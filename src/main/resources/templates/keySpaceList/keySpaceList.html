@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/onMenuLayout">
+<head>
+<title>キースペース</title>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" >
+</head>
+<body>
+<th:block layout:fragment="content">
+<h3>キースペース</h3>
+<input type="button" id="keySpaceRegister" value="キースペースを作成"/>
+<form th:object="${form}" th:action="@{/authenticate}" method="post">
+	<table>
+		<tr>
+			<td><label>ユーザID</label></td>
+			<td><input type="text" th:field="*{userId}"/></td>
+		</tr>
+		<tr>
+			<td><label>パスワード</label></td>
+			<td><input type="password" th:field="*{password}"/></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type="submit" value="ログイン"/></td>
+		</tr>
+	</table>
+</form>
+<script src="/js/keySpaceList/main.js" th:src="@{/js/keySpaceList/main.js}"></script>
+</th:block>
+</body>
+</html>
