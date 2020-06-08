@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/onMenuLayout">
+<head>
+<title>キースペースフォーム</title>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" >
+</head>
+<body>
+<section layout:fragment="content">
+<h3>キースペースフォーム</h3>
+<form th:object="${form}" th:action="@{/keySpaceRegister/regist}" method="post">
+	<table>
+		<tr>
+			<td><label>キースペース名</label></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan='2'><input type="text" th:field="*{keySpaceName}"/></td>
+		</tr>
+		<tr>
+			<td><label>パラメーター</label></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style='color:blue;'>// TODO 後で実装</span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type="submit" value="登録"/></td>
+		</tr>
+	</table>
+</form>
+</section>
+</body>
+</html>
