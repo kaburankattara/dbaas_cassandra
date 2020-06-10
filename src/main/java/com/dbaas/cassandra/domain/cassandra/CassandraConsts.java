@@ -42,7 +42,7 @@ public class CassandraConsts {
 	/** パス ec2-userホーム **/
 	public static final String PATH_EC2_USER_HOME = "/home/ec2-user";
 	/** パス cassandraホーム */
-	public static final String PATH_CASSANDRA_HOME = PATH_OPT + FILE_CASSANDRA;
+	public static final String PATH_CASSANDRA_HOME = "/usr/local" + FILE_CASSANDRA;
 	/** URL amazon corretto8  **/
 	public static final String DOWNLOAD_URL_AMAZON_CORRETTO_8_X64_LINUX_LATEST = "https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.tar.gz";
 	/** URL cassandraインストールバッチ  **/
@@ -60,7 +60,7 @@ public class CassandraConsts {
     /** cassandra */
     private static final String CASSANDRA = "cassandra ";
     /** cassandraをバックグラウンド実行 */
-    public static final String EXEC_CASSANDRA_BACK_GROUND = CASSANDRA + " -p " + PATH_CASSANDRA_HOME + "/pidfile.pid";
+    public static final String EXEC_CASSANDRA_BACK_GROUND = CASSANDRA + " -p " + PATH_CASSANDRA_HOME + "/pidfile.pid -R";
     /** cassandraをフォアグラウンド実行 */
     public static final String EXEC_CASSANDRA_FORE_GROUND = CASSANDRA + " -f ";
 }

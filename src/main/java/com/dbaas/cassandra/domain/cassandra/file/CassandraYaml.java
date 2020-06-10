@@ -1,9 +1,5 @@
 package com.dbaas.cassandra.domain.cassandra.file;
 
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_CASSANDRA_YAML;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_CASSANDRA_HOME;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_CONF;
-
 import java.io.File;
 
 import com.dbaas.cassandra.domain.auth.LoginUser;
@@ -24,7 +20,9 @@ public class CassandraYaml {
 	}
 	
 	public CassandraYaml(LoginUser user) {
-		this.fileName = PATH_CASSANDRA_HOME + PATH_CONF + FILE_CASSANDRA_YAML;
+		// TODO 定数化
+		this.fileName = "/etc/cassandra/conf/cassandra.yaml";
+		//this.fileName = PATH_CASSANDRA_HOME + PATH_CONF + FILE_CASSANDRA_YAML;
 	}
 
 	public void create(LoginUser user, Instance instance) {
@@ -476,7 +474,7 @@ public class CassandraYaml {
 		sb.append("          # Ex: \\\"<ip1>,<ip2>,<ip3>\\\"\n");
 		// シードノードに自身のプライベートIPアドレスを追加する
 		// TODO マルチノード起動を入れるときに変更が必要
-		sb.append("          - seeds: \\\"127.0.0.1" + "," + instance.getPrivateIpAddress() + "\\\"\n");
+		sb.append("          - seeds: \\\"127.0.0.1" + "," + instance.getPublicIpAddress() + "\\\"\n");
 		sb.append("\n");
 		sb.append("# For workloads with more data than can fit in memory, Cassandra's\n");
 		sb.append("# bottleneck will be reads that need to fetch data from\n");

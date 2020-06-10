@@ -2,18 +2,13 @@ package com.dbaas.cassandra.domain.cassandra;
 
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_EXEC;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_SFTP;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHMOD_OCTAL_777;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_CHMOD;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_EXEC_SHELL_INSTALLCASSANDRA;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_MV;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_RM;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SOURCE;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_STATUS_SUCCESS;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SUDO;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_TOUCH;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.EXEC_CASSANDRA_FORE_GROUND;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_CASSANDRA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_INSTALL_CASSANDRA_SH;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_JAVA;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_PROFILE;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_EC2_USER_HOME;
@@ -30,8 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
-import com.dbaas.cassandra.domain.cassandra.file.InstallCassandraSh;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.jcraft.jsch.Channel;
@@ -160,32 +155,41 @@ public class Cassandra {
 	 * @throws SftpException
 	 */
 	public String installCassandra() throws JSchException, SftpException {
-		// シェルをサーバに格納し、javaとcassandraをセットアップ
-		InstallCassandraSh installCassandraSh = InstallCassandraSh.createManager();
-		installCassandraSh.create();
-		String homeInstallCassandraSh = PATH_EC2_USER_HOME + FILE_INSTALL_CASSANDRA_SH;
-		String tmpInstallCassandraSh = PATH_TMP + FILE_INSTALL_CASSANDRA_SH;
-		putFile(tmpInstallCassandraSh, homeInstallCassandraSh);
-		exec(COMMAND_CHMOD, CHMOD_OCTAL_777, homeInstallCassandraSh);
-		exec(COMMAND_EXEC_SHELL_INSTALLCASSANDRA, "");
+		// javaとcassandraのインストール
+		exec("sudo amazon-linux-extras enable corretto8");
+		exec("sudo yum -y install java-1.8.0-amazon-corretto");
+		CassandraRepo repo = CassandraRepo.createManager();
+		repo.create();
+		execCreateFile(repo.getFileName(), repo.getDetail());
+		exec("sudo yum -y install cassandra");
 		
-		// profileを最新化
-		Profile profile = Profile.createManager();
-		String homeProfile = PATH_EC2_USER_HOME + FILE_PROFILE;
-		String etcProfile = PATH_ETC + FILE_PROFILE;
-		String tmpProfile = PATH_TMP + FILE_PROFILE;
-
-		// 最新のprofile情報を取得し、サーバにprofileを配置
-		profile.createProfileForInstallCassandra();
-		putFile(tmpProfile, homeProfile);
-
-		// 今あるprofileを削除し新しいprofileを配置
-		execSudo(COMMAND_RM, etcProfile);
-		execSudo(COMMAND_MV, homeProfile, etcProfile);
 		
-		// profileをサーバに配置し、pathを通す
-		exec(COMMAND_SOURCE, etcProfile);
-		execSudo(COMMAND_SOURCE, etcProfile);
+//		// シェルをサーバに格納し、javaとcassandraをセットアップ
+//		InstallCassandraSh installCassandraSh = InstallCassandraSh.createManager();
+//		installCassandraSh.create();
+//		String homeInstallCassandraSh = PATH_EC2_USER_HOME + FILE_INSTALL_CASSANDRA_SH;
+//		String tmpInstallCassandraSh = PATH_TMP + FILE_INSTALL_CASSANDRA_SH;
+//		putFile(tmpInstallCassandraSh, homeInstallCassandraSh);
+//		exec(COMMAND_CHMOD, CHMOD_OCTAL_777, homeInstallCassandraSh);
+//		exec(COMMAND_EXEC_SHELL_INSTALLCASSANDRA, "");
+//		
+//		// profileを最新化
+//		Profile profile = Profile.createManager();
+//		String homeProfile = PATH_EC2_USER_HOME + FILE_PROFILE;
+//		String etcProfile = PATH_ETC + FILE_PROFILE;
+//		String tmpProfile = PATH_TMP + FILE_PROFILE;
+//
+//		// 最新のprofile情報を取得し、サーバにprofileを配置
+//		profile.createProfileForInstallCassandra();
+//		putFile(tmpProfile, homeProfile);
+//
+//		// 今あるprofileを削除し新しいprofileを配置
+//		execSudo(COMMAND_RM, etcProfile);
+//		execSudo(COMMAND_MV, homeProfile, etcProfile);
+//		
+//		// profileをサーバに配置し、pathを通す
+//		exec(COMMAND_SOURCE, etcProfile);
+//		execSudo(COMMAND_SOURCE, etcProfile);
 		return COMMAND_STATUS_SUCCESS;
 	}
 
@@ -243,7 +247,12 @@ public class Cassandra {
 	 * @throws SftpException
 	 */
 	public String execCassandra() throws JSchException, SftpException {
-		exec(EXEC_CASSANDRA_FORE_GROUND);
+//		exec("sudo systemctl daemon-reload");
+//		exec("sudo systemctl start cassandra");
+
+		
+		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
+//		exec(EXEC_CASSANDRA_FORE_GROUND);
 		return COMMAND_STATUS_SUCCESS;
 	}
 
@@ -257,10 +266,10 @@ public class Cassandra {
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
 //		exec("touch aaa | printenv > aaa");
 //		return "";
-
+		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");
-		return exec("touch aaa | cassandra -v 2> aaa");
+//		return exec("touch aaa | cassandra -v 2> aaa");
 	}
 	
 	/**
@@ -324,9 +333,10 @@ public class Cassandra {
 		sb.append(COMMAND_SUDO)
 			.append(String.format(COMMAND_TOUCH, fileName))
 			.append(" | ")
-			.append("echo ")
+			.append(COMMAND_SUDO)
+			.append(" echo ")
 			.append("\"" + fileStringDetail + "\"")
-			.append(" > ")
+			.append(" | sudo tee ")
 			.append(fileName);
 		
 		// コマンド実行

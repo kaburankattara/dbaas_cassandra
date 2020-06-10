@@ -72,7 +72,7 @@ public class  KeySpaceRegisterService {
 			Instances instances = serverManagerService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
 				cassandraManagerService.registKeySpace(instance, keySpace);
-			}
+			}		
 		} catch (Exception e) {
 			// サーバ構築を行っているのであれば、全サーバを削除
 			if (isCreateServer) {
