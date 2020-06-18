@@ -14,19 +14,27 @@
 <h3>キースペース</h3>
 <input type="button" id="keySpaceRegister" value="キースペースを作成"/>
 <form th:object="${form}" th:action="@{/authenticate}" method="post">
-	<table>
-		<tr>
-			<td><label>ユーザID</label></td>
-			<td><input type="text" th:field="*{userId}"/></td>
-		</tr>
-		<tr>
-			<td><label>パスワード</label></td>
-			<td><input type="password" th:field="*{password}"/></td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td><input type="submit" value="ログイン"/></td>
-		</tr>
+	<table border="1">
+		<thead style="background:#DDFFFF">
+			<tr>
+				<th><label>キースペース</label></th>
+<!-- TODO 追加実装は後で
+ 				<th><label>テーブル数</label></th>
+				<th><label>ステータス</label></th>
+ -->
+			</tr>
+		</thead>
+		<tbody>
+		<th:block th:each="keySpace, iterStat : ${keySpaceList}" th:unless="${#lists.isEmpty(keySpaceList)}">
+			<tr>
+				<td><a th:text="${keySpace}" class="clickLink" th:href="${'/keySpaceUpdater?keySpace=' + keySpace}">キースペース名</a></td>
+<!-- TODO 追加実装は後で
+				<td><label>1</label></td>
+				<td><label>ステータス</label></td>
+ -->
+			</tr>
+		</th:block>
+		</tbody>
 	</table>
 </form>
 <script src="/js/keySpaceList/main.js" th:src="@{/js/keySpaceList/main.js}"></script>
