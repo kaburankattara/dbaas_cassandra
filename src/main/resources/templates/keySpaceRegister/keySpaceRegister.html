@@ -5,13 +5,13 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
 	layout:decorate="layout/onMenuLayout">
 <head>
-<title>キースペースフォーム</title>
+<title>キースペース登録</title>
 <meta charset="utf-8" />
 <meta name="robots" content="noindex, nofollow, noarchive" >
 </head>
 <body>
 <section layout:fragment="content">
-<h3>キースペースフォーム</h3>
+<h3>キースペース更新</h3>
 <form th:object="${form}" th:action="@{/keySpaceRegister/regist}" method="post">
 	<table>
 		<tr>

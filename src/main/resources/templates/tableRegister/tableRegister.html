@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/onMenuLayout">
+<head>
+<title>テーブル登録</title>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" >
+</head>
+<body>
+<section layout:fragment="content">
+<h3>テーブル登録</h3>
+<form id="form" th:object="${form}" th:action="@{/tableRegister/regist}" method="post">
+	<table>
+		<tr>
+			<td><label>キースペース名</label></td>
+			<td><input type="text" th:field="*{keySpace}" disabled/></td>
+		</tr>
+		<tr>
+			<td><label>テーブル名</label></td>
+			<td><input type="text" th:field="*{tableName}"/></td>
+		</tr>
+	</table>
+	<label>スキーマ</label>
+	<table border="1">
+		<thead style="background:#DDFFFF">
+			<tr>
+				<td colspan="4"><label>列</label></td>
+			</tr>
+			<tr>
+				<td><label>キー</label></td>
+				<td><label>名前</label></td>
+				<td><label>型</label></td>
+				<td><label>&nbsp;</label></td>
+			</tr>
+		</thead>
+		<tbody th:id="rows" th:remove="all-but-first">
+				<th:block th:each="column,iterStat : *{columnList}" th:unless="${#lists.isEmpty(form.columnList)}">
+					<tr th:replace="/tableRegister/tableRegisterBean :: row1(${column}, ${iterStat.index}, false)"></tr>
+				</th:block>
+		</tbody>
+		<tr>
+			<td colspan="3">&nbsp;</td>
+			<td><input id="addColumn" type="button" value="追加"/></td>
+		</tr>
+	</table>
+	<input type="submit" value="登録"/>
+</form>
+<script src="/js/tableRegister/tableRegister.js" th:src="@{/js/tableRegister/tableRegister.js}"></script>
+</section>
+</body>
+</html>
