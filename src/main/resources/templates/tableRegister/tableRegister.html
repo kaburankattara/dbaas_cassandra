@@ -38,7 +38,7 @@
 		</thead>
 		<tbody th:id="rows" th:remove="all-but-first">
 				<th:block th:each="column,iterStat : *{columnList}" th:unless="${#lists.isEmpty(form.columnList)}">
-					<tr th:replace="/tableRegister/tableRegisterBean :: row1(${column}, ${iterStat.index}, false)"></tr>
+					<tr th:replace="/domain/columns/columns :: row1(*{columns}, *{columnList}, ${iterStat.index}, ${columnTypes}, false)"></tr>
 				</th:block>
 		</tbody>
 		<tr>

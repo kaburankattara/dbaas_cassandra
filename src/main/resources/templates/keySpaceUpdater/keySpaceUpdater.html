@@ -12,7 +12,7 @@
 <body>
 <section layout:fragment="content">
 <h3>キースペース更新</h3>
-<form th:object="${form}" th:action="@{/keySpaceUpdater/regist}" method="post">
+<form id="form" th:object="${form}" th:action="@{/keySpaceUpdater/regist}" method="post">
 	<table>
 		<tr>
 			<td><label>キースペース名</label></td>
@@ -37,9 +37,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<th:block th:each="tableName, iterStat : ${tableList}" th:unless="${#lists.isEmpty(tableList)}">
+		<th:block th:each="table, iterStat : ${tableList}" th:unless="${#lists.isEmpty(tableList)}">
 			<tr>
-				<td><a th:text="${tableName}" th:href="${'/tableUpdater?keySpace=' + form.keySpace + '&tableName=' + tableName}">テーブル名</a></td>
+				<td><a th:text="${table.getTableName()}" th:href="${'/tableUpdater?keySpace=' + form.keySpace + '&tableName=' + table.getTableName()}">テーブル名</a></td>
 <!-- TODO 追加実装は後で
 				<td><label>1</label></td>
 				<td><label>ステータス</label></td>
@@ -48,12 +48,8 @@
 		</th:block>
 		</tbody>
 	</table>
-	<table>
-		<tr>
-			<td>&nbsp;</td>
-			<td><input type="submit" value="登録"/></td>
-		</tr>
-	</table>
+	<input type="submit" value="登録"/>
+	<input id="deleteKeySpace" type="button" value="削除"/>
 </form>
 <script src="/js/keySpaceUpdater/keySpaceUpdater.js" th:src="@{/js/keySpaceUpdater/keySpaceUpdater.js}"></script>
 </section>

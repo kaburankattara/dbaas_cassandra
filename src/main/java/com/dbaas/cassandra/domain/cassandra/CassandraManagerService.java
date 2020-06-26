@@ -1,7 +1,15 @@
 package com.dbaas.cassandra.domain.cassandra;
 
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CQL_COMMAND_USE;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.KEYSPACE_SYSTEM_SCHEMA;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.SYSTEM_KEYSPACE_LIST;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.TABLE_COLUMNS;
+import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
+import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
+import static com.dbaas.cassandra.utils.StringUtils.split;
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
-import com.dbaas.cassandra.utils.StringUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
@@ -99,6 +108,24 @@ public class CassandraManagerService {
 		}
 	}
 
+	public void deleteKeySpace(Instance instance, String keySpace) {
+		String ipAddress = instance.getPublicIpAddress();
+		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
+		
+		try {
+			// サーバインスタンスを生成する
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
+
+			// 実行文を生成
+			String cqlCommand = "drop keyspace " + keySpace + ";";
+			
+			// 実行
+			cassandraServer.execCql(instance, cqlCommand);
+		} catch (JSchException | SftpException e) {
+			throw new RuntimeException();
+		}
+	}
+
 	public List<String> findAllKeySpace(Instances instances) {
 		// 各サーバの保持しているキースペース一覧を取得
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
@@ -113,8 +140,20 @@ public class CassandraManagerService {
 				// create文を作成して実行
 				String cqlCommand = "DESC KEYSPACES";
 				result = cassandraServer.execCql(instance, cqlCommand);
-				result = StringUtils.replaceAll(result, "  ", " ");
-				keySpaceList.addAll(Arrays.asList(StringUtils.split(result, ' ')));
+				
+				// 検索結果をListに整形
+				result = replaceAll(result, "\n", "");
+				result = replaceAll(result, "  ", " ");
+				List<String> cqlResultKeySpaceList = new ArrayList<String>(asList(split(result, ' ')));
+				
+				// システム管理用キースペース以外を抽出
+				for (String keySpace : cqlResultKeySpaceList) {
+					if (SYSTEM_KEYSPACE_LIST.contains(keySpace)) {
+						continue;
+					}
+					keySpaceList.add(keySpace);
+				}
+				
 				return keySpaceList;
 			} catch (JSchException | SftpException e) {
 				throw new RuntimeException();
@@ -141,14 +180,17 @@ public class CassandraManagerService {
 		}
 	}
 
-	public List<String> findTableByKeySpace(Instances instances, String keySpace) {
+	public Tables findTableByKeySpace(Instances instances, String keySpace) {
+		return findTableByKeySpace(instances, keySpace, null);
+	}
+
+	public Tables findTableByKeySpace(Instances instances, String keySpace, String tableName) {
 		// 各サーバの保持しているテーブル一覧を取得
-		List<String> tableList = new ArrayList<>();
+		List<Table> tableList = new ArrayList<Table>();
 		for (Instance instance : instances.getInstanceList()) {
-			List<String> result = null;
-				result = findTableByKeySpace(instance, keySpace);
-				tableList.addAll(result);
-				return tableList;
+				Tables tables = findTableByKeySpace(instance, keySpace, tableName);
+				tableList.addAll(tables.getTableList());
+				return new Tables(tableList);
 		}
 		return null;	
 		
@@ -156,22 +198,78 @@ public class CassandraManagerService {
 		// TODO マルチノードで
 	}
 
-	public List<String> findTableByKeySpace(Instance instance, String keySpace) {
+	public Tables findTableByKeySpace(Instance instance, String keySpace, String tableName) {
 		String ipAddress = instance.getPublicIpAddress();
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
-		List<String> tableList = new ArrayList<>();
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
 			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
 
-			// create文を作成して実行
-			String cqlCommand = "use " + keySpace + "; DESCRIBE tables;";
-			cassandraServer.execCql(instance, cqlCommand);
+			// create文を作成
+			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
+			cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keySpace + "'";
+			if (isNotEmpty(tableName)) {
+				cqlCommand = cqlCommand + " and table_name = '" + tableName + "'";
+			}
+			cqlCommand = cqlCommand + ";";
+			
+			// 実行
 			result = cassandraServer.execCql(instance, cqlCommand);
-			result = StringUtils.replaceAll(result, "  ", " ");
-			tableList.addAll(Arrays.asList(StringUtils.split(result, ' ')));
-			return tableList;
+			return new Tables(result);
+		} catch (JSchException | SftpException e) {
+			throw new RuntimeException();
+		}
+	}
+
+	public Tables addColumns(Instance instance, String keySpace, Table newTable) {
+		String ipAddress = instance.getPublicIpAddress();
+		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
+		String result = null;
+
+		// 現行のテーブル情報を取得
+		Instances instances = Instances.createInstance(instance);
+		// TODO  返り値がおかしい？
+		Table oldTable = findTableByKeySpace(instances, keySpace, newTable.getTableName())
+				.getTable(newTable.getTableName());
+		
+		try {
+			// テーブルを現行と次期で比較し、Alter文を生成
+			CqlFactory cqlFactory = new CqlFactory();
+			List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keySpace, oldTable, newTable);
+			
+			// サーバインスタンスを生成する
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
+
+			// 実行文を生成
+			StringBuilder sb = new StringBuilder();
+			sb.append(CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + ";");
+			for (String cqlAlterCommand : cqlAlterCommandList) {
+				sb.append(cqlAlterCommand);
+			}
+			String cqlCommand = sb.toString();
+			
+			// 実行
+			result = cassandraServer.execCql(instance, cqlCommand);
+			return new Tables(result);
+		} catch (JSchException | SftpException e) {
+			throw new RuntimeException();
+		}
+	}
+
+	public void deleteTable(Instance instance, String keySpace, String tableName) {
+		String ipAddress = instance.getPublicIpAddress();
+		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
+		
+		try {
+			// サーバインスタンスを生成する
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
+
+			// 実行文を生成
+			String cqlCommand = "drop table " + keySpace + "." + tableName + ";";
+			
+			// 実行
+			cassandraServer.execCql(instance, cqlCommand);
 		} catch (JSchException | SftpException e) {
 			throw new RuntimeException();
 		}

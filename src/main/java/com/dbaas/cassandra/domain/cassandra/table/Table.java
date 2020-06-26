@@ -26,6 +26,34 @@ public class Table {
 		this.columns = columns;
 	}
 
+	/**
+	 * コンストラクタ
+	 * 
+	 * @param columnInfoList
+	 */
+	public Table(List<List<String>> columnInfoList) {
+		
+		// カラムリストの生成とテーブル名の抽出
+		List<Column> columnList = new ArrayList<Column>();
+		String tableName = "";
+		boolean isGetTableName = true;
+		for (List<String> columnInfo : columnInfoList) {
+			
+			// 初回のみテーブル名取得
+			if (isGetTableName) {
+				int tableNameIndex = 1;
+				tableName = columnInfo.get(tableNameIndex);
+				isGetTableName = false;
+			}
+			Column column = new Column(columnInfo);
+			columnList.add(column);
+		}
+		
+		// フィールドセット
+		this.tableName =  tableName;
+		this.columns = new Columns(columnList);
+	}
+
 	public String getTableName() {
 		return tableName;
 	}
@@ -95,6 +123,14 @@ public class Table {
 			isNotFirst = true;
 		}
 		return sb.toString();
+	}
+
+	public List<Column> getColumnList() {
+		return columns.getColumnList();
+	}
+
+	public boolean hasColumn(Column column) {
+		return columns.hasColumn(column);
 	}
 }
 

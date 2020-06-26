@@ -1,6 +1,9 @@
 package com.dbaas.cassandra.domain.serverManager.instance;
 
+import static java.util.Arrays.asList;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +26,10 @@ public class Instances implements Serializable {
 			throw new NullPointerException("インスタンスリストが取得出来ていません");
 		}
 		this.instanceList = instanceList;
+	}
+	
+	public static Instances createInstance (Instance... instanceList) {
+		return new Instances(new ArrayList<Instance>(asList(instanceList)));
 	}
 	
 	/**

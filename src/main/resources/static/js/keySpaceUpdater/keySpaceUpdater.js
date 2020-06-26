@@ -7,4 +7,9 @@ $(function() {
 		$div.append($("<input type='hidden' id='keySpace' name='keySpace' value='" + keySpace + "'>"));
 		getSubmitByNewForm("/tableRegister", $div);
 	});
+	
+	/** キースペース削除 **/
+	$("#deleteKeySpace").on("click", function(){
+		postSubmit("/keySpaceUpdater/delete");
+	});
 });

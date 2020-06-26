@@ -4,40 +4,48 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterDeleteService;
+import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterInitService;
+import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterUpdateService;
 import com.dbaas.cassandra.domain.auth.LoginUser;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 
 @Service
 @Transactional
 public class TableUpdaterService {
-
-	private ServerManagerService serverManagerService;
-
-	private CassandraManagerService cassandraManagerService;
+	
+	private TableUpdaterInitService initService;
+	
+	private TableUpdaterUpdateService updateService;
+	
+	private TableUpdaterDeleteService deleteService;
 
 	@Autowired
-	TableUpdaterService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+	TableUpdaterService(TableUpdaterInitService initService, TableUpdaterUpdateService updateService,
+			TableUpdaterDeleteService deleteService) {
+		this.initService = initService;
+		this.updateService = updateService;
+		this.deleteService = deleteService;
 	}
 
 	/**
-	 * テーブルを登録する
+	 * テーブルを検索する
 	 */
-	public void registTable(LoginUser user, String keySpace, Table table) {
-		try {
-			// 入力されたテーブルを登録する
-			Instances instances = serverManagerService.getInstances(user);
-			for (Instance instance : instances.getInstanceList()) {
-				cassandraManagerService.registTable(instance, keySpace, table);
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.toString());
-		}
+	public Table findTable(LoginUser user, String keySpace, String tableName) {
+		return initService.findTableByKeySpaceAndTableName(user, keySpace, tableName);
+	}
+
+	/**
+	 * テーブルを更新する
+	 */
+	public void updateTable(LoginUser user, String keySpace, Table table) {
+		updateService.updateTable(user, keySpace, table);
+	}
+
+	/**
+	 * テーブルを削除する
+	 */
+	public void deleteTable(LoginUser user, String keySpace, String tableName) {
+		deleteService.deleteTable(user, keySpace, tableName);
 	}
 }
