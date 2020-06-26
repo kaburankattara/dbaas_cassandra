@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.app.TableUpdater.service;
+package com.dbaas.cassandra.app.TableUpdater.service.bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,31 +13,32 @@ import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 
 @Service
 @Transactional
-public class TableUpdaterInitService {
+public class TableUpdaterUpdateService {
 
 	private ServerManagerService serverManagerService;
 
 	private CassandraManagerService cassandraManagerService;
 
 	@Autowired
-	TableUpdaterInitService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
+	TableUpdaterUpdateService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
 		this.serverManagerService = serverManagerService;
 		this.cassandraManagerService = cassandraManagerService;
 	}
 
 	/**
-	 * テーブルを登録する
+	 * テーブルを更新する
 	 */
-	public void registTable(LoginUser user, String keySpace, Table table) {
+	public void updateTable(LoginUser user, String keySpace, Table table) {
 		try {
-			// 入力されたテーブルを登録する
 			Instances instances = serverManagerService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				cassandraManagerService.registTable(instance, keySpace, table);
+				cassandraManagerService.addColumns(instance, keySpace, table);
+				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
+			throw new RuntimeException();
 		}
 	}
 }

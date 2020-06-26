@@ -1,19 +1,34 @@
 package com.dbaas.cassandra.domain.cassandra.table;
 
+import static com.dbaas.cassandra.utils.StringUtils.isEquals;
+
+import java.util.List;
+
 public class Column {
-	
-	public boolean isRowKey;
 
 	public String columnName;
 
 	public String columnType;
-
-	public boolean getIsRowKey() {
-		return isRowKey;
-	}
 	
-	public void setIsRowKey(boolean isRowKey) {
-		this.isRowKey = isRowKey;
+	public boolean isRowKey;
+
+	/**
+	 * コンストラクタ
+	 */
+	public Column() {
+	}
+
+	/**
+	 * コンストラクタ
+	 */
+	public Column(List<String> cqlResult) {
+		int columnNameIndex = 2;
+		int columnTypeIndex = 7;
+		int isRowKeyIndex = 6;
+		columnName = cqlResult.get(columnNameIndex);
+		columnType = cqlResult.get(columnTypeIndex);
+		// TODO 定数化
+		isRowKey = isEquals(cqlResult.get(isRowKeyIndex), "0");
 	}
 
 	public String getColumnName() {
@@ -34,5 +49,13 @@ public class Column {
 
 	public boolean isRowKey() {
 		return isRowKey;
+	}
+
+	public boolean getIsRowKey() {
+		return isRowKey;
+	}
+	
+	public void setIsRowKey(boolean isRowKey) {
+		this.isRowKey = isRowKey;
 	}
 }

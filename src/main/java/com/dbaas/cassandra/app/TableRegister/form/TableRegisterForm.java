@@ -4,22 +4,22 @@ import static com.dbaas.cassandra.utils.NumberUtils.toInt;
 
 import java.util.List;
 
-import com.dbaas.cassandra.domain.cassandra.table.Column;
-import com.dbaas.cassandra.domain.cassandra.table.Columns;
+import com.dbaas.cassandra.domain.cassandra.table.ColumnForm;
+import com.dbaas.cassandra.domain.cassandra.table.ColumnsForm;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.utils.NumberUtils;
 
 public class TableRegisterForm {
 	
 	public TableRegisterForm() {
-		columns = new Columns();
+		columns = new ColumnsForm();
 	}
 	
 	public String keySpace;
 	
 	public String tableName;
 	
-	public Columns columns;
+	public ColumnsForm columns;
 	
 	public String getKeySpace() {
 		return keySpace;
@@ -37,11 +37,11 @@ public class TableRegisterForm {
 		this.tableName = tableName;
 	}
 
-	public List<Column> getColumnList() {
+	public List<ColumnForm> getColumnList() {
 		return columns.getColumnList();
 	}
 	
-	public void setColumnList(List<Column> columnList) {
+	public void setColumnList(List<ColumnForm> columnList) {
 		this.columns.setColumnList(columnList);
 	}
 	
@@ -51,11 +51,11 @@ public class TableRegisterForm {
 	}
 	
 	public void addColumn() {
-		this.columns.getColumnList().add(new Column());
+		this.columns.getColumnList().add(new ColumnForm());
 	}
 	
 	public void deleteColumn(String index) {
-		List<Column> columnList = columns.getColumnList();
+		List<ColumnForm> columnList = columns.getColumnList();
 		
 		// 数値型に変換出来ない、
 		// または対象インデックスがリストのサイズを超えている場合は処理しない
@@ -67,6 +67,6 @@ public class TableRegisterForm {
 	}
 	
 	public Table toTable() {
-		return new Table(tableName, columns);
+		return new Table(tableName, columns.toColumns());
 	}
 }

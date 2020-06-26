@@ -30,7 +30,7 @@ public final class ObjectUtils {
 	 * @return 判定結果
 	 */
 	public static boolean isNotEmpty(@Nullable Object[] array) {
-		return !ObjectUtils.isEmpty(array);
+		return !org.springframework.util.ObjectUtils.isEmpty(array);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public final class ObjectUtils {
 	 * @return 判定結果
 	 */
 	public static boolean isEmpty(@Nullable Object obj) {
-		return ObjectUtils.isEmpty(obj);
+		return org.springframework.util.ObjectUtils.isEmpty(obj);
 	}
 
 	/**
@@ -48,6 +48,6 @@ public final class ObjectUtils {
 	 * @return 判定結果
 	 */
 	public static boolean isNotEmpty(@Nullable Object obj) {
-		return !ObjectUtils.isEmpty(obj);
+		return !org.springframework.util.ObjectUtils.isEmpty(obj);
 	}
 }

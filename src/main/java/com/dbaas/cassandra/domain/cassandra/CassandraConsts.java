@@ -1,5 +1,10 @@
 package com.dbaas.cassandra.domain.cassandra;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class CassandraConsts {
 	/** sudoコマンド */
 	public static final String COMMAND_SUDO = "sudo ";
@@ -63,4 +68,14 @@ public class CassandraConsts {
     public static final String EXEC_CASSANDRA_BACK_GROUND = CASSANDRA + " -p " + PATH_CASSANDRA_HOME + "/pidfile.pid -R";
     /** cassandraをフォアグラウンド実行 */
     public static final String EXEC_CASSANDRA_FORE_GROUND = CASSANDRA + " -f ";
+    /** cqlコマンド use */
+    public static final String CQL_COMMAND_USE = "use ";
+    /** キースペース system_schema */
+    public static final String KEYSPACE_SYSTEM_SCHEMA = "system_schema";
+    /** テーブル system_schema.columns */
+    public static final String TABLE_COLUMNS = "columns";
+	/** システム管理用キースペース */
+	public static final List<String> SYSTEM_KEYSPACE_LIST = new ArrayList<String>(
+			asList("system_schema", "system_auth", "system", "system_distributed", "system_traces"));
+    
 }

@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.app.TableUpdater.controller;
 
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dbaas.cassandra.app.TableUpdater.form.TableUpdaterForm;
 import com.dbaas.cassandra.app.TableUpdater.service.TableUpdaterService;
 import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 @Controller
@@ -48,17 +51,20 @@ public class  TableUpdaterController {
 	}
 
 	@GetMapping()
-	public String index(HttpServletRequest request, @ModelAttribute("form") TableUpdaterForm form, Model model) {
-		form.init();
+	public String index(HttpServletRequest request, @AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model) {
 		model.addAttribute("TABLE_REGISTER_REFERER", getReferer(request));
 		initModelForAlways(model);
+		Table table = updaterService.findTable(user, form.getKeySpace(), form.getTableName());
+		form.setColumns(table.getColumns());
+		form.getColumns().setAllDisabled();
+		form.init();
 		return "tableUpdater/tableUpdater";
 	}
 
-	@PostMapping("regist")
+	@PostMapping("update")
 	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model) {
 		try {
-			updaterService.registTable(user, form.getKeySpace(), form.toTable());
+			updaterService.updateTable(user, form.getKeySpace(), form.toTable());
 		} catch(Exception e) {
 			
 		}
@@ -78,6 +84,17 @@ public class  TableUpdaterController {
 		initModelForAlways(model);
 		form.deleteColumn(targetIndex);
 		return "tableUpdater/tableUpdater";
+	}
+
+	@PostMapping("/deleteTable")
+	public String deleteTable(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model, RedirectAttributes redirectAttributes) {
+		try {
+			updaterService.deleteTable(user, form.getKeySpace(), form.getTableName());
+		} catch(Exception e) {
+			// TODO
+		}
+		redirectAttributes.addAttribute("keySpace", form.getKeySpace());
+		return createRedirectUri(URL_KEY_SPACE_UPDATER);
 	}
 	
 	private void initModelForAlways(Model model) {

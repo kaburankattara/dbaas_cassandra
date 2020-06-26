@@ -144,10 +144,10 @@ public class  ServerManagerService {
 	/**
 	 * サーバーを削除する
 	 */
-	public void deleteServer(String instanceId) {
+	public void deleteServer(Instance instance) {
 		final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
 		StopInstancesRequest request = new StopInstancesRequest()
-		    .withInstanceIds(instanceId);
+		    .withInstanceIds(instance.getInstanceId());
 		ec2.stopInstances(request);
 	}
 	
@@ -156,7 +156,7 @@ public class  ServerManagerService {
 	 */
 	public void deleteAllServer(LoginUser user) {
 		for (Instance instance : getInstances(user).getInstanceList()) {
-			deleteServer(instance.getInstanceId());
+			deleteServer(instance);
 		}
 	}
 }

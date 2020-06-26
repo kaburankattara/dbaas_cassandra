@@ -29,7 +29,6 @@ import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.utils.StringUtils;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
@@ -267,8 +266,7 @@ public class Cassandra {
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
 //		exec("touch aaa | printenv > aaa");
 //		return "";
-		String result = exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
-		return StringUtils.replaceAll(result, "\n", "");
+		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");
