@@ -16,5 +16,6 @@ create table m_user (
   , password VARCHAR(80) default '' not null
 ) ;
 
+INSERT INTO `dbaas`.`m_user` (`user_id`, `user_name`, `password`) VALUES ('aaa', 'test', '$2a$08$V36opBTB3.OYPrxWLo4Xsu1ijXG3d3kPUVeT.BjQqo1guUMLL7U7y');
 
 $2a$08$V36opBTB3.OYPrxWLo4Xsu1ijXG3d3kPUVeT.BjQqo1guUMLL7U7y
