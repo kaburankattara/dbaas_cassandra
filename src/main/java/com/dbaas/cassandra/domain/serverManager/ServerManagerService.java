@@ -18,9 +18,9 @@ import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.ResourceType;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
-import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.ec2.model.TagSpecification;
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
@@ -146,9 +146,9 @@ public class  ServerManagerService {
 	 */
 	public void deleteServer(Instance instance) {
 		final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
-		StopInstancesRequest request = new StopInstancesRequest()
-		    .withInstanceIds(instance.getInstanceId());
-		ec2.stopInstances(request);
+		TerminateInstancesRequest request = new TerminateInstancesRequest()
+				.withInstanceIds(instance.getInstanceId());
+		ec2.terminateInstances(request);
 	}
 	
 	/**
