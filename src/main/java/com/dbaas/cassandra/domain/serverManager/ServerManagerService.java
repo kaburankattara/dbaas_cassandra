@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.domain.serverManager;
 
 import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDateYyyymmddhhmmssSSSSSS;
+import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +129,8 @@ public class  ServerManagerService {
 		tagSpecifications.add(tag2);
 
 		runInstancesRequest
-			.withImageId("ami-0f310fced6141e627")
-			.withInstanceType(InstanceType.T2Micro)
+			.withImageId("ami-0039557137082409d")
+			.withInstanceType(InstanceType.T2Small)
 			.withMinCount(1)
 			.withMaxCount(1)
 			.withKeyName("cassandra2")
@@ -139,6 +140,27 @@ public class  ServerManagerService {
 		
 		AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
 		ec2.runInstances(runInstancesRequest);
+	}
+	
+	/**
+	 * サーバの構築が完了するまで待つ
+	 */
+	public void waitCompleteCreateServer(LoginUser user) {
+		// 保持しているサーバの状態が全てrunningになるまで待つ
+		boolean isNotAllInstanceRunning = true;
+		while (isNotAllInstanceRunning) {
+			// ユーザに紐づくEC2リストを取得
+			Instances instances = getInstances(user);
+			
+			// 保持しているサーバにpendingが存在すればrunningになるまで待つ
+			if (instances.hasPendingInstance()) {
+				sleep();
+				continue;
+			}
+			
+			// 保持しているサーバにpendingが無くなれば次処理を開始する
+			isNotAllInstanceRunning = false;
+		}
 	}
 	
 	/**

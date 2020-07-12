@@ -4,6 +4,8 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CQL_COMMAND_U
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.KEYSPACE_SYSTEM_SCHEMA;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.SYSTEM_KEYSPACE_LIST;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.TABLE_COLUMNS;
+import static com.dbaas.cassandra.utils.ObjectUtils.isEmpty;
+import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
 import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
 import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
 import static com.dbaas.cassandra.utils.StringUtils.split;
@@ -22,6 +24,7 @@ import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.utils.ThreadUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
@@ -33,6 +36,18 @@ public class CassandraManagerService {
 	public CassandraManagerService() {
 	}
 
+	/**
+	 * 全てのインスタンスに対し、cassandraをセットアップする
+	 * 
+	 * @param user
+	 * @param instances
+	 */
+	public void setup(LoginUser user, Instances instances) {
+		for (Instance instance : instances.getInstanceList()) {
+			setup(user, instance);
+		}
+	}
+
 	public void setup(LoginUser user, Instance instance) {
 		String ipAddress = instance.getPublicIpAddress();
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
@@ -41,7 +56,7 @@ public class CassandraManagerService {
 			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
 
 			// cassandraをインストールする
-			cassandraServer.installCassandra();
+//			cassandraServer.installCassandra();
 
 			// casssandra.yamlを設定し、cassandraを起動する
 			cassandraServer.setCassandraYaml(user, instance);
@@ -67,20 +82,103 @@ public class CassandraManagerService {
 		}
 	}
 
+	/**
+	 * 起動確認まで考慮してcassandraを起動する
+	 * 
+	 * @param instances
+	 */
+	public void execCassandraByWait(Instances instances) {
+		boolean hasNotExecCassandra = true;
+		int execCassandraCount = instances.getHasInstanceCount() * 3;
+		while (hasNotExecCassandra) {
+			hasNotExecCassandra = false;
+			
+			// 未起動のcassandraを再起動
+			for (Instance instance : instances.getInstanceList()) {
+				// プロセスIDが取得出来なければcassandraをリスタートする
+				if (!isExecCassandra(instance)) {
+					execCassandra(instance);
+					
+					// 再起動のリトライ制御
+					execCassandraCount--;
+					if (execCassandraCount < 0) {
+						// 実行対象cassandra数×3回再起動を試みたが起動仕切らない場合、
+						// システムエラーとする
+						// TODO 専用のExceptionを用意する
+						new RuntimeException();
+					}
+				}
+			}
+			
+			// CQLが実行可能か確認
+			for (Instance instance : instances.getInstanceList()) {
+				// 試験的なcqlコマンドを定期実行し、実行可能になるまで待つ
+				if (canExecCql(instance)) {
+					continue;
+				}
+				hasNotExecCassandra = true;
+				ThreadUtils.sleep();
+				ThreadUtils.sleep();
+				ThreadUtils.sleep();
+				ThreadUtils.sleep();
+				ThreadUtils.sleep();
+			}
+		}
+	}
+
+	/**
+	 * 全インスタンスがCQLの実行が可能か判定
+	 * 
+	 * @param instances
+	 * @return 判定結果
+	 */
+	public boolean canAllExecCql(Instances instances) {
+		if (instances.isEmpty()) {
+			return false;
+		}
+		
+		for (Instance instance : instances.getInstanceList()) {
+			// CQL実行が出来ないインスタンスが存在すればfalse
+			if (isEmpty(findAllKeySpace(instance))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * CQLが実行可能か判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean canExecCql(Instance instance) {
+		// CQLでキースペース一覧が取得出来るか判定
+		return isNotEmpty(findAllKeySpace(instance));
+	}
+
+	/**
+	 * casssandraが起動済みか判定
+	 * 
+	 * @param instance
+	 * @return 判定結果
+	 */
 	public boolean isExecCassandra(Instance instance) {
+		// cassandraのプロセスIDを取得し起動済みか判定
+		return isNotEmpty(getProcessIdByCassandra(instance));
+	}
+
+	public String getProcessIdByCassandra(Instance instance) {
 		String ipAddress = instance.getPublicIpAddress();
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
-		boolean isExecCassandra;
 		try {
 			// サーバインスタンスを生成する
 			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
 
 			// cassandraの起動確認
-			isExecCassandra = cassandraServer.isExecCassandra();
+			return cassandraServer.getProcessIdByCassandra();
 		} catch (JSchException | SftpException e) {
 			throw new RuntimeException();
 		}
-		return isExecCassandra;
 	}
 
 	public boolean isExecAllCassandra(Instances instances) {
@@ -91,7 +189,50 @@ public class CassandraManagerService {
 		}
 		return true;
 	}
-
+	
+	public void registKeySpace(Instances instances, String keySpace) {
+		for (Instance instance : instances.getInstanceList()) {
+			registKeySpace(instance, keySpace);
+		}
+	}
+	
+	/**
+	 * 重複は無視してキースペースを登録
+	 * 
+	 * @param instances
+	 * @param keyspaceList
+	 */
+	public void registKeySpaceByDuplicatIgnore(Instances instances, List<String> keyspaceList) {
+		for (String keyspace : keyspaceList) {
+			registKeySpaceByDuplicatIgnore(instances, keyspace);
+		}
+	}
+	
+	public void registKeySpaceByDuplicatIgnore(Instances instances, String keyspace) {
+		for (Instance instance : instances.getInstanceList()) {
+			registKeySpaceByDuplicatIgnore(instance, keyspace);
+		}
+	}
+	
+	/**
+	 * 重複は無視してキースペースを登録
+	 * 
+	 * @param instances
+	 * @param keyspaceList
+	 */
+	public void registKeySpaceByDuplicatIgnore(Instance instance, String keyspace) {
+		// 対象インスタンスのキースペース一覧を取得
+		List<String> keyspaceList = findAllKeySpaceWithoutSysKeySpace(instance);
+		
+		// キースペースが重複するのであれば登録しない
+		if (keyspaceList.contains(keyspace)) {
+			return;
+		}
+		
+		// キースペースが重複しないのであれば登録
+		registKeySpace(instance, keyspace);
+	}
+	
 	public void registKeySpace(Instance instance, String keySpace) {
 		String ipAddress = instance.getPublicIpAddress();
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
@@ -126,43 +267,64 @@ public class CassandraManagerService {
 		}
 	}
 
+	public List<String> findAllKeySpaceWithoutSysKeySpace(Instances instances) {
+		List<String> keySpaceList = new ArrayList<>();
+		// システム管理用キースペース以外を抽出
+		for (Instance instance : instances.getInstanceList()) {
+			keySpaceList.addAll(findAllKeySpaceWithoutSysKeySpace(instance));
+		}
+		return keySpaceList;
+	}
+
+	public List<String> findAllKeySpaceWithoutSysKeySpace(Instance instance) {
+		List<String> keySpaceList = new ArrayList<>();
+		// システム管理用キースペース以外を抽出
+		for (String keySpace : findAllKeySpace(instance)) {
+			if (SYSTEM_KEYSPACE_LIST.contains(keySpace)) {
+				continue;
+			}
+			keySpaceList.add(keySpace);
+		}
+		return keySpaceList;
+	}
+
 	public List<String> findAllKeySpace(Instances instances) {
+		// 各サーバの保持しているキースペース一覧を取得
+		List<String> keySpaceList = new ArrayList<>();
+		for (Instance instance : instances.getInstanceList()) {
+			keySpaceList.addAll(findAllKeySpace(instance));
+		}
+		return keySpaceList;
+	}
+
+	public List<String> findAllKeySpace(Instance instance) {
 		// 各サーバの保持しているキースペース一覧を取得
 		String identityKeyFilName = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
 		List<String> keySpaceList = new ArrayList<>();
-		for (Instance instance : instances.getInstanceList()) {
-			String ipAddress = instance.getPublicIpAddress();
-			String result = null;
-			try {
-				// サーバインスタンスを生成する
-				Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
-				
-				// create文を作成して実行
-				String cqlCommand = "DESC KEYSPACES";
-				result = cassandraServer.execCql(instance, cqlCommand);
-				
-				// 検索結果をListに整形
-				result = replaceAll(result, "\n", "");
-				result = replaceAll(result, "  ", " ");
-				List<String> cqlResultKeySpaceList = new ArrayList<String>(asList(split(result, ' ')));
-				
-				// システム管理用キースペース以外を抽出
-				for (String keySpace : cqlResultKeySpaceList) {
-					if (SYSTEM_KEYSPACE_LIST.contains(keySpace)) {
-						continue;
-					}
-					keySpaceList.add(keySpace);
-				}
-				
-				return keySpaceList;
-			} catch (JSchException | SftpException e) {
-				throw new RuntimeException();
+		String ipAddress = instance.getPublicIpAddress();
+		String result = null;
+		try {
+			// サーバインスタンスを生成する
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
+
+			// create文を作成して実行
+			String cqlCommand = "DESC KEYSPACES";
+			result = cassandraServer.execCql(instance, cqlCommand);
+
+			// 検索結果をListに整形
+			result = replaceAll(result, "\n", "");
+			result = replaceAll(result, "  ", " ");
+			List<String> cqlResultKeySpaceList = new ArrayList<String>(asList(split(result, ' ')));
+
+			// システム管理用キースペース以外を抽出
+			for (String keySpace : cqlResultKeySpaceList) {
+				keySpaceList.add(keySpace);
 			}
+
+			return keySpaceList;
+		} catch (JSchException | SftpException e) {
+			throw new RuntimeException();
 		}
-		return null;	
-		
-		// 各サーバで取得したキースペースの重複を削除
-		// TODO マルチノードで
 	}
 
 	public void registTable(Instance instance, String keySpace, Table table) {

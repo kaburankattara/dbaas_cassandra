@@ -15,7 +15,6 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_EC2_USER
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_ETC;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_OPT;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_TMP;
-import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
 import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
 
 import java.io.BufferedInputStream;
@@ -211,15 +210,15 @@ public class Cassandra {
 	}
 
 	/**
-	 * casssandraが起動済み判定
+	 * cassandraのプロセスIDを取得
 	 * 
 	 * @return 判定結果
 	 * @throws JSchException
 	 * @throws SftpException
 	 */
-	public boolean isExecCassandra() throws JSchException, SftpException {
+	public String getProcessIdByCassandra() throws JSchException, SftpException {
 		// cassandraのプロセスIDを取得し起動済みか判定
-		return isNotEmpty(exec("pgrep -f cassandra"));
+		return exec("pgrep -f cassandra");
 	}
 
 //	/**
@@ -250,8 +249,10 @@ public class Cassandra {
 //		exec("sudo systemctl daemon-reload");
 //		exec("sudo systemctl start cassandra");
 
+//		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
+		execSudo("systemctl restart execCassandra");
 		
-		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
+//		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
 //		exec(EXEC_CASSANDRA_FORE_GROUND);
 		return COMMAND_STATUS_SUCCESS;
 	}
@@ -266,7 +267,7 @@ public class Cassandra {
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
 //		exec("touch aaa | printenv > aaa");
 //		return "";
-		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+		return execSudo("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");

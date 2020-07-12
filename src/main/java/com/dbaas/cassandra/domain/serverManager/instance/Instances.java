@@ -19,7 +19,7 @@ public class Instances implements Serializable {
 	/**
 	 * インスタンスリスト
 	 */
-	private List<Instance> instanceList;
+	private List<Instance> instanceList = new ArrayList<Instance>();
 	
 	public Instances(List<Instance> instanceList) {
 		if (instanceList == null) {
@@ -71,5 +71,17 @@ public class Instances implements Serializable {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 保持ししているインスタンス数を取得
+	 * 
+	 * @return 判定結果
+	 */
+	public int getHasInstanceCount() {
+		if (isEmpty()) {
+			return 0;
+		}
+		return instanceList.size();
 	}
  }
