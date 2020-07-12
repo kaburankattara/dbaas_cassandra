@@ -57,7 +57,7 @@ public class CassandraYaml {
 		sb.append("# The name of the cluster. This is mainly used to prevent machines in\n");
 		sb.append("# one logical cluster from joining another.\n");
 		// クラスタ名にはユーザIDを指定する
-		sb.append("cluster_name: '" + user.getUserId() + " Cluster'\n");
+		sb.append("cluster_name: 'test Cluster'\n");
 		sb.append("\n");
 		sb.append("# This defines the number of tokens randomly assigned to this node on the ring\n");
 		sb.append("# The more tokens, relative to other nodes, the larger the proportion of data\n");
@@ -474,7 +474,7 @@ public class CassandraYaml {
 		sb.append("          # Ex: \\\"<ip1>,<ip2>,<ip3>\\\"\n");
 		// シードノードに自身のプライベートIPアドレスを追加する
 		// TODO マルチノード起動を入れるときに変更が必要
-		sb.append("          - seeds: \\\"127.0.0.1" + "," + instance.getPublicIpAddress() + "\\\"\n");
+		sb.append("          - seeds: \\\"127.0.0.1\\\"\n");
 		sb.append("\n");
 		sb.append("# For workloads with more data than can fit in memory, Cassandra's\n");
 		sb.append("# bottleneck will be reads that need to fetch data from\n");

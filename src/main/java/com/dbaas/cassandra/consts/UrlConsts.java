@@ -15,4 +15,6 @@ public class UrlConsts {
 	
 	public static final String URL_TABLE_UPDATER = "/tableUpdater";
 	
+	public static final String URL_IS_COMPLETE_KEYSPACE_REGIST = "/isCompleteKeyspaceRegist";
+	
 }

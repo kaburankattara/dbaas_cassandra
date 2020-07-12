@@ -36,7 +36,7 @@ public class  KeySpaceListController {
 	
 	@RequestMapping()
 	public String index(@AuthenticationPrincipal LoginUser user, Model model) {
-		List<String> keySpaceList = keySpaceListService.findKeySpace(user);
+		List<String> keySpaceList = keySpaceListService.init(user);
 		model.addAttribute("keySpaceList", keySpaceList);
 		return "keySpaceList/keySpaceList";
 	}

@@ -75,7 +75,7 @@ public class  KeySpaceUpdaterService {
 
 			// 削除後も一つ以上のキースペースを保持しているか判定
 			Instances instances = serverManagerService.getInstances(user);
-			List<String> keySpaceList = cassandraManagerService.findAllKeySpace(instances);
+			List<String> keySpaceList = cassandraManagerService.findAllKeySpaceWithoutSysKeySpace(instances);
 			if (isNotEmpty(keySpaceList)) {
 				return;
 			}
