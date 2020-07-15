@@ -2,15 +2,18 @@
 <html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/loginLayout">
 <head>
+<title>ログイン</title>
 <meta charset="utf-8" />
 <meta name="robots" content="noindex, nofollow, noarchive" >
-<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 </head>
 <body>
+<th:block layout:fragment="content">
 <h3>ログインフォーム</h3>
 <form th:object="${form}" th:action="@{/authenticate}" method="post">
+	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table>
 		<tr>
 			<td><label>ユーザID</label></td>
@@ -32,5 +35,6 @@ var loginproc = function(e) {
 }
 $("#login2").on("click", loginproc);
 </script>
+</th:block>
 </body>
 </html>
