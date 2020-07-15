@@ -2,6 +2,7 @@ package com.dbaas.cassandra.app.TableRegister.controller;
 
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_REGISTER;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
 import static com.dbaas.cassandra.utils.StringUtils.isContains;
@@ -63,7 +64,8 @@ public class  TableRegisterController {
 		try {
 			registerService.registTable(user, form.getKeySpace(), form.toTable());
 		} catch(Exception e) {
-			
+			// TODO: handle exception
+			System.out.println(e.toString());
 		}
 		
 		// 遷移元の画面によって遷移先を分岐する

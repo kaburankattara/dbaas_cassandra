@@ -26,23 +26,27 @@
 			</tr>
 		</thead>
 		<tbody>
-		<th:block th:each="keySpace, iterStat : ${keySpaceList}" th:unless="${#lists.isEmpty(keySpaceList)}">
+		<th:block th:each="keySpace, iterStat : ${initResultDto.keyspaceList}" th:unless="${#lists.isEmpty(initResultDto.keyspaceList)}">
 			<tr th:id="'row_' + ${keySpace}">
 				<td>
-					<div class="statusPending">
+					<div class="statusPending" 
+							th:classappend="|${initResultDto.getAppendClassForStatusPending(keySpace)}|">
 						<span th:text="${keySpace}">dummy</span>
 					</div>
-					<div class="statusComplete displayNone">
+					<div class="statusComplete" 
+							th:classappend="|${initResultDto.getAppendClassForStatusComplete(keySpace)}|">
 						<a th:text="${keySpace}" class="clickLink" th:href="${'/keySpaceUpdater?keySpace=' + keySpace}">キースペース名</a>
 					</div>
 				</td>
 				<td>
-					<div class="statusPending">
+					<div class="statusPending" 
+							th:classappend="|${initResultDto.getAppendClassForStatusPending(keySpace)}|">
 						<img th:src="@{/img/loader.gif}"  style="vertical-align:middle; width:15px; height:15px;" />
 						<span>pending</span>
 					</div>
-					<div class="statusComplete displayNone">
-						<span>complete</span>
+					<div class="statusComplete" 
+							th:classappend="|${initResultDto.getAppendClassForStatusComplete(keySpace)}|">
+						<span>active</span>
 					</div>
 				</td>
 <!-- TODO 追加実装は後で
