@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
         // ログイン処理の認証ルールを設定		
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/authenticate").permitAll() // 認証なしでアクセス可能なパス
+                .antMatchers("/", "/login", "/authenticate", "/css/*", "/js/*").permitAll() // 認証なしでアクセス可能なパス
                 .anyRequest().authenticated() // それ以外は認証が必要
                 .and()
             .formLogin()
@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("userId") // ログインフォームのユーザー欄のname属性を設定
                 .passwordParameter("password") // ログインフォームのパスワード欄のname属性を設定
                 .successForwardUrl("/menu") // ログイン成功時に遷移するURL
-                .failureUrl("/error") // ログイン失敗時に遷移するURL
+                .failureUrl("/loginError") // ログイン失敗時に遷移するURL
                 .permitAll()
                 .and()
             .logout()

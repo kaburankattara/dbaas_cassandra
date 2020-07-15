@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!-- メッセージ定義スクリプト -->
+<script type="text/javascript" layout:fragment="messages" th:inline="javascript">
+/*<![CDATA[*/
+	var messages = /*[[${messages}]]*/ {};
+	for (var key in messages)
+	    if (messages.hasOwnProperty(key)) window[key] = messages[key];
+
+/*]]>*/
+</script>
+
+<!-- 共通メッセージエリア部品 -->
+<div layout:fragment="messagesArea">
+	<ul style="color: blue;">
+		<li><span id="message" th:utext="${message}" style="font-size: 14px;"> Message</span></li>
+	</ul>
+	<ul style="color: red;">
+	<th:block th:if="${#arrays.length(#fields.errors())} == 0">
+		<li>
+			<span id="errorMessage" th:utext="${errorMessage}" style="font-size: 14px;"></span>
+		</li>
+	</th:block>
+		<li th:each="errorMessage : ${#fields.globalErrors()}">
+			<span id="errorMessage" th:utext="${errorMessage}" style="font-size: 14px;">Error message</span>
+		</li>
+	</ul>
+</div>
+
+</html>

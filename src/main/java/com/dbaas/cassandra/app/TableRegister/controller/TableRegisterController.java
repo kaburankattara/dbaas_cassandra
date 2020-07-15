@@ -2,7 +2,6 @@ package com.dbaas.cassandra.app.TableRegister.controller;
 
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_REGISTER;
-import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
 import static com.dbaas.cassandra.utils.StringUtils.isContains;

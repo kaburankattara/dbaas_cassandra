@@ -15,6 +15,7 @@
 <h3>キースペース</h3>
 <input type="button" id="keySpaceRegister" value="キースペースを作成"/>
 <form th:object="${form}" th:action="@{/authenticate}" method="post">
+	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table border="1">
 		<thead style="background:#DDFFFF">
 			<tr>
