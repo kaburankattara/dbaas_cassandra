@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
         // ログイン処理の認証ルールを設定		
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/authenticate", "/css/*", "/js/*").permitAll() // 認証なしでアクセス可能なパス
+                .antMatchers("/", "/login", "/authenticate", "/css/**", "/js/**").permitAll() // 認証なしでアクセス可能なパス
                 .anyRequest().authenticated() // それ以外は認証が必要
                 .and()
             .formLogin()

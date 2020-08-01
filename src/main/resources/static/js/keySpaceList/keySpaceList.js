@@ -1,41 +1,25 @@
-$(function() {
-	
-	/** サブミット（get） */
-	function getSubmitByNewForm(url) {
-		$('<form/>', {action: url, method: 'get'})
-		.appendTo('body')
-		.submit();
-	}
-	/** サブミット（post） */
-	function postSubmit(url) {
-		$('#form').attr('action', url);
-		$('#form').attr('method', 'post');
-		$('#form').submit();
-	}
-	
-	/** キースペース登録画面に遷移 **/
-	$("#keySpaceRegister").on("click", function(){
-		getSubmitByNewForm("/keySpaceRegister");
-	});
-	
-	var isCompleteCreateServer = function(){
-		var url = "/isCompleteKeyspaceRegist";
-		var param = {
-				keySpace : $("#keySpace").val()
-		}
-		var callBack = function(completeKeySpaceList) {
-			for(index in completeKeySpaceList){
-				var $rowKeySpace = $("#row_" + completeKeySpaceList[index]);
-				$rowKeySpace.find(".statusPending").each(function(index, e) {
-					$(e).addClass('displayNone');
-				});
-				$rowKeySpace.find(".statusComplete").each(function(index, e) {
-					$(e).removeClass('displayNone');
-				});
-			}
-		}
-		doAsyncGet(url, param, callBack);
-	}
-	setInterval(isCompleteCreateServer, 1000);
-	
+import { Request } from "../common/request.js";
+import { IsCompleteKeyspaceRegist } from "../async/isCompleteKeyspaceRegist.js";
+$(function () {
+    /** キースペース登録画面に遷移 **/
+    $("#keySpaceRegister").on("click", function () {
+        var request = new Request();
+        request.getSubmit("/keySpaceRegister");
+    });
+    var isCompleteCreateServer = function () {
+        // 登録済みチェックを実施
+        var isCompleteKeyspaceRegist = new IsCompleteKeyspaceRegist();
+        isCompleteKeyspaceRegist.execRequest(function (completeKeySpaceList) {
+            for (var index in completeKeySpaceList) {
+                var $rowKeySpace = $("#row_" + completeKeySpaceList[index]);
+                $rowKeySpace.find(".statusPending").each(function (index, e) {
+                    $(e).addClass('displayNone');
+                });
+                $rowKeySpace.find(".statusComplete").each(function (index, e) {
+                    $(e).removeClass('displayNone');
+                });
+            }
+        });
+    };
+    setInterval(isCompleteCreateServer, 1000);
 });

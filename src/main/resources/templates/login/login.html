@@ -29,12 +29,6 @@
 		</tr>
 	</table>
 </form>
-<script type="text/javascript" th:inline="javascript">
-var loginproc = function(e) {
-	$.post( 'http://localhost/authenticate', $('form').serialize() )
-}
-$("#login2").on("click", loginproc);
-</script>
 </th:block>
 </body>
 </html>
