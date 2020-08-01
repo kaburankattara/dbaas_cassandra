@@ -6,6 +6,8 @@ build/
 !**/src/test/**
 bin/
 *.pem
+node_modules/
+.DS_Store
 
 ### STS ###
 .apt_generated
