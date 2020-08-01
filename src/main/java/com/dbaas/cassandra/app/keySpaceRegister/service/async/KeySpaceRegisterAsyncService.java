@@ -49,7 +49,7 @@ public class  KeySpaceRegisterAsyncService {
 			
 			// サーバはあるが、cassandraが起動来ていない場合
 			// cassandraを再セットアップし、起動してからキースペースを登録
-			if (!instances.isEmpty() && canAllExecCql) {
+			if (!instances.isEmpty() && !canAllExecCql) {
 				cassandraManagerService.setup(user, instances);
 				cassandraManagerService.execCassandraByWait(instances);
 				// ※他画面からの登録処理とバッティングを考慮して登録する
