@@ -1,6 +1,5 @@
 package com.dbaas.cassandra.app.TableUpdater.controller;
 
-import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
@@ -8,6 +7,12 @@ import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
 import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.dbaas.cassandra.app.TableUpdater.form.TableUpdaterForm;
+import com.dbaas.cassandra.app.TableUpdater.service.TableUpdaterService;
+import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,12 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.dbaas.cassandra.app.TableUpdater.form.TableUpdaterForm;
-import com.dbaas.cassandra.app.TableUpdater.service.TableUpdaterService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
-import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 @Controller
 @RequestMapping(URL_TABLE_UPDATER)
@@ -69,7 +68,7 @@ public class  TableUpdaterController {
 			
 		}
 		
-		return createRedirectUri(URL_KEY_SPACE_LIST);
+		return createRedirectUri(URL_KEY_SPACE_UPDATER);
 	}
 
 	@PostMapping("/addColumn")

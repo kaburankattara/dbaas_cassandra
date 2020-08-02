@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.app.TableRegister.controller;
 
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_REGISTER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
@@ -8,6 +9,11 @@ import static com.dbaas.cassandra.utils.StringUtils.isContains;
 import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.dbaas.cassandra.app.TableRegister.form.TableRegisterForm;
+import com.dbaas.cassandra.app.TableRegister.service.TableRegisterService;
+import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,11 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-
-import com.dbaas.cassandra.app.TableRegister.form.TableRegisterForm;
-import com.dbaas.cassandra.app.TableRegister.service.TableRegisterService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
-import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 @Controller
 @RequestMapping(URL_TABLE_REGISTER)
@@ -69,12 +70,13 @@ public class  TableRegisterController {
 		
 		// 遷移元の画面によって遷移先を分岐する
 		String referer = (String) model.asMap().get("TABLE_REGISTER_REFERER");
+		// TODO キースペースの存在確認を行う
 		if (isContains(URL_KEY_SPACE_LIST, referer)) {
 			// キースペース一覧へ遷移
 			return createRedirectUri(URL_KEY_SPACE_LIST);
 		}
 		// テーブル一覧へ遷移
-		return createRedirectUri(URL_KEY_SPACE_LIST);
+		return createRedirectUri(URL_KEY_SPACE_UPDATER);
 	}
 
 	@PostMapping("/addColumn")

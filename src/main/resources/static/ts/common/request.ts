@@ -6,9 +6,19 @@ class Request {
 			.appendTo('body')
 			.submit();
 	};
-	getSubmit = function (url: string) {
-		$('<form/>', { action: url, method: 'get' })
-			.appendTo('body')
+	
+	getSubmit = function (url: string, $inputTags?: JQuery) {
+		// 追加するhtmlがあれば追加用の変数に格納する
+		let appendInputTags = "";
+		if ($inputTags != undefined) {
+			appendInputTags = $inputTags.html();
+		}
+
+		// サブミット実行
+		$('#form')
+			.attr('action', url)
+			.attr('method', 'get')
+			.append(appendInputTags)
 			.submit();
 	};
 
