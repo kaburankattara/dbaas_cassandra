@@ -18,4 +18,10 @@ $(function () {
 		var request = new Request();
 		request.postSubmit("/keySpaceUpdater/delete");
 	});
+
+	/** 遷移元であるキースペース更新画面に遷移する **/
+	$("#referrer").on("click", function(){
+		var request = new Request();
+		request.getSubmit("/keySpaceList");
+	});
 });

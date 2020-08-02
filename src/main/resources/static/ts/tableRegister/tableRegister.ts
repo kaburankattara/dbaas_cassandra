@@ -19,4 +19,10 @@ $(function () {
 		var request = new Request();
 		request.postSubmitAddInputs("/tableRegister/deleteColumn", $div);
 	});
+	
+	/** 遷移元であるキースペース更新画面に遷移する **/
+	$("#referrer").on("click", function(){
+		var request = new Request();
+		request.getSubmit("/keySpaceUpdater");
+	});
 });

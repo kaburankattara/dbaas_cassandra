@@ -7,9 +7,17 @@ var Request = /** @class */ (function () {
                 .appendTo('body')
                 .submit();
         };
-        this.getSubmit = function (url) {
-            $('<form/>', { action: url, method: 'get' })
-                .appendTo('body')
+        this.getSubmit = function (url, $inputTags) {
+            // 追加するhtmlがあれば追加用の変数に格納する
+            var appendInputTags = "";
+            if ($inputTags != undefined) {
+                appendInputTags = $inputTags.html();
+            }
+            // サブミット実行
+            $('#form')
+                .attr('action', url)
+                .attr('method', 'get')
+                .append(appendInputTags)
                 .submit();
         };
         this.getSubmitAddInputs = function (url, $inputTags) {
