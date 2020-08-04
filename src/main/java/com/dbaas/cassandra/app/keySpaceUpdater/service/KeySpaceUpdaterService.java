@@ -18,21 +18,22 @@ import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 
 @Service
 @Transactional
-public class  KeySpaceUpdaterService {
-	
+public class KeySpaceUpdaterService {
+
 	private KeySpaceUpdaterDeleteService deleteService;
-	
+
 	private ServerManagerService serverManagerService;
-	
+
 	private CassandraManagerService cassandraManagerService;
-	
+
 	@Autowired
-	KeySpaceUpdaterService(KeySpaceUpdaterDeleteService deleteService, ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
+	KeySpaceUpdaterService(KeySpaceUpdaterDeleteService deleteService, ServerManagerService serverManagerService,
+			CassandraManagerService cassandraManagerService) {
 		this.deleteService = deleteService;
 		this.serverManagerService = serverManagerService;
 		this.cassandraManagerService = cassandraManagerService;
 	}
-	
+
 	/**
 	 * テーブル一覧を取得
 	 */
@@ -43,28 +44,28 @@ public class  KeySpaceUpdaterService {
 			while (isNotAllInstanceRunning) {
 				// ユーザに紐づくEC2リストを取得
 				Instances instances = serverManagerService.getInstances(user);
-				
+
 				// 保持しているサーバにpendingが存在すればrunningになるまで待つ
 				if (instances.hasPendingInstance()) {
 					sleep();
 					continue;
 				}
-				
+
 				// 保持しているサーバにpendingが無くなれば次処理を開始する
 				isNotAllInstanceRunning = false;
 			}
-			
+
 			// 入力されたkeySpaceを登録する
 			Instances instances = serverManagerService.getInstances(user);
-			return cassandraManagerService.findTableByKeySpace(instances, keySpace);
-			
+			return cassandraManagerService.findAllTableByKeySpace(instances, keySpace);
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
 		}
 		return null;
 	}
-	
+
 	/**
 	 * キースペースを削除
 	 */
@@ -82,7 +83,7 @@ public class  KeySpaceUpdaterService {
 
 			// 全てのキースペースを削除していたらサーバーも削除
 			serverManagerService.deleteAllServer(user);
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());

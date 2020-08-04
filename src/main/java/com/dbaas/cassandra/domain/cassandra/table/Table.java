@@ -3,6 +3,8 @@ package com.dbaas.cassandra.domain.cassandra.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dbaas.cassandra.utils.StringUtils;
+
 public class Table {
 
 	/**
@@ -14,6 +16,12 @@ public class Table {
 	 * カラムリスト
 	 */
 	private Columns columns;
+
+	/**
+	 * コンストラクタ
+	 */
+	public Table() {
+	}
 
 	/**
 	 * コンストラクタ
@@ -131,6 +139,10 @@ public class Table {
 
 	public boolean hasColumn(Column column) {
 		return columns.hasColumn(column);
+	}
+
+	public boolean isEmpty() {
+		return StringUtils.isEmpty(tableName) || columns.isEmpty();
 	}
 }
 

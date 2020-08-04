@@ -1,11 +1,10 @@
 package com.dbaas.cassandra.domain.user;
 
+import com.dbaas.cassandra.domain.table.serverByUser.ServerByUserDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.dbaas.cassandra.domain.auth.LoginUser;
-import com.dbaas.cassandra.domain.table.serverByUser.ServerByUserDao;
 
 @Service
 @Transactional

@@ -10,12 +10,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dbaas.cassandra.utils.ObjectUtils;
+
 public class Tables {
+
+	/**
+	 * リストの一番目要素のインデックス
+	 */
+	private static final int INDEX_FIRST = 0;
 
 	/**
 	 * テーブルリスト
 	 */
 	private List<Table> tableList;
+
+	/**
+	 * コンストラクタ
+	 */
+	public Tables() {
+		tableList = new ArrayList<>();
+	}
 
 	/**
 	 * コンストラクタ
@@ -76,6 +90,13 @@ public class Tables {
 	public List<Table> getTableList() {
 		return tableList;
 	}
+
+	public Table getFirstTable() {
+		if (tableList.isEmpty()) {
+			return new Table();
+		}
+		return tableList.get(INDEX_FIRST);
+	}
 	
 	public void setTableList(List<Table> tableList) {
 		this.tableList = tableList;
@@ -92,6 +113,10 @@ public class Tables {
 			}
 		}
 		return null;
+	}
+
+	public boolean isEmpty() {
+		return ObjectUtils.isEmpty(tableList) || tableList.isEmpty();
 	}
 
 }
