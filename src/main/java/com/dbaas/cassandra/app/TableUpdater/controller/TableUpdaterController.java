@@ -27,18 +27,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(URL_TABLE_UPDATER)
-public class  TableUpdaterController {
+public class TableUpdaterController {
 
-    private final TableUpdaterService updaterService;
-    
-    private final KbnDao kbnDao;
+	private final TableUpdaterService updaterService;
 
-    @Autowired
-    public TableUpdaterController(TableUpdaterService updaterService, KbnDao kbnDao){
-        this.updaterService = updaterService;
-        this.kbnDao = kbnDao;
-    }
-    
+	private final KbnDao kbnDao;
+
+	@Autowired
+	public TableUpdaterController(TableUpdaterService updaterService, KbnDao kbnDao) {
+		this.updaterService = updaterService;
+		this.kbnDao = kbnDao;
+	}
+
 	/**
 	 * メソッド呼出前処理
 	 *
@@ -50,7 +50,8 @@ public class  TableUpdaterController {
 	}
 
 	@GetMapping()
-	public String index(HttpServletRequest request, @AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model) {
+	public String index(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
+			@ModelAttribute("form") TableUpdaterForm form, Model model) {
 		model.addAttribute("TABLE_REGISTER_REFERER", getReferer(request));
 		initModelForAlways(model);
 		Table table = updaterService.findTable(user, form.getKeySpace(), form.getTableName());
@@ -61,13 +62,16 @@ public class  TableUpdaterController {
 	}
 
 	@PostMapping("update")
-	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model) {
+	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
+			@ModelAttribute("form") TableUpdaterForm form, RedirectAttributes attributes, Model model) {
 		try {
 			updaterService.updateTable(user, form.getKeySpace(), form.toTable());
-		} catch(Exception e) {
-			
+		} catch (Exception e) {
+
 		}
-		
+
+		// キースペース更新画面に遷移
+		attributes.addAttribute("keySpace", form.getKeySpace());
 		return createRedirectUri(URL_KEY_SPACE_UPDATER);
 	}
 
@@ -79,25 +83,27 @@ public class  TableUpdaterController {
 	}
 
 	@PostMapping("/deleteColumn")
-	public String deleteColumn(@ModelAttribute("form") TableUpdaterForm form, @RequestParam("targetIndex") String targetIndex, Model model) {
+	public String deleteColumn(@ModelAttribute("form") TableUpdaterForm form,
+			@RequestParam("targetIndex") String targetIndex, Model model) {
 		initModelForAlways(model);
 		form.deleteColumn(targetIndex);
 		return "tableUpdater/tableUpdater";
 	}
 
 	@PostMapping("/deleteTable")
-	public String deleteTable(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form, Model model, RedirectAttributes redirectAttributes) {
+	public String deleteTable(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form,
+			Model model, RedirectAttributes redirectAttributes) {
 		try {
 			updaterService.deleteTable(user, form.getKeySpace(), form.getTableName());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			// TODO
 		}
 		redirectAttributes.addAttribute("keySpace", form.getKeySpace());
 		return createRedirectUri(URL_KEY_SPACE_UPDATER);
 	}
-	
+
 	private void initModelForAlways(Model model) {
 		model.addAttribute("columnTypes", kbnDao.findByTypeCd(COLUMN_TYPE));
 	}
-	
+
 }

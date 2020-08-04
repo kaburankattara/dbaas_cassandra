@@ -1,6 +1,8 @@
 package com.dbaas.cassandra.app.login.controller;
 
-import static com.dbaas.cassandra.consts.SysConsts.MESSAGE_KEY_ERROR;
+import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_ERROR;
+
+import com.dbaas.cassandra.app.login.form.LoginForm;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.dbaas.cassandra.app.login.form.LoginForm;
 
 @Controller
 public class LoginController {

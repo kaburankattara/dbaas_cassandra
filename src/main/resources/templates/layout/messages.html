@@ -18,6 +18,9 @@
 	<ul style="color: blue;">
 		<li><span id="message" th:utext="${message}" style="font-size: 14px;"> Message</span></li>
 	</ul>
+	<ul style="color: #DAA520;">
+		<li><span id="message" th:utext="${warningMessage}" style="font-size: 14px;"> Message</span></li>
+	</ul>
 	<ul style="color: red;">
 	<th:block th:if="${#arrays.length(#fields.errors())} == 0">
 		<li>
