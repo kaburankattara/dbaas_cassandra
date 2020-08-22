@@ -41,9 +41,4 @@ public class LoginController {
 		model.addAttribute(MESSAGE_KEY_ERROR, "認証に失敗しました。ユーザIDまたはパスワードが間違っています。");
 		return "login/login";
 	}
-	
-	@RequestMapping("/menu")
-	public String loginRedirect() {
-		return "redirect:/keySpaceList";
-	}
 }
