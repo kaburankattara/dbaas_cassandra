@@ -1,5 +1,7 @@
 package com.dbaas.cassandra.shared.config;
 
+import com.dbaas.cassandra.consts.UrlConsts;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// セキュリティ対策外の指定
 		web.ignoring()
 		//.antMatchers("/resources/**");
-		.antMatchers("/jfsadmin-act/**");
+		.antMatchers("/admin-act/**");
 	}
 	
 	@Override
@@ -39,8 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/authenticate") // ログインフォームのアクションに指定したURL[action="@{/login}"]を設定
                 .usernameParameter("userId") // ログインフォームのユーザー欄のname属性を設定
-                .passwordParameter("password") // ログインフォームのパスワード欄のname属性を設定
-                .successForwardUrl("/menu") // ログイン成功時に遷移するURL
+				.passwordParameter("password") // ログインフォームのパスワード欄のname属性を設定
+				.defaultSuccessUrl(UrlConsts.URL_KEY_SPACE_LIST) // ログイン成功時に遷移するURL
+//                .successForwardUrl("/menu")
                 .failureUrl("/loginError") // ログイン失敗時に遷移するURL
                 .permitAll()
                 .and()
