@@ -41,7 +41,7 @@ public class  KeySpaceListService {
 	 */
 	public KeySpaceListInitServiceResultDto init(LoginUser user) {
 		// 画面の一覧表示用にキースペースマネージャに登録されているキースペースリストを取得
-		List<String> keyspaceList = keyspaceManagerDao.findAllKeyspaceByUserId(user.getUserId());
+		List<String> keyspaceList = keyspaceManagerDao.findAllKeyspaceByUserId(user);
 
 		// cassandraサーバがCQL操作可能か判定
 		List<String> createdKeyspaceList = keySpaceListInitService.findCreatedKeyspaceList(user);
