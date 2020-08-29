@@ -40,9 +40,9 @@ public class  KeyspaceManagerDao {
      * @param userId ユーザーID
      * @return ユーザー
      */
-	public List<String> findAllKeyspaceByUserId(String userId) {
+	public List<String> findAllKeyspaceByUserId(LoginUser user) {
 		List<String> keyspaceList = new ArrayList<String>();
-		List<KeyspaceManagerEntity> entityList = repository.findByUserId(userId);
+		List<KeyspaceManagerEntity> entityList = repository.findByUserId(user.getUserId());
 		if (entityList == null) {
 			return keyspaceList;
 		}

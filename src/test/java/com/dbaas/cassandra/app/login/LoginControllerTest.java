@@ -48,12 +48,22 @@ public class LoginControllerTest {
     @Test
     @DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/DB上に存在する利用者ユーザでログインできる_setup.xml", type = DatabaseOperation.CLEAN_INSERT))
     @Transactional
-    void DB上に存在する利用者ユーザでログインできる() throws Exception {
+    void DB上に存在する利用者ユーザでログイン出来る() throws Exception {
         this.mockMvc
                 .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aab").param("password", "aaa")
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/keySpaceList"));
+    }
+
+    @Test
+    @Transactional
+    void DB上に存在する利用者ユーザでログイン出来ない() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aab").param("password", "aaa")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/loginError"));
     }
 
     @Test

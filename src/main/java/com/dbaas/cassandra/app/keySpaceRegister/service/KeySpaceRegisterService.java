@@ -33,7 +33,7 @@ public class  KeySpaceRegisterService {
 	 * @return
 	 */
 	public List<String> findAllKeyspace(LoginUser user) {
-		return keyspaceManagerDao.findAllKeyspaceByUserId(user.getUserId());
+		return keyspaceManagerDao.findAllKeyspaceByUserId(user);
 	}
 
 	
