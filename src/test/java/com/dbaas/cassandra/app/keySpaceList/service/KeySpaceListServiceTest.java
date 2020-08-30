@@ -4,13 +4,15 @@ import static com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceRe
 import static com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDtoTest.getKeySpaceListServiceCassandraサーバ構築済_登録済;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto;
@@ -35,11 +37,15 @@ public class  KeySpaceListServiceTest {
     @InjectMocks
     private KeySpaceListService keySpaceListService;
 
-//    @Before
-//    private void initMocks() {
-//        // @Beforeが付与されているメソッドのなかにinitMocksメソッドを書くことで、各テストメソッドを実行する前に毎回実行できる
-//        MockitoAnnotations.initMocks(this);
-//    }
+    @BeforeAll
+    static void initMocks() {
+    	System.out.println();
+    }
+
+    @BeforeEach
+    void beforeEach() {
+    	System.out.println();
+    }
     
     @Test
 	public void cassandraサーバ未構築_未登録() throws Exception {
@@ -47,11 +53,10 @@ public class  KeySpaceListServiceTest {
 		KeySpaceListInitServiceResultDto compTarget = getKeySpaceListServiceCassandraサーバ未構築_未登録();
 
     	// テスト準備
-		User user = new User();
-    	user.setUserId("aaa");
-    	user.setUserName("test");
-    	user.setPassword("");
-    	LoginUser loginUser = new LoginUser(user, null);
+    	LoginUser loginUser = new LoginUser(new User(), null);
+    	loginUser.setUserId("aaa");
+    	loginUser.setUserName("test");
+    	loginUser.setPassword("");
 		Mockito.when(keySpaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
 		Mockito.when(keyspaceManagerDao.findAllKeyspaceByUserId(loginUser)).thenReturn(compTarget.getKeyspaceList());
 				
@@ -113,4 +118,14 @@ public class  KeySpaceListServiceTest {
    		Assertions.assertThat(checkTarget.getKeyspaceList().size()).isEqualTo(compTarget.getKeyspaceList().size());
    		Assertions.assertThat(checkTarget.getCreatedKeyspaceList().size()).isEqualTo(compTarget.getCreatedKeyspaceList().size());
 	}
+
+    @AfterEach
+    void afterEach() {
+        System.out.println("  JUnit5Test#afterEach()");
+    }
+
+    @AfterAll
+    static void afterAll() {
+        System.out.println("JUnit5Test#afterAll()");
+    }
 }
