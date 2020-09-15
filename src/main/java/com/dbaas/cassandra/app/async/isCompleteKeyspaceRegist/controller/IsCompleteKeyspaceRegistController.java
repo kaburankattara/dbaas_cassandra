@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbaas.cassandra.app.async.isCompleteKeyspaceRegist.service.IsCompleteKeyspaceRegistService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Controller
 @RequestMapping(URL_IS_COMPLETE_KEYSPACE_REGIST)

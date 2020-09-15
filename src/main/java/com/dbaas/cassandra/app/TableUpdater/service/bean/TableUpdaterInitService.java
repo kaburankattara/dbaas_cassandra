@@ -1,11 +1,11 @@
 package com.dbaas.cassandra.app.TableUpdater.service.bean;
 
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

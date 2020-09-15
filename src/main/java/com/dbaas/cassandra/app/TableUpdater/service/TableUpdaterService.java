@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterDeleteService;
 import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterInitService;
 import com.dbaas.cassandra.app.TableUpdater.service.bean.TableUpdaterUpdateService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional

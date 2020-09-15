@@ -7,26 +7,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.table.user.UserDao;
+import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
+import com.dbaas.cassandra.domain.user.UserService;
 
 @Service
 @Transactional(readOnly = true)
 public class AuthenticationUserDetailsService implements UserDetailsService {
 
-	UserDao userDao;
+	UserService userService;
 	
 	@Autowired
-	AuthenticationUserDetailsService(UserDao userDao) {
-		this.userDao = userDao;
+	AuthenticationUserDetailsService(UserService userService) {
+		this.userService = userService;
 	}
 
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-		User user = userDao.findById(userId);
+		User user = userService.findUserByUserId(userId);
 		if (user.isEmpty()) {
 			throw new UsernameNotFoundException("");
 		}
-		return new LoginUser(user, null);
+		return new LoginUser(user);
 	}
 	
 //	public Set<GrantedAuthority> getAuthorities(LoginUser user) {

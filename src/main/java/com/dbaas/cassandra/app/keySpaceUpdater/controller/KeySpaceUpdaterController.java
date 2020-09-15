@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.dbaas.cassandra.app.keySpaceUpdater.form.KeySpaceUpdaterForm;
 import com.dbaas.cassandra.app.keySpaceUpdater.service.KeySpaceUpdaterService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Controller
 @RequestMapping(URL_KEY_SPACE_UPDATER)

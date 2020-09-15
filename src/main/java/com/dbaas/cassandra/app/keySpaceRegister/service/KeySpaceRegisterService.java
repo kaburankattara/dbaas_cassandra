@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.app.keySpaceRegister.service.async.KeySpaceRegisterAsyncService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional

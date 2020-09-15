@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.dbaas.cassandra.app.TableRegister.form.TableRegisterForm;
 import com.dbaas.cassandra.app.TableRegister.service.TableRegisterService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.message.MessageSourceService;
 import com.dbaas.cassandra.domain.table.kbn.KbnDao;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

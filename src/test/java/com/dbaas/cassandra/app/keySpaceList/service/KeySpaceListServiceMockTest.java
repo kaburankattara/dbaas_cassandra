@@ -13,57 +13,30 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.DbaasCassandraApplication;
 import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncService;
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
-import com.dbaas.cassandra.config.DatasourceConfig;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
 import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseSetups;
 
-@SpringBootTest(classes = DbaasCassandraApplication.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ 
-	MockitoTestExecutionListener.class,
-    TransactionalTestExecutionListener.class, // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
-    DbUnitTestExecutionListener.class
-    })
-@Import(DatasourceConfig.class)
-public class KeySpaceListServiceTest {
+public class KeySpaceListServiceMockTest {
 	
     @Mock
     private KeySpaceListInitService keySpaceListInitService;
 
     @Mock
 	private KeySpaceListAsyncService keySpaceListAsyncService;
-    
-    @Mock
-    private CassandraManagerService cassandraManagerService;
 	
+    @Mock
+	private KeyspaceManagerDao keyspaceManagerDao;
+    
     @InjectMocks
     private KeySpaceListService keySpaceListService;
 
-    @Autowired
-	public KeySpaceListServiceTest(KeyspaceManagerDao keyspaceManagerDao) {
-		this.keySpaceListService = new KeySpaceListService(keySpaceListInitService, keySpaceListAsyncService,
-				cassandraManagerService, keyspaceManagerDao);
-	}
-    
     @BeforeAll
     static void initMocks() {
     	System.out.println();
@@ -85,7 +58,8 @@ public class KeySpaceListServiceTest {
     	loginUser.setUserName("test");
     	loginUser.setPassword("");
 		Mockito.when(keySpaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
-
+		Mockito.when(keyspaceManagerDao.findAllKeyspaceByUserId(loginUser)).thenReturn(compTarget.getKeyspaceList());
+				
 		// テスト対象の実行
 		KeySpaceListInitServiceResultDto checkTarget = keySpaceListService.init(loginUser);
 
@@ -124,8 +98,6 @@ public class KeySpaceListServiceTest {
      * 登録済みのキースペースリストを取得したDtoが返却されること
      */
     @Test
-    @Transactional
-    @DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/app/keySpaceList/cassandraサーバ構築済_登録済_setup.xml", type = DatabaseOperation.CLEAN_INSERT))
 	public void cassandraサーバ構築済_登録済() {
     	// 比較対象Dtoの生成
 		KeySpaceListInitServiceResultDto compTarget = getKeySpaceListServiceCassandraサーバ構築済_登録済();
@@ -137,6 +109,7 @@ public class KeySpaceListServiceTest {
     	user.setPassword("");
     	LoginUser loginUser = new LoginUser(user);
 		Mockito.when(keySpaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
+		Mockito.when(keyspaceManagerDao.findAllKeyspaceByUserId(loginUser)).thenReturn(compTarget.getKeyspaceList());
 		
 		// テスト対象の実行
 		KeySpaceListInitServiceResultDto checkTarget;
@@ -148,7 +121,7 @@ public class KeySpaceListServiceTest {
 	   		Assertions.assertThat(true).isEqualTo(false);
 	   		return;
 		}
-			
+		
 		// テスト対象の検証
    		Assertions.assertThat(checkTarget.getKeyspaceList().size()).isEqualTo(compTarget.getKeyspaceList().size());
    		Assertions.assertThat(checkTarget.getCreatedKeyspaceList().size()).isEqualTo(compTarget.getCreatedKeyspaceList().size());
