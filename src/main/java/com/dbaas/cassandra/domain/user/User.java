@@ -29,6 +29,15 @@ public class User extends UserEntity {
 	}
 
 	/**
+	 * 空ユーザーを作成する
+	 * 
+	 * @return ユーザー
+	 */
+	public static User createEmptyUser() {
+		return new User(new UserEntity());
+	}
+
+	/**
 	 * ユーザーが空か判定
 	 * 
 	 * @return 判定結果

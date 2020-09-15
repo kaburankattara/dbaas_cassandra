@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.dbaas.cassandra.app.keySpaceRegister.form.KeySpaceRegisterForm;
 import com.dbaas.cassandra.app.keySpaceRegister.service.KeySpaceRegisterService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Controller
 @RequestMapping(URL_KEY_SPACE_REGISTER)

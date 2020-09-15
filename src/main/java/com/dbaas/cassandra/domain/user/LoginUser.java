@@ -1,12 +1,10 @@
-package com.dbaas.cassandra.domain.auth;
+package com.dbaas.cassandra.domain.user;
 
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.dbaas.cassandra.domain.user.User;
 
 /**
  * 認証情報クラス
@@ -35,9 +33,18 @@ public class LoginUser extends User implements UserDetails {
 	 * @param user ユーザー
 	 * @param authorities 権限
 	 */
-	public LoginUser(User user, Set<GrantedAuthority> authorities) {
+	public LoginUser(User user) {
 		super(user);
-		this.authorities = authorities;
+		this.authorities = null;
+	}
+
+	/**
+	 * 空ログインユーザーを作成する
+	 * 
+	 * @return ログインユーザー
+	 */
+	public static LoginUser createEmptyLoginUser() {
+		return new LoginUser(createEmptyUser());
 	}
 
 	/**

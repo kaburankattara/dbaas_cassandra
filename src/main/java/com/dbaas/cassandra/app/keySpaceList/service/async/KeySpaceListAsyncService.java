@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Async()
 @Service
@@ -32,9 +32,16 @@ public class  KeySpaceListAsyncService {
 	 * @param user
 	 * @param keyspaceList
 	 * @param sysDate
+	 * @throws Exception 
 	 */
-	public void refreshCassandra(LoginUser user, List<String> keyspaceList, LocalDateTime sysDate) {
-		setSysDate(sysDate);
-		keySpaceListInitService.refreshCassandra(user, keyspaceList);
+	public void refreshCassandra(LoginUser user, List<String> keyspaceList, LocalDateTime sysDate) throws Exception {
+		try {
+			setSysDate(sysDate);
+			keySpaceListInitService.refreshCassandra(user, keyspaceList);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+			throw new Exception();
+		}
 	}
 }

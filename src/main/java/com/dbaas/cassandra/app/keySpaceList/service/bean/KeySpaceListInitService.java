@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
 import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
-public class  KeySpaceListInitService {
+public class KeySpaceListInitService {
 	
 	private ServerManagerService serverManagerService;
 	
@@ -36,12 +36,12 @@ public class  KeySpaceListInitService {
 	public List<String> findCreatedKeyspaceList(LoginUser user) {
 			Instances instances = serverManagerService.getInstances(user);
 			
-			// サーバが起動中なら完了するまで待つ
+			// サーバが起動中なら空のキースペースリストを返す
 			if (instances.hasPendingInstance()) {
 				return new ArrayList<String>();
 			}
 			
-			// CQLの実行可否を確認
+			// 登録済みのキースペースリストを取得する
 			return cassandraManagerService.findAllKeySpaceWithoutSysKeySpace(instances);
 	}
 
@@ -50,8 +50,9 @@ public class  KeySpaceListInitService {
 	 * cassandraの稼働状況をリフレッシュする
 	 * 
 	 * @param user
+	 * @throws Exception 
 	 */
-	public void refreshCassandra(LoginUser user, List<String> keyspaceList) {
+	public void refreshCassandra(LoginUser user, List<String> keyspaceList) throws Exception {
 		try {
 			Instances instances = serverManagerService.getInstances(user);
 			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
@@ -95,6 +96,7 @@ public class  KeySpaceListInitService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
+			throw new Exception();
 		}
 	}
 	

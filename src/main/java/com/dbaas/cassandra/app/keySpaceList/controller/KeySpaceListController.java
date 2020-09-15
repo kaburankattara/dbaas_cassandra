@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keySpaceList.service.KeySpaceListService;
 import com.dbaas.cassandra.app.login.form.LoginForm;
-import com.dbaas.cassandra.domain.auth.LoginUser;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Controller
 @RequestMapping("/keySpaceList")
@@ -35,8 +35,13 @@ public class  KeySpaceListController {
 	
 	@RequestMapping()
 	public String index(@AuthenticationPrincipal LoginUser user, Model model) {
-		KeySpaceListInitServiceResultDto initResultDto = keySpaceListService.init(user);
-		model.addAttribute("initResultDto", initResultDto);
+		try {
+			KeySpaceListInitServiceResultDto initResultDto = keySpaceListService.init(user);
+			model.addAttribute("initResultDto", initResultDto);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+		}
 		return "keySpaceList/keySpaceList";
 	}
 }

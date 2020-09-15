@@ -15,7 +15,7 @@ public class DatasourceConfig {
 			.create()
 			.username("root")
 			.password("password")
-			.url("jdbc:mysql://13.231.121.197/dbaas?nullCatalogMeansCurrent=true")
+			.url("jdbc:mysql://13.231.121.197/dbaasTest?nullCatalogMeansCurrent=true")
 			.driverClassName("com.mysql.cj.jdbc.Driver")
 			.build());
 	}

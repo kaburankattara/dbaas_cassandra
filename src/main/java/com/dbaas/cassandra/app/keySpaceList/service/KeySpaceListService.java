@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncService;
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
 import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
@@ -38,8 +38,9 @@ public class  KeySpaceListService {
 	 * 
 	 * @param user
 	 * @return キースペースリスト
+	 * @throws Exception 
 	 */
-	public KeySpaceListInitServiceResultDto init(LoginUser user) {
+	public KeySpaceListInitServiceResultDto init(LoginUser user) throws Exception {
 		// 画面の一覧表示用にキースペースマネージャに登録されているキースペースリストを取得
 		List<String> keyspaceList = keyspaceManagerDao.findAllKeyspaceByUserId(user);
 
@@ -47,8 +48,13 @@ public class  KeySpaceListService {
 		List<String> createdKeyspaceList = keySpaceListInitService.findCreatedKeyspaceList(user);
 		
 		// cassandraサーバの起動状況をリフレッシュする
-		keySpaceListAsyncService.refreshCassandra(user, keyspaceList, getSysDate());
-		
+		try {
+			keySpaceListAsyncService.refreshCassandra(user, keyspaceList, getSysDate());
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+			throw new Exception();
+		}
 		return new KeySpaceListInitServiceResultDto(keyspaceList, createdKeyspaceList);
 	}
 }

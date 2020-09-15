@@ -32,6 +32,10 @@ public class Instances implements Serializable {
 		return new Instances(new ArrayList<Instance>(asList(instanceList)));
 	}
 	
+	public static Instances createEmptyInstance () {
+		return createInstance();
+	}
+	
 	/**
 	 * インスタンスリストを取得
 	 * 

@@ -26,6 +26,13 @@ public class Instance implements Serializable {
 		this.instance = instance;
 	}
 	
+	private Instance() {
+	}
+	
+	public static Instance CreateEmptyInstance() {
+		return new Instance();
+	}
+	
 	/**
 	 * インスタンスリストを取得
 	 * 

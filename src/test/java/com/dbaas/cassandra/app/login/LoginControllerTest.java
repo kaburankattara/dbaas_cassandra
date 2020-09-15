@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -28,7 +29,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetups;
 @SpringBootTest(classes = DbaasCassandraApplication.class)
 @WebAppConfiguration
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, 
-//    TransactionalTestExecutionListener.class, 
+    TransactionalTestExecutionListener.class, // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
     DbUnitTestExecutionListener.class })
 @Import(DatasourceConfig.class)
 public class LoginControllerTest {
@@ -48,9 +49,9 @@ public class LoginControllerTest {
     @Test
     @DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/DB上に存在する利用者ユーザでログインできる_setup.xml", type = DatabaseOperation.CLEAN_INSERT))
     @Transactional
-    void DB上に存在する利用者ユーザでログイン出来る() throws Exception {
+    void DB上に存在するユーザでログイン出来る() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aab").param("password", "aaa")
+                .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aaa").param("password", "aaa")
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/keySpaceList"));
@@ -58,9 +59,9 @@ public class LoginControllerTest {
 
     @Test
     @Transactional
-    void DB上に存在する利用者ユーザでログイン出来ない() throws Exception {
+    void DB上に存在しないユーザではログイン出来ない() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aab").param("password", "aaa")
+                .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aaa").param("password", "aaa")
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/loginError"));

@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.UnexpectedRollbackException;
 
-import com.dbaas.cassandra.domain.auth.LoginUser;
 import com.dbaas.cassandra.domain.log.Logger;
 import com.dbaas.cassandra.domain.message.MessageSourceService;
+import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Aspect
 @Component
