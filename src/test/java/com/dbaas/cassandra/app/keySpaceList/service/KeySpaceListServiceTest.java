@@ -28,7 +28,7 @@ import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncServi
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
 import com.dbaas.cassandra.config.DatasourceConfig;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -59,9 +59,9 @@ public class KeySpaceListServiceTest {
     private KeySpaceListService keySpaceListService;
 
     @Autowired
-	public KeySpaceListServiceTest(KeyspaceManagerDao keyspaceManagerDao) {
+	public KeySpaceListServiceTest(KeyspaceRegistPlanService keyspaceRegistPlanService) {
 		this.keySpaceListService = new KeySpaceListService(keySpaceListInitService, keySpaceListAsyncService,
-				cassandraManagerService, keyspaceManagerDao);
+				cassandraManagerService, keyspaceRegistPlanService);
 	}
     
     @BeforeAll

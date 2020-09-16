@@ -2,27 +2,33 @@ package com.dbaas.cassandra.app.keySpaceList.dto;
 
 import java.util.List;
 
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+
 public class KeySpaceListInitServiceResultDto {
 	
 	public KeySpaceListInitServiceResultDto() {
 		
 	}
 	
-	public KeySpaceListInitServiceResultDto(List<String> keyspaceList, List<String> createdKeyspaceList) {
-		this.keyspaceList = keyspaceList;
+	public KeySpaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, List<String> createdKeyspaceList) {
+		this.keyspaceRegistPlans = keyspaceRegistPlans;
 		this.createdKeyspaceList = createdKeyspaceList;
 	}	
 	
-	public List<String> keyspaceList;
+	public KeyspaceRegistPlans keyspaceRegistPlans;
 
 	public List<String> createdKeyspaceList;
 	
 	public List<String> getKeyspaceList() {
-		return keyspaceList;
+		return keyspaceRegistPlans.getKeyspaceList();
+	}
+
+	public KeyspaceRegistPlans getKeyspaceRegistPlans() {
+		return keyspaceRegistPlans;
 	}
 	
-	public void setKeyspaceList(List<String> keyspaceList) {
-		this.keyspaceList = keyspaceList;
+	public void setKeyspaceRegistPlans(KeyspaceRegistPlans keyspaceRegistPlans) {
+		this.keyspaceRegistPlans = keyspaceRegistPlans;
 	}
 
 	public List<String> getCreatedKeyspaceList() {

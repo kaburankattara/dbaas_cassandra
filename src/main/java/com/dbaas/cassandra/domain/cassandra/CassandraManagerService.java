@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -200,10 +201,10 @@ public class CassandraManagerService {
 	 * 重複は無視してキースペースを登録
 	 * 
 	 * @param instances
-	 * @param keyspaceList
+	 * @param keyspaceRegistPlans
 	 */
-	public void registKeySpaceByDuplicatIgnore(Instances instances, List<String> keyspaceList) {
-		for (String keyspace : keyspaceList) {
+	public void registKeySpaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
+		for (String keyspace : keyspaceRegistPlans.getKeyspaceList()) {
 			registKeySpaceByDuplicatIgnore(instances, keyspace);
 		}
 	}

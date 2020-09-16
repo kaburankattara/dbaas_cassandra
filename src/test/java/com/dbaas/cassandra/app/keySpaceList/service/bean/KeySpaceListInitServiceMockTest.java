@@ -1,15 +1,12 @@
 package com.dbaas.cassandra.app.keySpaceList.service.bean;
 
+import static com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
 import static com.github.springtestdbunit.annotation.DatabaseOperation.CLEAN_INSERT;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,23 +24,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.DbaasCassandraApplication;
 import com.dbaas.cassandra.config.DatasourceConfig;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 import com.dbaas.cassandra.domain.serverManager.instance.InstancesServiceForTest;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerEntity;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseSetups;
 
 @SpringBootTest(classes = DbaasCassandraApplication.class)
 @ExtendWith(SpringExtension.class) // dbunit、DIコンテナを使用しないならこれだけで良い
-@TestExecutionListeners({ MockitoTestExecutionListener.class, TransactionalTestExecutionListener.class, // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
-		DbUnitTestExecutionListener.class })
-@Import(DatasourceConfig.class)
 @Transactional
+@TestExecutionListeners({ MockitoTestExecutionListener.class
+	, TransactionalTestExecutionListener.class // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
+	, DbUnitTestExecutionListener.class })
+@Import(DatasourceConfig.class)
+@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT)
 public class KeySpaceListInitServiceMockTest {
 
 	@Mock
@@ -54,7 +52,7 @@ public class KeySpaceListInitServiceMockTest {
 
 	private UserService userService;
 
-	private KeyspaceManagerDao keyspaceManagerDao;
+	private KeyspaceRegistPlanService keyspaceRegistPlanService;
 
 	private InstancesServiceForTest instancesServiceForTest;
 
@@ -62,25 +60,14 @@ public class KeySpaceListInitServiceMockTest {
 	private KeySpaceListInitService keySpaceListInitService;
 
 	@Autowired
-	public KeySpaceListInitServiceMockTest(UserService userService, KeyspaceManagerDao keyspaceManagerDao,
+	public KeySpaceListInitServiceMockTest(UserService userService, KeyspaceRegistPlanService keyspaceRegistPlanService,
 			InstancesServiceForTest instancesServiceForTest) {
 		this.userService = userService;
-		this.keyspaceManagerDao = keyspaceManagerDao;
+		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
 		this.instancesServiceForTest = instancesServiceForTest;
 	}
 
-	@BeforeAll
-	static void initMocks() {
-		System.out.println();
-	}
-
-	@BeforeEach
-	void beforeEach() {
-		System.out.println();
-	}
-
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
 	public void findCreatedKeyspaceList_サーバが未構築の場合() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -99,7 +86,6 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
 	public void findCreatedKeyspaceList_サーバが構築中の場合() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -118,7 +104,6 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
 	public void findCreatedKeyspaceList_サーバが構築済_かつキースペースが未登録の場合() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -140,7 +125,6 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
 	public void findCreatedKeyspaceList_サーバが構築済_かつキースペースが登録済の場合() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -164,12 +148,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
-	public void refreshCassandra_サーバが未構築_かつ登録済み予定のキースペースがない場合() {
+	public void refreshCassandra_サーバが未構築_かつキースペースの登録予定がない場合() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances emptyInstances = Instances.createEmptyInstance();
-		List<String> emptyKeyspaceList = new ArrayList<String>();
+		KeyspaceRegistPlans keyspaceRegistPlans = KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans();
 
 		// 条件
 		// サーバが未構築である
@@ -184,17 +167,17 @@ public class KeySpaceListInitServiceMockTest {
 		// Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(Mockito.isA(LoginUser.class));
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class))
-				.registKeySpaceByDuplicatIgnore(emptyInstances, emptyKeyspaceList);
+				.registKeySpaceByDuplicatIgnore(emptyInstances, keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, emptyInstances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(emptyInstances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class))
-				.registKeySpaceByDuplicatIgnore(emptyInstances, emptyKeyspaceList);
+				.registKeySpaceByDuplicatIgnore(emptyInstances, keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, emptyKeyspaceList);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -202,17 +185,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups({ @DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT),
-			@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT) })
-	public void refreshCassandra_cassandraサーバ未構築_登録形跡がある() {
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	public void refreshCassandra_cassandraサーバ未構築_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		List<KeyspaceManagerEntity> keyspaceManagerList = keyspaceManagerDao.findByUserId(user.getUserId());
-		// TODO 後できれいにする
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
-		for (KeyspaceManagerEntity entity : keyspaceManagerList) {
-			keyspaceListForCreatePlan.add(entity.keyspace);
-		}
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ未構築状態();
 
 		// 条件
@@ -226,17 +203,17 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -244,11 +221,10 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
-	public void cassandraサーバ構築中_未登録() {
+	public void cassandraサーバ構築中_かつキースペースの登録予定がない() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
+		KeyspaceRegistPlans keyspaceRegistPlans = createEmptyKeyspaceRegistPlans();
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築中状態();
 
 		// 条件
@@ -262,17 +238,17 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -280,17 +256,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
-	public void cassandraサーバ構築中_登録形跡がある() {
+	public void cassandraサーバ構築中_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築中状態();
-		List<KeyspaceManagerEntity> keyspaceManagerList = keyspaceManagerDao.findByUserId(user.getUserId());
-		// TODO 後できれいにする
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
-		for (KeyspaceManagerEntity entity : keyspaceManagerList) {
-			keyspaceListForCreatePlan.add(entity.keyspace);
-		}
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 
 		// 条件
 		// サーバが構築中である
@@ -303,17 +273,17 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -321,12 +291,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups(@DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT))
-	public void cassandraサーバ構築済_未登録() {
+	public void cassandraサーバ構築済_かつキースペースの登録予定がない() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
+		KeyspaceRegistPlans keyspaceRegistPlans = createEmptyKeyspaceRegistPlans();
 
 		// 条件
 		// サーバが構築中である
@@ -339,17 +308,17 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -357,17 +326,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups({ @DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT),
-			@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT) })
-	public void cassandraサーバ構築済_登録形跡がある() {
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	public void cassandraサーバ構築済_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		List<KeyspaceManagerEntity> keyspaceManagerList = keyspaceManagerDao.findByUserId(user.getUserId());
-		// TODO 後できれいにする
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
-		for (KeyspaceManagerEntity entity : keyspaceManagerList) {
-			keyspaceListForCreatePlan.add(entity.keyspace);
-		}
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
 
 		// 条件
@@ -381,17 +344,17 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
@@ -399,17 +362,11 @@ public class KeySpaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetups({ @DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT),
-		@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT) })
-	public void cassandraサーバ構築済_cassandra実行可能_登録形跡がある() {
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	public void cassandraサーバ構築済_かつcassandra実行可能_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		List<KeyspaceManagerEntity> keyspaceManagerList = keyspaceManagerDao.findByUserId(user.getUserId());
-		// TODO 後できれいにする
-		List<String> keyspaceListForCreatePlan = new ArrayList<String>();
-		for (KeyspaceManagerEntity entity : keyspaceManagerList) {
-			keyspaceListForCreatePlan.add(entity.keyspace);
-		}
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
 
 		// 条件
@@ -423,30 +380,21 @@ public class KeySpaceListInitServiceMockTest {
 		Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).execCassandraByWait(instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraManagerService.class)).registKeySpaceByDuplicatIgnore(instances,
-				keyspaceListForCreatePlan);
+				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
 		// voidメソッドのmockテストのため、Exceptionが発生しなければ明示的な検証は無し
 		try {
-			keySpaceListInitService.refreshCassandra(user, keyspaceListForCreatePlan);
+			keySpaceListInitService.refreshCassandra(user, keyspaceRegistPlans);
 			Assertions.assertThat(true).isEqualTo(true);
 		} catch (Exception e) {
 			Assertions.assertThat(true).isEqualTo(false);
 		}
 	}
 
-	@AfterEach
-	void afterEach() {
-		System.out.println("  JUnit5Test#afterEach()");
-	}
-
-	@AfterAll
-	static void afterAll() {
-		System.out.println("JUnit5Test#afterAll()");
-	}
 }
