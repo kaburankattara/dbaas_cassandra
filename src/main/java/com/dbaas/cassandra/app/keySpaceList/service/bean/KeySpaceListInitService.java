@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -50,9 +51,10 @@ public class KeySpaceListInitService {
 	 * cassandraの稼働状況をリフレッシュする
 	 * 
 	 * @param user
-	 * @throws Exception 
+	 * @param keyspaceRegistPlans
+	 * @throws Exception
 	 */
-	public void refreshCassandra(LoginUser user, List<String> keyspaceList) throws Exception {
+	public void refreshCassandra(LoginUser user, KeyspaceRegistPlans keyspaceRegistPlans) throws Exception {
 		try {
 			Instances instances = serverManagerService.getInstances(user);
 			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
@@ -65,7 +67,7 @@ public class KeySpaceListInitService {
 			// cassandraのコマンド実行まで可能な場合、
 			// キースペースの登録漏れがあれば登録しておく
 			if (!instances.isEmpty() && canAllExecCql) {
-				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceList);
+				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceRegistPlans);
 				return;
 			}
 			
@@ -75,7 +77,7 @@ public class KeySpaceListInitService {
 			if (!instances.isEmpty() && !canAllExecCql) {
 				cassandraManagerService.setup(user, instances);
 				cassandraManagerService.execCassandraByWait(instances);
-				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceList);
+				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceRegistPlans);
 				return;
 			}
 
@@ -92,7 +94,7 @@ public class KeySpaceListInitService {
 			cassandraManagerService.setup(user, instances);
 			cassandraManagerService.execCassandraByWait(instances);
 			// そしてキースペースの登録漏れがあれば登録
-			cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceList);
+			cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceRegistPlans);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());

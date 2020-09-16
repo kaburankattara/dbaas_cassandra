@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.app.keySpaceRegister.service.async.KeySpaceRegisterAsyncService;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
@@ -18,12 +18,12 @@ public class  KeySpaceRegisterService {
 	
 	private KeySpaceRegisterAsyncService asyncService;
 	
-	private KeyspaceManagerDao keyspaceManagerDao;
+	private KeyspaceRegistPlanService keyspaceRegistPlanService;
 	
 	@Autowired
-	KeySpaceRegisterService(KeySpaceRegisterAsyncService asyncService, KeyspaceManagerDao keyspaceManagerDao) {
+	KeySpaceRegisterService(KeySpaceRegisterAsyncService asyncService, KeyspaceRegistPlanService keyspaceRegistPlanService) {
 		this.asyncService = asyncService;
-		this.keyspaceManagerDao = keyspaceManagerDao;
+		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
 	}
 	
 	/**
@@ -33,16 +33,15 @@ public class  KeySpaceRegisterService {
 	 * @return
 	 */
 	public List<String> findAllKeyspace(LoginUser user) {
-		return keyspaceManagerDao.findAllKeyspaceByUserId(user);
+		return keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user).getKeyspaceList();
 	}
-
 	
 	/**
 	 * キースペースを登録する
 	 */
 	public void registKeySpace(LoginUser user, String keySpace) {
 		// 登録するキースペースをキースペースマネージャーテーブルに登録
-		keyspaceManagerDao.insert(user, keySpace);
+		keyspaceRegistPlanService.insert(user, keySpace);
 		
 		// サーバ構築を行う必要も発生する場合があるため、
 		// 物理的なキースペースの登録は非同期で行う

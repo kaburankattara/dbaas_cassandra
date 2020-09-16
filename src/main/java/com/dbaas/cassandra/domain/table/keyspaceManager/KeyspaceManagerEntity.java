@@ -23,10 +23,26 @@ public class KeyspaceManagerEntity implements Serializable {
 	
 	@Id
 	@Column(name = "user_id")
-	public String userId;
+	private String userId;
 	
 	@Id
 	@Column(name = "keyspace")
-	public String keyspace;
+	private String keyspace;
+	
+	public String getUserId() {
+		return userId;
+	}
+	
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	public String getKeyspace() {
+		return keyspace;
+	}
+	
+	public void setKeyspace(String keyspace) {
+		this.keyspace = keyspace;
+	}
 	
 }

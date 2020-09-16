@@ -12,7 +12,8 @@ import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto
 import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncService;
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
 import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
@@ -23,14 +24,14 @@ public class  KeySpaceListService {
 
 	private KeySpaceListAsyncService keySpaceListAsyncService;
 	
-	private KeyspaceManagerDao keyspaceManagerDao;
+	private KeyspaceRegistPlanService keyspaceRegistPlanService;
 	
 	@Autowired
 	KeySpaceListService(KeySpaceListInitService keySpaceListInitService, KeySpaceListAsyncService keySpaceListAsyncService, CassandraManagerService cassandraManagerService,
-			KeyspaceManagerDao keyspaceManagerDao) {
+			KeyspaceRegistPlanService keyspaceRegistPlanService) {
 		this.keySpaceListInitService = keySpaceListInitService;
 		this.keySpaceListAsyncService = keySpaceListAsyncService;
-		this.keyspaceManagerDao = keyspaceManagerDao;
+		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
 	}
 	
 	/**
@@ -42,19 +43,19 @@ public class  KeySpaceListService {
 	 */
 	public KeySpaceListInitServiceResultDto init(LoginUser user) throws Exception {
 		// 画面の一覧表示用にキースペースマネージャに登録されているキースペースリストを取得
-		List<String> keyspaceList = keyspaceManagerDao.findAllKeyspaceByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 
 		// cassandraサーバがCQL操作可能か判定
 		List<String> createdKeyspaceList = keySpaceListInitService.findCreatedKeyspaceList(user);
 		
 		// cassandraサーバの起動状況をリフレッシュする
 		try {
-			keySpaceListAsyncService.refreshCassandra(user, keyspaceList, getSysDate());
+			keySpaceListAsyncService.refreshCassandra(user, keyspaceRegistPlans, getSysDate());
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
 			throw new Exception();
 		}
-		return new KeySpaceListInitServiceResultDto(keyspaceList, createdKeyspaceList);
+		return new KeySpaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaceList);
 	}
 }
