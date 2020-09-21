@@ -4,6 +4,7 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CQL_COMMAND_U
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.KEYSPACE_SYSTEM_SCHEMA;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.SYSTEM_KEYSPACE_LIST;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.TABLE_COLUMNS;
+import static com.dbaas.cassandra.domain.cassandra.table.Table.createEmptyTable;
 import static com.dbaas.cassandra.utils.ObjectUtils.isEmpty;
 import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
 import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
@@ -365,7 +366,7 @@ public class CassandraManagerService {
 					return table;
 				}
 		}
-		return null;	
+		return createEmptyTable();	
 		
 		// 各サーバで取得したテーブルの重複を削除
 		// TODO マルチノードで

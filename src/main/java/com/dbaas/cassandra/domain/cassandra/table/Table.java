@@ -1,5 +1,7 @@
 package com.dbaas.cassandra.domain.cassandra.table;
 
+import static com.dbaas.cassandra.domain.cassandra.table.Columns.createEmptyColumns;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,13 @@ public class Table {
 	 * コンストラクタ
 	 */
 	public Table() {
+	}
+
+	/**
+	 * コンストラクタ
+	 */
+	public static Table createEmptyTable() {
+		return new Table(null, createEmptyColumns());
 	}
 
 	/**

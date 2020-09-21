@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.app.TableRegister.form;
 
 import static com.dbaas.cassandra.utils.NumberUtils.toInt;
+import static com.dbaas.cassandra.utils.StringUtils.toLowerCase;
 
 import java.util.List;
 
@@ -67,6 +68,6 @@ public class TableRegisterForm {
 	}
 	
 	public Table toTable() {
-		return new Table(tableName, columns.toColumns());
+		return new Table(toLowerCase(tableName), columns.toColumns());
 	}
 }

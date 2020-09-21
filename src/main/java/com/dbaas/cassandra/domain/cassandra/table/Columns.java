@@ -11,6 +11,10 @@ public class Columns {
 		this.columnList = new ArrayList<Column>();
 	}
 	
+	public static Columns createEmptyColumns() {
+		return new Columns();
+	}
+	
 	public Columns(List<Column> columnList) {
 		this.columnList = columnList;
 	}

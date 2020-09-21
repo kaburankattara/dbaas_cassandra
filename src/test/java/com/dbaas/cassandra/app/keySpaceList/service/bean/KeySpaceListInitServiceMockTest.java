@@ -37,9 +37,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @SpringBootTest(classes = DbaasCassandraApplication.class)
 @ExtendWith(SpringExtension.class) // dbunit、DIコンテナを使用しないならこれだけで良い
 @Transactional
-@TestExecutionListeners({ MockitoTestExecutionListener.class
-	, TransactionalTestExecutionListener.class // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
-	, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ MockitoTestExecutionListener.class, TransactionalTestExecutionListener.class // テストトランザクションの制御。デフォルトで設定により、テスト後にDB状態はロールバックする
+		, DbUnitTestExecutionListener.class })
 @Import(DatasourceConfig.class)
 @DatabaseSetup(value = "/static/dbunit/domain/user/テストユーザー.xml", type = CLEAN_INSERT)
 public class KeySpaceListInitServiceMockTest {
