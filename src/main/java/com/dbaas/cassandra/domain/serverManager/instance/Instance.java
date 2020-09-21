@@ -4,6 +4,8 @@ import static com.dbaas.cassandra.utils.StringUtils.isEquals;
 
 import java.io.Serializable;
 
+import com.amazonaws.services.ec2.model.Tag;
+
 /**
  * ec2インスタンス
  * 
@@ -70,6 +72,20 @@ public class Instance implements Serializable {
 	}
 	
 	/**
+	 * インスタンス名を取得
+	 * 
+	 * @return インスタンス名
+	 */
+	public String getName() {
+		for (Tag tag : instance.getTags()) {
+			if (isEquals(tag.getKey(), "Name")) {
+				return tag.getValue();
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * IPv4のパブリックIPアドレスを取得
 	 * 
 	 * @return IPv4のパブリックIPアドレス
@@ -94,5 +110,59 @@ public class Instance implements Serializable {
 	 */
 	public boolean isPending() {
 		return isEquals(instance.getState().getName(), "pending");
+	}
+	
+	/**
+	 * インスタンスの状態がrunningか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isRunning() {
+		return isEquals(instance.getState().getName(), "running");
+	}
+	
+	/**
+	 * インスタンスの状態がshutting-downか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isShuttingDown() {
+		return isEquals(instance.getState().getName(), "shutting-down");
+	}
+	
+	/**
+	 * インスタンスの状態がstoppingか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isStopping() {
+		return isEquals(instance.getState().getName(), "stopping");
+	}
+	
+	/**
+	 * インスタンスの状態がstoppedか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isStopped() {
+		return isEquals(instance.getState().getName(), "stopped");
+	}
+	
+	/**
+	 * インスタンスの状態がterminatedか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isTerminated() {
+		return isEquals(instance.getState().getName(), "terminated");
+	}
+	
+	/**
+	 * インスタンスの状態が「shutting-down」〜「terminated」か判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean isShuttingDownToTerminated() {
+		return isShuttingDown() || isStopping() || isStopped() || isTerminated();
 	}
  }

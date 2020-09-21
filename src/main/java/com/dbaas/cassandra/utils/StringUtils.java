@@ -316,4 +316,26 @@ public final class StringUtils {
 		}
 		return false;
 	}
+
+	/**
+	 * 引数で指定された文字列を大文字に変換する
+	 * 
+	 * @param target
+	 * @return 変換結果
+	 */
+	public static String toUpperCase(String target) {
+		return isEmpty(target) ? target : target.toUpperCase();
+	}
+
+	/**
+	 * 引数で指定された文字列を小文字に変換する
+	 * 
+	 * @param target
+	 * @return 変換結果
+	 */
+	public static String toLowerCase(String target) {
+		return isEmpty(target) ? target : target.toLowerCase();
+	}
+	
+	
 }

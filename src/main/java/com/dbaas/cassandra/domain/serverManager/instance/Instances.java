@@ -64,13 +64,41 @@ public class Instances implements Serializable {
 	}
 	
 	/**
-	 * インスタンスを保持していないか判定
+	 * pending状態のインスタンスを保持していないか判定
 	 * 
 	 * @return 判定結果
 	 */
 	public boolean hasPendingInstance() {
 		for (Instance instance : instanceList) {
 			if (instance.isPending()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * running状態のインスタンスを保持していないか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean hasRunningInstance() {
+		for (Instance instance : instanceList) {
+			if (instance.isRunning()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * running状態のインスタンスを保持していないか判定
+	 * 
+	 * @return 判定結果
+	 */
+	public boolean hasShuttingDownToTerminatedInstance() {
+		for (Instance instance : instanceList) {
+			if (instance.isShuttingDownToTerminated()) {
 				return true;
 			}
 		}

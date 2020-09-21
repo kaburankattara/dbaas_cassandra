@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -61,6 +62,8 @@ public final class DateUtils {
     
     /** 日付フォーマット　yyyyMMdd */
     public static final String DATE_FORMAT_YYYYMMDD = "yyyyMMdd";
+    /** 日付フォーマット　yyyyMMddHHmmss.SSSSSS */
+    public static final String DATE_FORMAT_YYYYMMDDHHMMSS_SSSSSS = "yyyyMMddHHmmss.SSSSSS";
 
 	/**
 	 * 引数で指定された日付の月末日を取得する。
@@ -658,6 +661,23 @@ public final class DateUtils {
 	 */
 	public static boolean isDate(String str) {
 		return isDate(str, "yyyy/MM/dd") || isDate(str, DATE_FORMAT_YYYYMMDD);
+	}
+
+	/**
+	 * 日付チェック(yyyyMMddHHmmss.SSSSSS)
+	 *
+	 * @param str チェック文字列
+	 * @return チェック結果
+	 */
+	public static boolean isDateByYyyymmddhhmmssSSSSSS(String str) {
+		// isDate()は秒単位での比較は出来ないため、フォーマット変換の可否で判断する
+		// ※isDate()だと文字列への再パースで厳密な時間が変わってしまう
+		try {
+			formatYyyymmdd(str, DATE_FORMAT_YYYYMMDDHHMMSS_SSSSSS);
+			return true;
+		} catch (DateTimeParseException e) {
+			return false;
+		}
 	}
 
 	/**
