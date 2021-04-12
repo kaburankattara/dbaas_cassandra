@@ -11,23 +11,24 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-<h3>ログインフォーム</h3>
+<h3>Dbaas Cassandra</h3>
 <form th:object="${form}" th:action="@{/authenticate}" method="post">
 	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table>
 		<tr>
 			<td><label>ユーザID</label></td>
-			<td><input type="text" th:field="*{userId}"/></td>
+			<td><th:block th:replace="/domain/user/user :: userId"></th:block></td>
 		</tr>
 		<tr>
 			<td><label>パスワード</label></td>
-			<td><input type="password" th:field="*{password}"/></td>
+			<td><th:block th:replace="/domain/user/user :: password"></th:block></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
 			<td><input id="login" type="submit" value="ログイン"/></td>
 		</tr>
 	</table>
+	<a th:href="@{/userRegister}">ユーザー登録はこちら</a>
 </form>
 </th:block>
 </body>

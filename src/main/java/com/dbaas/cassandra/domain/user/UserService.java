@@ -3,6 +3,8 @@ package com.dbaas.cassandra.domain.user;
 import static com.dbaas.cassandra.domain.user.LoginUser.createEmptyLoginUser;
 import static com.dbaas.cassandra.utils.StringUtils.isEmpty;
 
+import com.dbaas.cassandra.shared.exception.SystemException;
+import com.dbaas.cassandra.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,15 @@ public class UserService {
 			return createEmptyLoginUser();
 		}
 		return new LoginUser(userDao.findById(userId));
+	}
+
+	/**
+	 * ユーザーを登録する
+	 *
+	 * @param user ユーザー
+	 */
+	public void registUser(User user) {
+		userDao.registUser(user);
 	}
 	
 //    /**

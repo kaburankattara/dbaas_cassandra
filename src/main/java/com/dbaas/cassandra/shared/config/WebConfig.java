@@ -20,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
         return localValidatorFactoryBean;
     }
     
+    @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //registry.addViewController("/authenticate").setViewName("authenticate");
     }
