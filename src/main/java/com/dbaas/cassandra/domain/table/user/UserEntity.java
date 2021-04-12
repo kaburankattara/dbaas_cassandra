@@ -26,7 +26,6 @@ public class UserEntity implements Serializable {
      * ユーザーID
      */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String userId;
 
     /**

@@ -12,6 +12,7 @@
 <body>
 <th:block layout:fragment="content">
 <h3>キースペース</h3>
+<span>1ユーザーにつき、1クラスターを構築出来ます。</span>
 <form id="form" th:object="${form}" th:action="@{/authenticate}" method="post">
 	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<input type="button" id="keySpaceRegister" value="キースペースを作成"/>

@@ -108,6 +108,7 @@ public class LoginUser extends User implements UserDetails {
 	 * 
 	 * @return ユーザーID
 	 */
+	@Override
 	public String getUserId() {
 		return super.getUserId();
 	}
