@@ -52,14 +52,14 @@ public class Table {
 		
 		// カラムリストの生成とテーブル名の抽出
 		List<Column> columnList = new ArrayList<Column>();
-		String tableName = "";
+		String tmpTableName = "";
 		boolean isGetTableName = true;
 		for (List<String> columnInfo : columnInfoList) {
 			
 			// 初回のみテーブル名取得
 			if (isGetTableName) {
 				int tableNameIndex = 1;
-				tableName = columnInfo.get(tableNameIndex);
+				tmpTableName = columnInfo.get(tableNameIndex);
 				isGetTableName = false;
 			}
 			Column column = new Column(columnInfo);
@@ -67,7 +67,7 @@ public class Table {
 		}
 		
 		// フィールドセット
-		this.tableName =  tableName;
+		this.tableName =  tmpTableName;
 		this.columns = new Columns(columnList);
 	}
 

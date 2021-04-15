@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/loginLayout">
+<head>
+<title></title>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" >
+</head>
+<body>
+<section layout:fragment="content">
+<h3></h3>
+<form id="form" th:object="${form}" th:action="@{/authenticate}" method="post">
+	<th:block th:replace="/domain/user/user :: userIdHidden"></th:block>
+	<th:block th:replace="/domain/user/user :: passwordHidden"></th:block>
+</form>
+<script src="/js/redirectLogin/redirectLogin.js" th:src="@{/js/redirectLogin/redirectLogin.js}" type="module"></script>
+</section>
+</body>
+</html>

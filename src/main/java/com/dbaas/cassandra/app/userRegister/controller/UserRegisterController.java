@@ -1,31 +1,29 @@
 package com.dbaas.cassandra.app.userRegister.controller;
 
-import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
-import com.dbaas.cassandra.app.userRegister.form.UserRegisterForm;
-import com.dbaas.cassandra.app.userRegister.service.UserRegisterService;
-import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.message.Message;
-import com.dbaas.cassandra.domain.message.MessageSourceService;
-import com.dbaas.cassandra.domain.table.kbn.KbnDao;
-import com.dbaas.cassandra.domain.user.LoginUser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_REDIRECT_LOGIN;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_USER_REGISTER;
+import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.dbaas.cassandra.consts.UrlConsts.*;
-import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
-import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_WARNING;
-import static com.dbaas.cassandra.domain.message.Message.MSG001W;
-import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
-import static com.dbaas.cassandra.utils.StringUtils.isContains;
-import static com.dbaas.cassandra.utils.StringUtils.isEquals;
-import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
+import com.dbaas.cassandra.app.userRegister.form.UserRegisterForm;
+import com.dbaas.cassandra.app.userRegister.service.UserRegisterService;
+import com.dbaas.cassandra.domain.message.Message;
+import com.dbaas.cassandra.domain.message.MessageSourceService;
+import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 
 @Controller
 @RequestMapping(URL_USER_REGISTER)
@@ -55,9 +53,13 @@ public class UserRegisterController {
 
 	@GetMapping()
 	public String index(HttpServletRequest request, @ModelAttribute("form") UserRegisterForm form, Model model) {
-//      form.init();
-//		model.addAttribute("TABLE_REGISTER_REFERER", getReferer(request));
-//		initModelForAlways(model);
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(8);
+		System.out.println("aaa(8):" + passwordEncoder.encode("aaa"));
+		passwordEncoder = new BCryptPasswordEncoder();
+		System.out.println("aaa(def):" + passwordEncoder.encode("aaa"));
+		passwordEncoder = new BCryptPasswordEncoder();
+		System.out.println("aaa(10):" + passwordEncoder.encode("aaa"));
+
 		return "userRegister/userRegister";
 	}
 
@@ -69,6 +71,8 @@ public class UserRegisterController {
 			return "userRegister/userRegister";
 		}
 
-		return "userRegister/userRegister";
+		// 登録が完了した場合、リダイレクトログインする
+		attributes.addFlashAttribute("form", form.createRedirectLoginForm());
+		return createRedirectUri(URL_KEY_REDIRECT_LOGIN);
 	}
 }

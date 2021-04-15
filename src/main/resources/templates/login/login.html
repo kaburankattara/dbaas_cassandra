@@ -12,7 +12,7 @@
 <body>
 <th:block layout:fragment="content">
 <h3>Dbaas Cassandra</h3>
-<form th:object="${form}" th:action="@{/authenticate}" method="post">
+<form id="form" th:object="${form}" th:action="@{/authenticate}" method="post">
 	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table>
 		<tr>

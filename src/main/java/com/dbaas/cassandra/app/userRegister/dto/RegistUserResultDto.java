@@ -1,10 +1,7 @@
 package com.dbaas.cassandra.app.userRegister.dto;
 
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.message.Message;
 import com.dbaas.cassandra.domain.message.MessageSourceService;
-
-import java.util.List;
 
 public class RegistUserResultDto {
 

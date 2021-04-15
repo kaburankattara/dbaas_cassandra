@@ -3,8 +3,15 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
+<!-- ユーザーID -->
 <th:block th:fragment="userId"><input type="text" th:field="*{userId}"/></th:block>
+<th:block th:fragment="userIdHidden"><input type="hidden" th:field="*{userId}"/></th:block>
+
+<!-- ユーザー名 -->
 <th:block th:fragment="userName"><input type="text" th:field="*{userName}"/></th:block>
+
+<!-- パスワード -->
 <th:block th:fragment="password"><input type="password" th:field="*{password}"/></th:block>
+<th:block th:fragment="passwordHidden"><input type="hidden" th:field="*{password}"/></th:block>
 
 </html>
