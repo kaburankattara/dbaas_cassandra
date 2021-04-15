@@ -42,11 +42,11 @@ public class ColumnsForm {
 	}
 	
 	public Columns toColumns() {
-		List<Column> columnList = new ArrayList<Column>();
+		List<Column> toColumnList = new ArrayList<Column>();
 		for (ColumnForm columnForm : this.columnList) {
-			columnList.add(columnForm);
+			toColumnList.add(columnForm);
 		}
-		return new Columns(columnList);
+		return new Columns(toColumnList);
 	}
 	
 	public static ColumnsForm toColumnsForm(Columns Columns) {

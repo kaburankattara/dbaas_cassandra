@@ -77,14 +77,14 @@ public class Tables {
 		}
 		
 		// インスタンス化
-		List<Table> tableList = new ArrayList<Table>();
+		List<Table> tmpTableList = new ArrayList<Table>();
 		for(List<List<String>> columnInfoList : tableMap.values()) {
 			Table table = new Table(columnInfoList);
-			tableList.add(table);
+			tmpTableList.add(table);
 		}
 		
 		// フィールドセット
-		this.tableList = tableList;
+		this.tableList = tmpTableList;
 	}
 
 	public List<Table> getTableList() {

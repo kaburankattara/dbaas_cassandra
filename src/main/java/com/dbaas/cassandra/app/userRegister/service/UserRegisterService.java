@@ -1,17 +1,13 @@
 package com.dbaas.cassandra.app.userRegister.service;
 
-import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
-import com.dbaas.cassandra.domain.user.LoginUser;
-import com.dbaas.cassandra.domain.user.User;
-import com.dbaas.cassandra.domain.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
+import com.dbaas.cassandra.domain.user.LoginUser;
+import com.dbaas.cassandra.domain.user.User;
+import com.dbaas.cassandra.domain.user.UserService;
 
 @Service
 @Transactional

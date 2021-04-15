@@ -18,7 +18,7 @@ public class User extends UserEntity {
 	/**
 	 * パスワードエンコーダー
 	 */
-	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(8);
 
 	/**
 	 * デフォルトコンストラクタ

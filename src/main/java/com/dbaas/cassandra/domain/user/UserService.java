@@ -3,8 +3,6 @@ package com.dbaas.cassandra.domain.user;
 import static com.dbaas.cassandra.domain.user.LoginUser.createEmptyLoginUser;
 import static com.dbaas.cassandra.utils.StringUtils.isEmpty;
 
-import com.dbaas.cassandra.shared.exception.SystemException;
-import com.dbaas.cassandra.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
