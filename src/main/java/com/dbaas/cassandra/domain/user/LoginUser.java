@@ -31,7 +31,6 @@ public class LoginUser extends User implements UserDetails {
 	 * コンストラクタ
 	 * 
 	 * @param user ユーザー
-	 * @param authorities 権限
 	 */
 	public LoginUser(User user) {
 		super(user);

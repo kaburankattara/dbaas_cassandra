@@ -45,7 +45,7 @@ public class  KeySpaceListService {
 		// 画面の一覧表示用にキースペースマネージャに登録されているキースペースリストを取得
 		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
 
-		// cassandraサーバがCQL操作可能か判定
+		// cassandraサーバに登録済のキースペースリストを取得する
 		List<String> createdKeyspaceList = keySpaceListInitService.findCreatedKeyspaceList(user);
 		
 		// cassandraサーバの起動状況をリフレッシュする
