@@ -34,13 +34,16 @@ public class KeySpaceListController {
 
     @RequestMapping
     public String index(@AuthenticationPrincipal LoginUser user, Model model) {
+
+        KeySpaceListInitServiceResultDto initResultDto = new KeySpaceListInitServiceResultDto();
         try {
-            KeySpaceListInitServiceResultDto initResultDto = keySpaceListService.init(user);
+            initResultDto = keySpaceListService.init(user);
             model.addAttribute("initResultDto", initResultDto);
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.toString());
         }
+        model.addAttribute("initResultDto", initResultDto);
         return "keySpaceList/keySpaceList";
     }
 }
