@@ -250,7 +250,8 @@ public class Cassandra {
 //		exec("sudo systemctl start cassandra");
 
 //		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
-		execSudo("systemctl restart execCassandra");
+//		execSudo("systemctl restart execCassandra");
+		execSudo("systemctl restart cassandra");
 		
 //		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
 //		exec(EXEC_CASSANDRA_FORE_GROUND);
@@ -267,7 +268,7 @@ public class Cassandra {
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
 //		exec("touch aaa | printenv > aaa");
 //		return "";
-		return execSudo("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+		return exec("/usr/sbin/cassandra/bin/cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");
@@ -310,7 +311,10 @@ public class Cassandra {
 			channel.setCommand(String.format(sudo + command, args));
             channel.connect();
             System.out.println("exec-command:" + String.format(sudo + command, args));
-            return getCommandResult(channel, session);
+            String commandResult = getCommandResult(channel, session);
+			System.out.println("exec-result:" + commandResult);
+			System.out.println("exec-statusCode:" + channel.getExitStatus());
+            return commandResult;
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
 			ex.printStackTrace();
@@ -411,15 +415,13 @@ public class Cassandra {
 	}
 	
 	private String getCommandResult(ChannelExec channel, Session session) {
-		BufferedInputStream bin = null;
-		ByteArrayOutputStream bout = null;
-		
-		bout = new ByteArrayOutputStream();
-		try {
-			bin = new BufferedInputStream(channel.getInputStream());
 
+		try (BufferedInputStream bin = new BufferedInputStream(channel.getInputStream())) {
+//		try (BufferedInputStream bin = new BufferedInputStream(channel.getExtInputStream())) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			byte[] buf = new byte[1024];
 			int length;
+
 			while (true) {
 				length = bin.read(buf);
 				if (length == -1) {
@@ -432,29 +434,12 @@ public class Cassandra {
 
 		} catch(IOException ex) {
 			System.out.println(ex.toString());
-		}finally {
-			if (bin != null) {
-				try {
-					bin.close();
-				} catch (IOException e) {
-				}
+		} finally {
+			if (channel != null && channel.isConnected()) {
+				channel.disconnect();
 			}
-            if (channel != null) {
-                try {
-                    channel.disconnect();
-                }
-                catch (Exception e) {
-                }
-            }
-            if (session != null) {
-                try {
-                    session.disconnect();
-                }
-                catch (Exception e) {
-                }
-            }
 		}
-		return new String(bout.toByteArray(), StandardCharsets.UTF_8);
+		return "";
 	}
 
     /**

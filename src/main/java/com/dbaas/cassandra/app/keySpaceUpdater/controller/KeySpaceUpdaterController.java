@@ -20,7 +20,7 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Controller
 @RequestMapping(URL_KEY_SPACE_UPDATER)
-public class  KeySpaceUpdaterController {
+public class KeySpaceUpdaterController {
 
     private final KeySpaceUpdaterService updaterService;
 

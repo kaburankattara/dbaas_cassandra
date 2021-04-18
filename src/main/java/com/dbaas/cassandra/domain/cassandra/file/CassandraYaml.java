@@ -21,7 +21,7 @@ public class CassandraYaml {
 	
 	public CassandraYaml(LoginUser user) {
 		// TODO 定数化
-		this.fileName = "/etc/cassandra/conf/cassandra.yaml";
+		this.fileName = "/sbin/cassandra/conf/cassandra.yaml";
 		//this.fileName = PATH_CASSANDRA_HOME + PATH_CONF + FILE_CASSANDRA_YAML;
 	}
 
@@ -57,7 +57,7 @@ public class CassandraYaml {
 		sb.append("# The name of the cluster. This is mainly used to prevent machines in\n");
 		sb.append("# one logical cluster from joining another.\n");
 		// クラスタ名にはユーザIDを指定する
-		sb.append("cluster_name: 'test Cluster'\n");
+		sb.append("cluster_name: 'Test Cluster'\n");
 		sb.append("\n");
 		sb.append("# This defines the number of tokens randomly assigned to this node on the ring\n");
 		sb.append("# The more tokens, relative to other nodes, the larger the proportion of data\n");

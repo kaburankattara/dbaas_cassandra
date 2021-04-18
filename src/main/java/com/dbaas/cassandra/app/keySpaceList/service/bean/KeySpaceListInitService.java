@@ -56,16 +56,16 @@ public class KeySpaceListInitService {
 	 */
 	public void refreshCassandra(LoginUser user, KeyspaceRegistPlans keyspaceRegistPlans) throws Exception {
 		try {
-			Instances instances = serverManagerService.getInstances(user);
-			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
-			
+
 			// サーバが起動中なら完了するまで待つ
+			Instances instances = serverManagerService.getInstances(user);
 			if (instances.hasPendingInstance()) {
 				serverManagerService.waitCompleteCreateServer(user);
 			}
 
 			// cassandraのコマンド実行まで可能な場合、
 			// キースペースの登録漏れがあれば登録しておく
+			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
 			if (!instances.isEmpty() && canAllExecCql) {
 				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceRegistPlans);
 				return;

@@ -1,8 +1,11 @@
 package com.dbaas.cassandra.app.keySpaceList.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlan;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.utils.ObjectUtils;
 
 public class KeySpaceListInitServiceResultDto {
 	
@@ -13,14 +16,29 @@ public class KeySpaceListInitServiceResultDto {
 	public KeySpaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, List<String> createdKeyspaceList) {
 		this.keyspaceRegistPlans = keyspaceRegistPlans;
 		this.createdKeyspaceList = createdKeyspaceList;
-	}	
+		setKeyspaceList();
+	}
 	
 	public KeyspaceRegistPlans keyspaceRegistPlans;
 
 	public List<String> createdKeyspaceList;
+
+	public List<String> keyspaceList;
 	
 	public List<String> getKeyspaceList() {
-		return keyspaceRegistPlans.getKeyspaceList();
+		return keyspaceList;
+	}
+
+	public void setKeyspaceList() {
+		this.keyspaceList = keyspaceRegistPlans.getKeyspaceList();
+		if (ObjectUtils.isEmpty(createdKeyspaceList)) {
+			return;
+		}
+		for (String keyspace : createdKeyspaceList) {
+			if (!createdKeyspaceList.contains(keyspace)) {
+				keyspaceList.add(keyspace);
+			}
+		}
 	}
 
 	public KeyspaceRegistPlans getKeyspaceRegistPlans() {
@@ -51,6 +69,10 @@ public class KeySpaceListInitServiceResultDto {
 	
 	public String getAppendClassForStatusPending(String keyspace) {
 		return !createdKeyspaceList.contains(keyspace) ? "" : "displayNone";
+	}
+
+	public boolean hasKeyspaceList() {
+		return ObjectUtils.isNotEmpty(createdKeyspaceList);
 	}
 	
 }
