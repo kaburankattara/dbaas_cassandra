@@ -29,7 +29,10 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 @Service
 @Transactional
 public class  ServerManagerService {
-	
+
+	private static String AMI_ID = "ami-02d17dc5a8a84b06c";
+	private static String AMI_ID_bk = "ami-0039557137082409d";
+
     @Autowired
     public ServerManagerService(){
     }
@@ -129,7 +132,7 @@ public class  ServerManagerService {
 		tagSpecifications.add(tag2);
 
 		runInstancesRequest
-			.withImageId("ami-0039557137082409d")
+			.withImageId(AMI_ID)
 			.withInstanceType(InstanceType.T2Small)
 			.withMinCount(1)
 			.withMaxCount(1)
