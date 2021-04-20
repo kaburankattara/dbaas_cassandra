@@ -6,6 +6,7 @@ import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,7 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 @Transactional
 public class  ServerManagerService {
 
-	private static String AMI_ID = "ami-02d17dc5a8a84b06c";
-	private static String AMI_ID_bk = "ami-0039557137082409d";
+	ApplicationProperties ap = ApplicationProperties.createInstance();
 
     @Autowired
     public ServerManagerService(){
@@ -132,7 +132,7 @@ public class  ServerManagerService {
 		tagSpecifications.add(tag2);
 
 		runInstancesRequest
-			.withImageId(AMI_ID)
+			.withImageId(ap.getAmiId())
 			.withInstanceType(InstanceType.T2Small)
 			.withMinCount(1)
 			.withMaxCount(1)

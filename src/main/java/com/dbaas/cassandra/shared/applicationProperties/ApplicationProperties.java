@@ -1,7 +1,6 @@
 package com.dbaas.cassandra.shared.applicationProperties;
 
 import com.dbaas.cassandra.shared.exception.SystemException;
-import com.dbaas.cassandra.utils.StringUtils;
 
 import java.util.ResourceBundle;
 
@@ -20,9 +19,13 @@ public class ApplicationProperties {
     private ApplicationProperties() {
     }
 
-    private static ResourceBundle resourceBundle = ResourceBundle.getBundle("application");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("application");
 
     private static final String BUSINESS_PARAM = "business.param";
+
+    public String getAmiId() {
+        return getProperty("amiId");
+    }
 
     public String getIdentityKeyFileName() {
         return getProperty("identityKeyFileName");

@@ -1,26 +1,5 @@
 package com.dbaas.cassandra.domain.cassandra;
 
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CQL_COMMAND_USE;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.KEYSPACE_SYSTEM_SCHEMA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.SYSTEM_KEYSPACE_LIST;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.TABLE_COLUMNS;
-import static com.dbaas.cassandra.domain.cassandra.table.Table.createEmptyTable;
-import static com.dbaas.cassandra.utils.ObjectUtils.isEmpty;
-import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
-import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
-import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
-import static com.dbaas.cassandra.utils.StringUtils.split;
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
@@ -31,6 +10,21 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.utils.ThreadUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
+import static com.dbaas.cassandra.domain.cassandra.table.Table.createEmptyTable;
+import static com.dbaas.cassandra.utils.ObjectUtils.isEmpty;
+import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
+import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
+import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
+import static com.dbaas.cassandra.utils.StringUtils.split;
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional
@@ -42,7 +36,7 @@ public class CassandraManagerService {
 
 	/**
 	 * 全てのインスタンスに対し、cassandraをセットアップする
-	 * 
+	 * c
 	 * @param user
 	 * @param instances
 	 */
@@ -53,10 +47,9 @@ public class CassandraManagerService {
 	}
 
 	public void setup(LoginUser user, Instance instance) {
-		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// cassandraをインストールする
 //			cassandraServer.installCassandra();
@@ -65,20 +58,19 @@ public class CassandraManagerService {
 			cassandraServer.setCassandraYaml(user, instance);
 
 			// cassandraを実行する
-			cassandraServer.execCassandra();
+			cassandraServer.execCassandra(instance);
 		} catch (JSchException | SftpException e) {
 			throw new RuntimeException();
 		}
 	}
 
 	public void execCassandra(Instance instance) {
-		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// cassandraを実行する
-			cassandraServer.execCassandra();
+			cassandraServer.execCassandra(instance);
 		} catch (JSchException | SftpException e) {
 			throw new RuntimeException();
 		}
@@ -170,13 +162,12 @@ public class CassandraManagerService {
 	}
 
 	public String getProcessIdByCassandra(Instance instance) {
-		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// cassandraの起動確認
-			return cassandraServer.getProcessIdByCassandra();
+			return cassandraServer.getProcessIdByCassandra(instance);
 		} catch (JSchException | SftpException e) {
 			throw new RuntimeException();
 		}
@@ -235,10 +226,9 @@ public class CassandraManagerService {
 	}
 	
 	public void registKeySpace(Instance instance, String keySpace) {
-		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// create文を作成して実行
 			String cqlCommand = "create keyspace if not exists " + keySpace
@@ -250,11 +240,9 @@ public class CassandraManagerService {
 	}
 
 	public void deleteKeySpace(Instance instance, String keySpace) {
-		String ipAddress = instance.getPublicIpAddress();
-		
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// 実行文を生成
 			String cqlCommand = "drop keyspace " + keySpace + ";";
@@ -299,11 +287,10 @@ public class CassandraManagerService {
 	public List<String> findAllKeySpace(Instance instance) {
 		// 各サーバの保持しているキースペース一覧を取得
 		List<String> keySpaceList = new ArrayList<>();
-		String ipAddress = instance.getPublicIpAddress();
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// create文を作成して実行
 			String cqlCommand = "DESC KEYSPACES";
@@ -326,10 +313,9 @@ public class CassandraManagerService {
 	}
 
 	public void registTable(Instance instance, String keySpace, Table table) {
-		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// create文を作成して実行
 			String cqlCommand = table.getCreateCql(keySpace);
@@ -368,11 +354,10 @@ public class CassandraManagerService {
 	}
 
 	public Tables findAllTableByKeySpace(Instance instance, String keySpace) {
-		String ipAddress = instance.getPublicIpAddress();
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// create文を作成
 			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
@@ -388,11 +373,10 @@ public class CassandraManagerService {
 	}
 
 	public Table findTableByKeySpace(Instance instance, String keySpace, String tableName) {
-		String ipAddress = instance.getPublicIpAddress();
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// create文を作成
 			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
@@ -411,7 +395,6 @@ public class CassandraManagerService {
 	}
 
 	public Tables addColumns(Instance instance, String keySpace, Table newTable) {
-		String ipAddress = instance.getPublicIpAddress();
 		String result = null;
 
 		// 現行のテーブル情報を取得
@@ -425,7 +408,7 @@ public class CassandraManagerService {
 			List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keySpace, oldTable, newTable);
 			
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// 実行文を生成
 			StringBuilder sb = new StringBuilder();
@@ -444,11 +427,9 @@ public class CassandraManagerService {
 	}
 
 	public void deleteTable(Instance instance, String keySpace, String tableName) {
-		String ipAddress = instance.getPublicIpAddress();
-		
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
+			Cassandra cassandraServer = Cassandra.createInstance();
 
 			// 実行文を生成
 			String cqlCommand = "drop table " + keySpace + "." + tableName + ";";
