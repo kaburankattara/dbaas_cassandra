@@ -28,6 +28,7 @@ import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.user.LoginUser;
+import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
@@ -37,6 +38,8 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 public class Cassandra {
+
+	ApplicationProperties ap = ApplicationProperties.createInstance();
 
 	/**
 	 * ホスト名
@@ -62,28 +65,22 @@ public class Cassandra {
 	 * インスタンス生成
 	 * 
 	 * @param hostname
-	 * @param port
-	 * @param userId
-	 * @param identityKeyFileName
-	 * @return
+	 * @return cassandra
 	 */
-	public static Cassandra createInstance(String hostname, int port, String userId, String identityKeyFileName) {
-		return new Cassandra(hostname, port, userId, identityKeyFileName);
+	public static Cassandra createInstance(String hostname) {
+		return new Cassandra(hostname);
 	}
 
 	/**
 	 * コンストラクタ
 	 * 
 	 * @param hostname
-	 * @param port
-	 * @param userId
-	 * @param identityKeyFileName
 	 */
-	private Cassandra(String hostname, int port, String userId, String identityKeyFileName) {
+	private Cassandra(String hostname) {
 		this.hostname = hostname;
-		this.port = port;
-		this.userId = userId;
-		this.identityKeyFileName = identityKeyFileName;
+		this.port = ap.getSshPort();
+		this.userId = ap.getRemoteServerUser();
+		this.identityKeyFileName = ap.getIdentityKeyFileName();
 	}
 
     /**
@@ -266,9 +263,7 @@ public class Cassandra {
 	 * @throws SftpException
 	 */
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
-//		exec("touch aaa | printenv > aaa");
-//		return "";
-		return exec("/usr/sbin/cassandra/bin/cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+		return exec(ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");

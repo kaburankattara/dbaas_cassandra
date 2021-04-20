@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ResourceBundle;
+
 @Controller
 public class LoginController {
 
@@ -32,7 +34,6 @@ public class LoginController {
 	/**
 	 * ログインエラー時処理
 	 * @param form Form
-	 * @param exception 例外
 	 * @param model Model
 	 * @return 遷移先画面
 	 */

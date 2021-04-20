@@ -135,6 +135,15 @@ public final class StringUtils {
     	return org.apache.commons.lang3.StringUtils.substring(str, start, end);
     }
 
+	/**
+	 * 最終文字を取得
+	 * @param str 文字列
+	 * @return 処理結果
+	 */
+	public static String getEndChar(final String str) {
+		return isEmpty(str) ? str : substring(str, str.length() - 1);
+	}
+
     /**
      * 置換
      * @param text 文字列
