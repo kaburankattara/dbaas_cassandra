@@ -1,5 +1,7 @@
 package com.dbaas.cassandra.utils;
 
+import com.dbaas.cassandra.shared.exception.SystemException;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
@@ -21,7 +23,7 @@ public final class ThreadUtils {
 			int sleepTime = 1000;
 			MILLISECONDS.sleep(sleepTime);
 		} catch (InterruptedException e) {
-			throw new RuntimeException();
+			throw new SystemException();
 		}
 	}
 }

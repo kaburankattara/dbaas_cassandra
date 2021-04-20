@@ -1,115 +1,40 @@
 package com.dbaas.cassandra.domain.cassandra;
 
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_EXEC;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_SFTP;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_MV;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_RM;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SOURCE;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_STATUS_SUCCESS;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SUDO;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_TOUCH;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_CASSANDRA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_JAVA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_PROFILE;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_EC2_USER_HOME;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_ETC;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_OPT;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_TMP;
-import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
+import com.dbaas.cassandra.domain.sftp.Sftp;
+import com.dbaas.cassandra.domain.ssh.Ssh;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
+
 public class Cassandra {
+
+	Ssh ssh = Ssh.createInstance();
+
+	Sftp sftp = Sftp.createInstance();
 
 	ApplicationProperties ap = ApplicationProperties.createInstance();
 
 	/**
-	 * ホスト名
-	 */
-	private String hostname;
-
-	/**
-	 * ポート番号
-	 */
-	private int port;
-
-	/**
-	 * ユーザID
-	 */
-	private String userId;
-
-	/**
-	 * 認証キーファイル名
-	 */
-	private String identityKeyFileName;
-
-	/**
 	 * インスタンス生成
 	 * 
-	 * @param hostname
 	 * @return cassandra
 	 */
-	public static Cassandra createInstance(String hostname) {
-		return new Cassandra(hostname);
+	public static Cassandra createInstance() {
+		return new Cassandra();
 	}
 
 	/**
 	 * コンストラクタ
-	 * 
-	 * @param hostname
 	 */
-	private Cassandra(String hostname) {
-		this.hostname = hostname;
-		this.port = ap.getSshPort();
-		this.userId = ap.getRemoteServerUser();
-		this.identityKeyFileName = ap.getIdentityKeyFileName();
+	private Cassandra() {
 	}
-
-    /**
-     * ファイルアップロード
-     *
-     * @param sourcePath
-     *            アップロード対象ファイルのパス<br>
-     *            アプリ実行環境上の絶対パスを指定
-     * @param destPath
-     *            アップ先のパス
-     * @throws JSchException
-     *             Session・Channelの設定/接続エラー時に発生
-     * @throws SftpException
-     *             sftp操作失敗時に発生
-     */
-	public void putFile(final String sourcePath, final String destPath) throws JSchException, SftpException {
-        Session session = null;
-        ChannelSftp channel = null;
-
-		try {
-			session = connectSessionToRetryCount();
-            channel = connectChannelSftp(session);
-            channel.put(sourcePath, destPath);
-		} catch (Exception ex) {
-			System.out.println(ex.toString());
-		} finally {
-			disconnect(session, channel);
-		}
-    }
 
 	/**
 	 * casssandraをインストールする
@@ -117,7 +42,7 @@ public class Cassandra {
 	 * @throws JSchException
 	 * @throws SftpException
 	 */
-	public String unInstallCassandra() throws JSchException, SftpException {
+	public String unInstallCassandra(Instance instance) throws JSchException, SftpException {
 		String optJava = PATH_OPT + FILE_JAVA;
 		String optCassandra = PATH_OPT + FILE_CASSANDRA;
 		String homeProfile = PATH_EC2_USER_HOME + FILE_PROFILE;
@@ -126,21 +51,21 @@ public class Cassandra {
 		Profile profile = Profile.createManager();
 
 		// javaとCassandraを削除
-		execSudo(COMMAND_RM, optJava);
-		execSudo(COMMAND_RM, optCassandra);
+		ssh.execSudo(instance, COMMAND_RM, optJava);
+		ssh.execSudo(instance, COMMAND_RM, optCassandra);
 
 		// profileを最新化
 		// 最新のprofile情報を取得し、サーバにprofileを配置
 		profile.createProfile();
-		putFile(tmpProfile, homeProfile);
+		sftp.putFile(instance, tmpProfile, homeProfile);
 
 		// 今あるprofileを削除し新しいprofileを配置
-		execSudo(COMMAND_RM, etcProfile);
-		execSudo(COMMAND_MV, homeProfile, etcProfile);
+		ssh.execSudo(instance, COMMAND_RM, etcProfile);
+		ssh.execSudo(instance, COMMAND_MV, homeProfile, etcProfile);
 		
 		// profileをサーバに配置し、pathを通す
-		exec(COMMAND_SOURCE, etcProfile);
-		execSudo(COMMAND_SOURCE, etcProfile);
+		ssh.exec(instance, COMMAND_SOURCE, etcProfile);
+		ssh.execSudo(instance, COMMAND_SOURCE, etcProfile);
 		return COMMAND_STATUS_SUCCESS;
 	}
 
@@ -150,14 +75,14 @@ public class Cassandra {
 	 * @throws JSchException
 	 * @throws SftpException
 	 */
-	public String installCassandra() throws JSchException, SftpException {
+	public String installCassandra(Instance instance) throws JSchException, SftpException {
 		// javaとcassandraのインストール
-		exec("sudo amazon-linux-extras enable corretto8");
-		exec("sudo yum -y install java-1.8.0-amazon-corretto");
+		ssh.exec(instance, "sudo amazon-linux-extras enable corretto8");
+		ssh.exec(instance, "sudo yum -y install java-1.8.0-amazon-corretto");
 		CassandraRepo repo = CassandraRepo.createManager();
 		repo.create();
-		execCreateFile(repo.getFileName(), repo.getDetail());
-		exec("sudo yum -y install cassandra");
+		sftp.execCreateFile(instance, repo.getFileName(), repo.getDetail());
+		ssh.exec(instance, "sudo yum -y install cassandra");
 		
 		
 //		// シェルをサーバに格納し、javaとcassandraをセットアップ
@@ -202,7 +127,7 @@ public class Cassandra {
 		// cassandra.yamlファイルを作成し設定する
 		CassandraYaml yaml = CassandraYaml.createManager(user);
 		yaml.create(user, instance);
-		execCreateFile(yaml.getFileName(), yaml.getDetail());
+		sftp.execCreateFile(instance, yaml.getFileName(), yaml.getDetail());
 		return COMMAND_STATUS_SUCCESS;
 	}
 
@@ -213,9 +138,9 @@ public class Cassandra {
 	 * @throws JSchException
 	 * @throws SftpException
 	 */
-	public String getProcessIdByCassandra() throws JSchException, SftpException {
+	public String getProcessIdByCassandra(Instance instance) throws JSchException, SftpException {
 		// cassandraのプロセスIDを取得し起動済みか判定
-		return exec("pgrep -f cassandra");
+		return ssh.exec(instance, "pgrep -f cassandra");
 	}
 
 //	/**
@@ -242,13 +167,13 @@ public class Cassandra {
 	 * @throws JSchException
 	 * @throws SftpException
 	 */
-	public String execCassandra() throws JSchException, SftpException {
+	public String execCassandra(Instance instance) throws JSchException, SftpException {
 //		exec("sudo systemctl daemon-reload");
 //		exec("sudo systemctl start cassandra");
 
 //		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
 //		execSudo("systemctl restart execCassandra");
-		execSudo("systemctl restart cassandra");
+		ssh.execSudo(instance, "systemctl restart cassandra");
 		
 //		execSudo(CassandraConsts.EXEC_CASSANDRA_BACK_GROUND);
 //		exec(EXEC_CASSANDRA_FORE_GROUND);
@@ -263,193 +188,12 @@ public class Cassandra {
 	 * @throws SftpException
 	 */
 	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
-		return exec(ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+		return ssh.exec(instance, ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");
 //		return exec("touch aaa | cassandra -v 2> aaa");
 	}
-	
-	/**
-	 * コマンドを実行する（インターフェース）
-	 * 
-	 * @throws JSchException
-	 * @throws SftpException
-	 */
-	private String exec(String command, Object... args) throws JSchException, SftpException {
-		return execCommand("", command, args);
-	}
 
-	/**
-	 * スーパーユーザ権限でコマンドを実行する（インターフェース）
-	 * 
-	 * @throws JSchException
-	 * @throws SftpException
-	 */
-	private String execSudo(String command, Object... args) throws JSchException, SftpException {
-		return execCommand(COMMAND_SUDO, command, args);
-	}
-
-	/**
-	 * コマンドを実行する
-	 * 
-	 * @throws JSchException
-	 * @throws SftpException
-	 */
-	private String execCommand(String sudo, String command, Object... args) throws JSchException, SftpException {
-		Session session = null;
-		ChannelExec channel = null;
-
-		try {
-			session = connectSessionToRetryCount();
-			channel = (ChannelExec) session.openChannel(CHANNEL_TYPE_EXEC);
-			channel.setCommand(String.format(sudo + command, args));
-            channel.connect();
-            System.out.println("exec-command:" + String.format(sudo + command, args));
-            String commandResult = getCommandResult(channel, session);
-			System.out.println("exec-result:" + commandResult);
-			System.out.println("exec-statusCode:" + channel.getExitStatus());
-            return commandResult;
-		} catch (Exception ex) {
-			System.out.println(ex.toString());
-			ex.printStackTrace();
-		} finally {
-			disconnect(session, channel);
-		}
-		return null;
-	}
-	
-	/**
-	 * サーバにファイルを作成する
-	 * 
-	 * @param fileName ファイル名
-	 * @param fileStringDetail ファイル内容
-	 * @return 実行結果
-	 * @throws JSchException
-	 * @throws SftpException
-	 */
-	public String execCreateFile(String fileName, String fileStringDetail) throws JSchException, SftpException {
-		// StringBuilderでコマンドを生成
-		StringBuilder sb = new StringBuilder();
-		sb.append(COMMAND_SUDO)
-			.append(String.format(COMMAND_TOUCH, fileName))
-			.append(" | ")
-			.append(COMMAND_SUDO)
-			.append(" echo ")
-			.append("\"" + fileStringDetail + "\"")
-			.append(" | sudo tee ")
-			.append(fileName);
-		
-		// コマンド実行
-		Session session = null;
-		ChannelExec channel = null;
-		try {
-			session = connectSessionToRetryCount();
-			channel = (ChannelExec) session.openChannel(CHANNEL_TYPE_EXEC);
-			channel.setCommand(sb.toString());
-            channel.connect();
-    		System.out.println("exec-command:" + sb.toString());
-    		return getCommandResult(channel, session);
-		} catch (Exception ex) {
-			System.out.println(ex.toString());
-			ex.printStackTrace();
-		} finally {
-			disconnect(session, channel);
-		}
-		return null;
-	}
-	
-	public Session connectSessionToRetryCount() {
-		int execCount = 0;
-		int retryCount = 5;// TODO 可変定数化
-
-		while (execCount <= retryCount) {
-			try {
-				return connectSession();
-			} catch (Exception e) {
-				sleep();
-				execCount++;
-				continue;
-			}
-		}
-		throw new RuntimeException();
-	}
-	
-	/**
-	 * Sessionを開始
-	 */
-	private Session connectSession() throws JSchException, IOException {
-		final JSch jsch = new JSch();
-		// 鍵追加
-		jsch.addIdentity(identityKeyFileName);
-		// Session設定
-		final Session session = jsch.getSession(userId, hostname, port);
-		session.setUserInfo(new SessionUser());
-		session.connect();
-
-		return session;
-	}
-
-	/**
-	 * Session・Channelの終了
-	 *
-	 * @param session  開始されたSession情報
-	 * @param channels 開始されたChannel情報.複数指定可能
-	 */
-	private void disconnect(final Session session, final Channel... channels) {
-		if (channels != null) {
-			Arrays.stream(channels).forEach(c -> {
-				if (c != null) {
-					c.disconnect();
-				}
-			});
-		}
-		if (session != null) {
-			session.disconnect();
-		}
-	}
-	
-	private String getCommandResult(ChannelExec channel, Session session) {
-
-		try (BufferedInputStream bin = new BufferedInputStream(channel.getInputStream())) {
-//		try (BufferedInputStream bin = new BufferedInputStream(channel.getExtInputStream())) {
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[] buf = new byte[1024];
-			int length;
-
-			while (true) {
-				length = bin.read(buf);
-				if (length == -1) {
-					break;
-				}
-				bout.write(buf, 0, length);
-			}
-			// 標準出力
-			return new String(bout.toByteArray(), StandardCharsets.UTF_8);
-
-		} catch(IOException ex) {
-			System.out.println(ex.toString());
-		} finally {
-			if (channel != null && channel.isConnected()) {
-				channel.disconnect();
-			}
-		}
-		return "";
-	}
-
-    /**
-     * SFTPのChannelを開始
-     *
-     * @param session
-     *            開始されたSession情報
-     */
-    private ChannelSftp connectChannelSftp(final Session session)
-            throws JSchException {
-        final ChannelSftp channel = (ChannelSftp) session
-                .openChannel(CHANNEL_TYPE_SFTP);
-        channel.connect();
-
-        return channel;
-    }
 }
 

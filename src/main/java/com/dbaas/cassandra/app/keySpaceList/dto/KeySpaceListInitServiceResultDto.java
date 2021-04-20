@@ -1,11 +1,9 @@
 package com.dbaas.cassandra.app.keySpaceList.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlan;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.utils.ObjectUtils;
+
+import java.util.List;
 
 public class KeySpaceListInitServiceResultDto {
 	
