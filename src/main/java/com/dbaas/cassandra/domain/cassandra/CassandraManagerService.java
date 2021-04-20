@@ -14,7 +14,9 @@ import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
+import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,9 +36,6 @@ import com.jcraft.jsch.SftpException;
 @Transactional
 public class CassandraManagerService {
 
-	private static final String IDENTITY_KEY_FILE_NAME = "/tmp/cassandra2.pem";
-	private static final String IDENTITY_KEY_FILE_NAME_bk = "src/main/resources/static/cassandra/identityKeyFile/cassandra2.pem";
-
 	@Autowired
 	public CassandraManagerService() {
 	}
@@ -55,10 +54,9 @@ public class CassandraManagerService {
 
 	public void setup(LoginUser user, Instance instance) {
 		String ipAddress = instance.getPublicIpAddress();
-		String identityKeyFilName = IDENTITY_KEY_FILE_NAME;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", identityKeyFilName);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// cassandraをインストールする
 //			cassandraServer.installCassandra();
@@ -77,7 +75,7 @@ public class CassandraManagerService {
 		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// cassandraを実行する
 			cassandraServer.execCassandra();
@@ -175,7 +173,7 @@ public class CassandraManagerService {
 		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// cassandraの起動確認
 			return cassandraServer.getProcessIdByCassandra();
@@ -240,7 +238,7 @@ public class CassandraManagerService {
 		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// create文を作成して実行
 			String cqlCommand = "create keyspace if not exists " + keySpace
@@ -256,7 +254,7 @@ public class CassandraManagerService {
 		
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// 実行文を生成
 			String cqlCommand = "drop keyspace " + keySpace + ";";
@@ -305,7 +303,7 @@ public class CassandraManagerService {
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// create文を作成して実行
 			String cqlCommand = "DESC KEYSPACES";
@@ -331,7 +329,7 @@ public class CassandraManagerService {
 		String ipAddress = instance.getPublicIpAddress();
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// create文を作成して実行
 			String cqlCommand = table.getCreateCql(keySpace);
@@ -374,7 +372,7 @@ public class CassandraManagerService {
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// create文を作成
 			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
@@ -394,7 +392,7 @@ public class CassandraManagerService {
 		String result = null;
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// create文を作成
 			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
@@ -427,7 +425,7 @@ public class CassandraManagerService {
 			List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keySpace, oldTable, newTable);
 			
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// 実行文を生成
 			StringBuilder sb = new StringBuilder();
@@ -450,7 +448,7 @@ public class CassandraManagerService {
 		
 		try {
 			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance(ipAddress, 22, "ec2-user", IDENTITY_KEY_FILE_NAME);
+			Cassandra cassandraServer = Cassandra.createInstance(ipAddress);
 
 			// 実行文を生成
 			String cqlCommand = "drop table " + keySpace + "." + tableName + ";";
