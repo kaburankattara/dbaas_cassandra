@@ -65,6 +65,7 @@ public class KeySpaceListInitService {
 
 			// cassandraのコマンド実行まで可能な場合、
 			// キースペースの登録漏れがあれば登録しておく
+			instances = serverManagerService.getInstances(user);
 			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
 			if (!instances.isEmpty() && canAllExecCql) {
 				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keyspaceRegistPlans);

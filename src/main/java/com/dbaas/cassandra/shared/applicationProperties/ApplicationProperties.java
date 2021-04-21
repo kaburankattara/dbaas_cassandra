@@ -51,6 +51,14 @@ public class ApplicationProperties {
         return getPropertyByInt("sshPort");
     }
 
+    public int getConnectSessionRetryCount() {
+        return getPropertyByInt("jsch.connectSessionRetryCount");
+    }
+
+    public int getSleepTime() {
+        return getPropertyByInt("utils.sleepTime");
+    }
+
     private String getProperty(String key) {
         return replaceNullToBlank(resourceBundle.getString(BUSINESS_PARAM + HALF_DOT + key));
     }
