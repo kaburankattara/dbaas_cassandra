@@ -27,9 +27,9 @@ public class Jsch {
 
     public Session connectSessionToRetryCount(Instance instance) {
         int execCount = 0;
-        int retryCount = 5;// TODO 可変定数化
+        int retryCount = ap.getConnectSessionRetryCount();
 
-        while (execCount <= retryCount) {
+        while (execCount < retryCount) {
             try {
                 return connectSession(instance);
             } catch (Exception e) {
