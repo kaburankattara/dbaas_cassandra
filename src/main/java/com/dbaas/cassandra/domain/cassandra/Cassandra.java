@@ -38,11 +38,11 @@ public class Cassandra {
 
 	/**
 	 * casssandraをインストールする
-	 * 
-	 * @throws JSchException
-	 * @throws SftpException
+	 *
+	 * @param instance
+	 * @return 実効結果
 	 */
-	public String unInstallCassandra(Instance instance) throws JSchException, SftpException {
+	public String unInstallCassandra(Instance instance) {
 		String optJava = PATH_OPT + FILE_JAVA;
 		String optCassandra = PATH_OPT + FILE_CASSANDRA;
 		String homeProfile = PATH_EC2_USER_HOME + FILE_PROFILE;
@@ -71,11 +71,11 @@ public class Cassandra {
 
 	/**
 	 * casssandraをインストールする
-	 * 
-	 * @throws JSchException
-	 * @throws SftpException
+	 *
+	 * @param instance
+	 * @return 実効結果
 	 */
-	public String installCassandra(Instance instance) throws JSchException, SftpException {
+	public String installCassandra(Instance instance) {
 		// javaとcassandraのインストール
 		ssh.exec(instance, "sudo amazon-linux-extras enable corretto8");
 		ssh.exec(instance, "sudo yum -y install java-1.8.0-amazon-corretto");
@@ -120,10 +120,8 @@ public class Cassandra {
 	 * @param user ユーザー
 	 * @param instance EC2インスタンス
 	 * @return 処理結果
-	 * @throws JSchException
-	 * @throws SftpException
 	 */
-	public String setCassandraYaml(LoginUser user, Instance instance) throws JSchException, SftpException {
+	public String setCassandraYaml(LoginUser user, Instance instance) {
 		// cassandra.yamlファイルを作成し設定する
 		CassandraYaml yaml = CassandraYaml.createManager(user);
 		yaml.create(user, instance);
@@ -133,12 +131,11 @@ public class Cassandra {
 
 	/**
 	 * cassandraのプロセスIDを取得
-	 * 
+	 *
+	 * @param instance
 	 * @return 判定結果
-	 * @throws JSchException
-	 * @throws SftpException
 	 */
-	public String getProcessIdByCassandra(Instance instance) throws JSchException, SftpException {
+	public String getProcessIdByCassandra(Instance instance) {
 		// cassandraのプロセスIDを取得し起動済みか判定
 		return ssh.exec(instance, "pgrep -f cassandra");
 	}
@@ -162,12 +159,11 @@ public class Cassandra {
 
 	/**
 	 * cassandraを実行する
-	 * 
+	 *
+	 * @param instance
 	 * @return 処理結果
-	 * @throws JSchException
-	 * @throws SftpException
 	 */
-	public String execCassandra(Instance instance) throws JSchException, SftpException {
+	public String execCassandra(Instance instance) {
 //		exec("sudo systemctl daemon-reload");
 //		exec("sudo systemctl start cassandra");
 
@@ -182,12 +178,12 @@ public class Cassandra {
 
 	/**
 	 * Cqlコマンドを実行
-	 * 
-	 * @return 判定結果
-	 * @throws JSchException
-	 * @throws SftpException
+	 *
+	 * @param instance
+	 * @param cqlCommand
+	 * @return 実効結果
 	 */
-	public String execCql(Instance instance, String cqlCommand) throws JSchException, SftpException {
+	public String execCql(Instance instance, String cqlCommand) {
 		return ssh.exec(instance, ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");

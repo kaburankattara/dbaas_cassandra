@@ -7,9 +7,8 @@ import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.domain.serverManager.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
+import com.dbaas.cassandra.shared.exception.SystemException;
 import com.dbaas.cassandra.utils.ThreadUtils;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +36,8 @@ public class CassandraManagerService {
 	/**
 	 * 全てのインスタンスに対し、cassandraをセットアップする
 	 * c
-	 * @param user
-	 * @param instances
+	 * @param user ユーザー
+	 * @param instances インスタンスリスト
 	 */
 	public void setup(LoginUser user, Instances instances) {
 		for (Instance instance : instances.getInstanceList()) {
@@ -47,42 +46,35 @@ public class CassandraManagerService {
 	}
 
 	public void setup(LoginUser user, Instance instance) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// cassandraをインストールする
+		// cassandraをインストールする
 //			cassandraServer.installCassandra();
 
-			// casssandra.yamlを設定し、cassandraを起動する
-			cassandraServer.setCassandraYaml(user, instance);
+		// casssandra.yamlを設定し、cassandraを起動する
+		cassandraServer.setCassandraYaml(user, instance);
 
-			// cassandraを実行する
-			cassandraServer.execCassandra(instance);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// cassandraを実行する
+		cassandraServer.execCassandra(instance);
 	}
 
 	public void execCassandra(Instance instance) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// cassandraを実行する
-			cassandraServer.execCassandra(instance);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// cassandraを実行する
+		cassandraServer.execCassandra(instance);
 	}
 
 	/**
 	 * 起動確認まで考慮してcassandraを起動する
 	 * 
-	 * @param instances
+	 * @param instances インスタンスリスト
 	 */
 	public void execCassandraByWait(Instances instances) {
 		boolean hasNotExecCassandra = true;
+		// TODO application.properties化する
 		int execCassandraCount = instances.getHasInstanceCount() * 3;
 		while (hasNotExecCassandra) {
 			hasNotExecCassandra = false;
@@ -96,10 +88,8 @@ public class CassandraManagerService {
 					// 再起動のリトライ制御
 					execCassandraCount--;
 					if (execCassandraCount < 0) {
-						// 実行対象cassandra数×3回再起動を試みたが起動仕切らない場合、
-						// システムエラーとする
-						// TODO 専用のExceptionを用意する
-						new RuntimeException();
+						// 実行対象cassandra数×3回再起動を試みたが起動仕切らない場合、システムエラーとする
+						throw new SystemException();
 					}
 				}
 			}
@@ -123,7 +113,7 @@ public class CassandraManagerService {
 	/**
 	 * 全インスタンスがCQLの実行が可能か判定
 	 * 
-	 * @param instances
+	 * @param instances インスタンスリスト
 	 * @return 判定結果
 	 */
 	public boolean canAllExecCql(Instances instances) {
@@ -153,7 +143,7 @@ public class CassandraManagerService {
 	/**
 	 * casssandraが起動済みか判定
 	 * 
-	 * @param instance
+	 * @param instance　インスタンス
 	 * @return 判定結果
 	 */
 	public boolean isExecCassandra(Instance instance) {
@@ -162,15 +152,11 @@ public class CassandraManagerService {
 	}
 
 	public String getProcessIdByCassandra(Instance instance) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// cassandraの起動確認
-			return cassandraServer.getProcessIdByCassandra(instance);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// cassandraの起動確認
+		return cassandraServer.getProcessIdByCassandra(instance);
 	}
 
 	public boolean isExecAllCassandra(Instances instances) {
@@ -224,34 +210,26 @@ public class CassandraManagerService {
 		// キースペースが重複しないのであれば登録
 		registKeySpace(instance, keyspace);
 	}
-	
-	public void registKeySpace(Instance instance, String keySpace) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
 
-			// create文を作成して実行
-			String cqlCommand = "create keyspace if not exists " + keySpace
-					+ " with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };";
-			cassandraServer.execCql(instance, cqlCommand);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+	public void registKeySpace(Instance instance, String keySpace) {
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
+
+		// create文を作成して実行
+		String cqlCommand = "create keyspace if not exists " + keySpace
+				+ " with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };";
+		cassandraServer.execCql(instance, cqlCommand);
 	}
 
 	public void deleteKeySpace(Instance instance, String keySpace) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// 実行文を生成
-			String cqlCommand = "drop keyspace " + keySpace + ";";
-			
-			// 実行
-			cassandraServer.execCql(instance, cqlCommand);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// 実行文を生成
+		String cqlCommand = "drop keyspace " + keySpace + ";";
+
+		// 実行
+		cassandraServer.execCql(instance, cqlCommand);
 	}
 
 	public List<String> findAllKeySpaceWithoutSysKeySpace(Instances instances) {
@@ -288,41 +266,34 @@ public class CassandraManagerService {
 		// 各サーバの保持しているキースペース一覧を取得
 		List<String> keySpaceList = new ArrayList<>();
 		String result = null;
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
 
-			// create文を作成して実行
-			String cqlCommand = "DESC KEYSPACES";
-			result = cassandraServer.execCql(instance, cqlCommand);
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// 検索結果をListに整形
-			result = replaceAll(result, "\n", "");
-			result = replaceAll(result, "  ", " ");
-			List<String> cqlResultKeySpaceList = new ArrayList<String>(asList(split(result, ' ')));
+		// create文を作成して実行
+		String cqlCommand = "DESC KEYSPACES";
+		result = cassandraServer.execCql(instance, cqlCommand);
 
-			// システム管理用キースペース以外を抽出
-			for (String keySpace : cqlResultKeySpaceList) {
-				keySpaceList.add(keySpace);
-			}
+		// 検索結果をListに整形
+		result = replaceAll(result, "\n", "");
+		result = replaceAll(result, "  ", " ");
+		List<String> cqlResultKeySpaceList = new ArrayList<String>(asList(split(result, ' ')));
 
-			return keySpaceList;
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
+		// システム管理用キースペース以外を抽出
+		for (String keySpace : cqlResultKeySpaceList) {
+			keySpaceList.add(keySpace);
 		}
+
+		return keySpaceList;
 	}
 
 	public void registTable(Instance instance, String keySpace, Table table) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// create文を作成して実行
-			String cqlCommand = table.getCreateCql(keySpace);
-			cassandraServer.execCql(instance, cqlCommand);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// create文を作成して実行
+		String cqlCommand = table.getCreateCql(keySpace);
+		cassandraServer.execCql(instance, cqlCommand);
 	}
 
 	public Tables findAllTableByKeySpace(Instances instances, String keySpace) {
@@ -355,43 +326,38 @@ public class CassandraManagerService {
 
 	public Tables findAllTableByKeySpace(Instance instance, String keySpace) {
 		String result = null;
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
 
-			// create文を作成
-			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
-			cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keySpace + "'";
-			cqlCommand = cqlCommand + ";";
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
+
+		// create文を作成
+		String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
+		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keySpace + "'";
+		cqlCommand = cqlCommand + ";";
 			
-			// 実行
-			result = cassandraServer.execCql(instance, cqlCommand);
-			return new Tables(result);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// 実行
+		result = cassandraServer.execCql(instance, cqlCommand);
+		return new Tables(result);
 	}
 
 	public Table findTableByKeySpace(Instance instance, String keySpace, String tableName) {
 		String result = null;
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
 
-			// create文を作成
-			String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
-			cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keySpace + "'";
-			if (isNotEmpty(tableName)) {
-				cqlCommand = cqlCommand + " and table_name = '" + tableName + "'";
-			}
-			cqlCommand = cqlCommand + ";";
-			
-			// 実行
-			result = cassandraServer.execCql(instance, cqlCommand);
-			return new Tables(result).getFirstTable();
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
+
+		// create文を作成
+		String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
+		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keySpace + "'";
+		if (isNotEmpty(tableName)) {
+			cqlCommand = cqlCommand + " and table_name = '" + tableName + "'";
 		}
+		cqlCommand = cqlCommand + ";";
+
+		// 実行
+		result = cassandraServer.execCql(instance, cqlCommand);
+		return new Tables(result).getFirstTable();
+
 	}
 
 	public Tables addColumns(Instance instance, String keySpace, Table newTable) {
@@ -401,43 +367,35 @@ public class CassandraManagerService {
 		Instances instances = Instances.createInstance(instance);
 		// TODO  返り値がおかしい？
 		Table oldTable = findTableByKeySpace(instances, keySpace, newTable.getTableName());
-		
-		try {
-			// テーブルを現行と次期で比較し、Alter文を生成
-			CqlFactory cqlFactory = new CqlFactory();
-			List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keySpace, oldTable, newTable);
-			
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
 
-			// 実行文を生成
-			StringBuilder sb = new StringBuilder();
-			sb.append(CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + ";");
-			for (String cqlAlterCommand : cqlAlterCommandList) {
-				sb.append(cqlAlterCommand);
-			}
-			String cqlCommand = sb.toString();
-			
-			// 実行
-			result = cassandraServer.execCql(instance, cqlCommand);
-			return new Tables(result);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
+		// テーブルを現行と次期で比較し、Alter文を生成
+		CqlFactory cqlFactory = new CqlFactory();
+		List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keySpace, oldTable, newTable);
+
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
+
+		// 実行文を生成
+		StringBuilder sb = new StringBuilder();
+		sb.append(CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + ";");
+		for (String cqlAlterCommand : cqlAlterCommandList) {
+			sb.append(cqlAlterCommand);
 		}
+		String cqlCommand = sb.toString();
+
+		// 実行
+		result = cassandraServer.execCql(instance, cqlCommand);
+		return new Tables(result);
 	}
 
 	public void deleteTable(Instance instance, String keySpace, String tableName) {
-		try {
-			// サーバインスタンスを生成する
-			Cassandra cassandraServer = Cassandra.createInstance();
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
 
-			// 実行文を生成
-			String cqlCommand = "drop table " + keySpace + "." + tableName + ";";
-			
-			// 実行
-			cassandraServer.execCql(instance, cqlCommand);
-		} catch (JSchException | SftpException e) {
-			throw new RuntimeException();
-		}
+		// 実行文を生成
+		String cqlCommand = "drop table " + keySpace + "." + tableName + ";";
+
+		// 実行
+		cassandraServer.execCql(instance, cqlCommand);
 	}
 }
