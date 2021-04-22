@@ -3,6 +3,7 @@ package com.dbaas.cassandra.domain.jsch;
 import com.dbaas.cassandra.domain.cassandra.SessionUser;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
+import com.dbaas.cassandra.shared.exception.SystemException;
 import com.jcraft.jsch.*;
 
 import java.io.BufferedInputStream;
@@ -44,16 +45,20 @@ public class Jsch {
     /**
      * Sessionを開始
      */
-    private Session connectSession(Instance instance) throws JSchException, IOException {
-        final JSch jsch = new JSch();
-        // 鍵追加
-        jsch.addIdentity(ap.getIdentityKeyFileName());
-        // Session設定
-        final Session session = jsch.getSession(ap.getRemoteServerUser(), instance.getPublicIpAddress(), ap.getSshPort());
-        session.setUserInfo(new SessionUser());
-        session.connect();
+    private Session connectSession(Instance instance) {
+        try {
+            final JSch jsch = new JSch();
+            // 鍵追加
+            jsch.addIdentity(ap.getIdentityKeyFileName());
+            // Session設定
+            final Session session = jsch.getSession(ap.getRemoteServerUser(), instance.getPublicIpAddress(), ap.getSshPort());
+            session.setUserInfo(new SessionUser());
+            session.connect();
 
-        return session;
+            return session;
+        } catch (JSchException e) {
+            throw new SystemException();
+        }
     }
 
     /**
@@ -75,7 +80,7 @@ public class Jsch {
         }
     }
 
-    public String getCommandResult(ChannelExec channel, Session session) {
+    public String getCommandResult(ChannelExec channel) {
 
         try (BufferedInputStream bin = new BufferedInputStream(channel.getInputStream())) {
 //		try (BufferedInputStream bin = new BufferedInputStream(channel.getExtInputStream())) {
@@ -107,17 +112,18 @@ public class Jsch {
      * SFTPのChannelを開始
      *
      * @param session
-     *            開始されたSession情報
+     * @return ChannelSftp
      */
-    public ChannelSftp connectChannelSftp(final Session session)
-            throws JSchException {
-        final ChannelSftp channel = (ChannelSftp) session
-                .openChannel(CHANNEL_TYPE_SFTP);
-        channel.connect();
+    public ChannelSftp connectChannelSftp(final Session session) {
+        try {
+            final ChannelSftp channel = (ChannelSftp) session
+                    .openChannel(CHANNEL_TYPE_SFTP);
+            channel.connect();
 
-        return channel;
+            return channel;
+        } catch (JSchException e) {
+            throw new SystemException();
+        }
     }
-
-
 
 }

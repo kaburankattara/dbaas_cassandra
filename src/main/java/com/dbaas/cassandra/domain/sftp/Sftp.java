@@ -23,10 +23,8 @@ public class Sftp {
      * @param fileName ファイル名
      * @param fileStringDetail ファイル内容
      * @return 実行結果
-     * @throws JSchException
-     * @throws SftpException
      */
-    public String execCreateFile(Instance instance, String fileName, String fileStringDetail) throws JSchException, SftpException {
+    public String execCreateFile(Instance instance, String fileName, String fileStringDetail) {
         // StringBuilderでコマンドを生成
         StringBuilder sb = new StringBuilder();
         sb.append(COMMAND_SUDO)
@@ -47,7 +45,7 @@ public class Sftp {
             channel.setCommand(sb.toString());
             channel.connect();
             System.out.println("exec-command:" + sb.toString());
-            return jsch.getCommandResult(channel, session);
+            return jsch.getCommandResult(channel);
         } catch (Exception ex) {
             System.out.println(ex.toString());
             ex.printStackTrace();
@@ -65,12 +63,8 @@ public class Sftp {
      *            アプリ実行環境上の絶対パスを指定
      * @param destPath
      *            アップ先のパス
-     * @throws JSchException
-     *             Session・Channelの設定/接続エラー時に発生
-     * @throws SftpException
-     *             sftp操作失敗時に発生
      */
-    public void putFile(Instance instance, final String sourcePath, final String destPath) throws JSchException, SftpException {
+    public void putFile(Instance instance, final String sourcePath, final String destPath) {
         Session session = null;
         ChannelSftp channel = null;
 

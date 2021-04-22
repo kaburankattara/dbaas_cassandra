@@ -24,30 +24,37 @@ public class Ssh {
     /**
      * コマンドを実行する（インターフェース）
      *
-     * @throws JSchException
-     * @throws SftpException
+     * @param instance
+     * @param command
+     * @param args
+     * @return 実行結果
      */
-    public String exec(Instance instance, String command, Object... args) throws JSchException, SftpException {
+    public String exec(Instance instance, String command, Object... args) {
         return execCommand(instance, EMPTY, command, args);
     }
 
     /**
      * スーパーユーザ権限でコマンドを実行する（インターフェース）
      *
-     * @throws JSchException
-     * @throws SftpException
+     * @param instance
+     * @param command
+     * @param args
+     * @return 実行結果
      */
-    public String execSudo(Instance instance, String command, Object... args) throws JSchException, SftpException {
+    public String execSudo(Instance instance, String command, Object... args) {
         return execCommand(instance, COMMAND_SUDO, command, args);
     }
 
     /**
      * コマンドを実行する
      *
-     * @throws JSchException
-     * @throws SftpException
+     * @param instance
+     * @param sudo
+     * @param command
+     * @param args
+     * @return 実行結果
      */
-    private String execCommand(Instance instance, String sudo, String command, Object... args) throws JSchException, SftpException {
+    private String execCommand(Instance instance, String sudo, String command, Object... args) {
         Session session = null;
         ChannelExec channel = null;
 
@@ -57,7 +64,7 @@ public class Ssh {
             channel.setCommand(String.format(sudo + command, args));
             channel.connect();
             System.out.println("exec-command:" + String.format(sudo + command, args));
-            String commandResult = jsch.getCommandResult(channel, session);
+            String commandResult = jsch.getCommandResult(channel);
             System.out.println("exec-result:" + commandResult);
             System.out.println("exec-statusCode:" + channel.getExitStatus());
             return commandResult;
