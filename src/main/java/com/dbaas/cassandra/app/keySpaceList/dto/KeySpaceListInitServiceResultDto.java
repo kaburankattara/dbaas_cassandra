@@ -5,16 +5,19 @@ import com.dbaas.cassandra.utils.ObjectUtils;
 
 import java.util.List;
 
+import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
+
 public class KeySpaceListInitServiceResultDto {
 	
 	public KeySpaceListInitServiceResultDto() {
 		
 	}
-	
-	public KeySpaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, List<String> createdKeyspaceList) {
+
+	public KeySpaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, List<String> createdKeyspaceList, String endPoint) {
 		this.keyspaceRegistPlans = keyspaceRegistPlans;
 		this.createdKeyspaceList = createdKeyspaceList;
 		setKeyspaceList();
+		this.endPoint = endPoint;
 	}
 	
 	public KeyspaceRegistPlans keyspaceRegistPlans;
@@ -22,6 +25,8 @@ public class KeySpaceListInitServiceResultDto {
 	public List<String> createdKeyspaceList;
 
 	public List<String> keyspaceList;
+
+	public String endPoint;
 	
 	public List<String> getKeyspaceList() {
 		return keyspaceList;
@@ -54,6 +59,18 @@ public class KeySpaceListInitServiceResultDto {
 	public void setCreatedKeyspaceList(List<String> createdKeyspaceList) {
 		this.createdKeyspaceList = createdKeyspaceList;
 	}
+
+	public String getEndPoint() {
+		return endPoint;
+	}
+
+	public void setEndPoint(String endPoint) {
+		this.endPoint = endPoint;
+	}
+
+	public boolean hasEndPoint() {
+		return isNotEmpty(endPoint);
+	}
 	
 	/**
 	 * 引数で指定されたキースペースが一覧画面でリンク表示可能か判定
@@ -67,6 +84,10 @@ public class KeySpaceListInitServiceResultDto {
 	
 	public String getAppendClassForStatusPending(String keyspace) {
 		return !createdKeyspaceList.contains(keyspace) ? "" : "displayNone";
+	}
+
+	public String getAppendClassForEndPoint() {
+		return isNotEmpty(endPoint) ? "" : "displayNone";
 	}
 
 	public boolean hasKeyspaceList() {

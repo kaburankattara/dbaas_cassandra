@@ -23,7 +23,7 @@ public class KeySpaceListInitService {
 	
 	@Autowired
 	KeySpaceListInitService(ServerManagerService serverManagerService,
-			CassandraManagerService cassandraManagerService) {
+							CassandraManagerService cassandraManagerService) {
 		this.serverManagerService = serverManagerService;
 		this.cassandraManagerService = cassandraManagerService;
 	}

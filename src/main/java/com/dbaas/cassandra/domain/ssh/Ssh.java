@@ -1,14 +1,13 @@
 package com.dbaas.cassandra.domain.ssh;
 
+import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_EXEC;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SUDO;
+
 import com.dbaas.cassandra.domain.jsch.Jsch;
 import com.dbaas.cassandra.domain.serverManager.instance.Instance;
 import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-
-import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 
 public class Ssh {
 

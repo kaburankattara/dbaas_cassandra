@@ -1,5 +1,17 @@
 package com.dbaas.cassandra.domain.cassandra;
 
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_MV;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_RM;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SOURCE;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_STATUS_SUCCESS;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_CASSANDRA;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_JAVA;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_PROFILE;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_EC2_USER_HOME;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_ETC;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_OPT;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_TMP;
+
 import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
@@ -8,10 +20,6 @@ import com.dbaas.cassandra.domain.sftp.Sftp;
 import com.dbaas.cassandra.domain.ssh.Ssh;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
-
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 
 public class Cassandra {
 

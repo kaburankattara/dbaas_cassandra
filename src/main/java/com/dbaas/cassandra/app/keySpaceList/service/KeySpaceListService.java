@@ -4,6 +4,8 @@ import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
 
 import java.util.List;
 
+import com.dbaas.cassandra.domain.endPoint.EndPointService;
+import com.dbaas.cassandra.shared.exception.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +27,16 @@ public class  KeySpaceListService {
 	private KeySpaceListAsyncService keySpaceListAsyncService;
 	
 	private KeyspaceRegistPlanService keyspaceRegistPlanService;
+
+	private EndPointService endPointService;
 	
 	@Autowired
 	KeySpaceListService(KeySpaceListInitService keySpaceListInitService, KeySpaceListAsyncService keySpaceListAsyncService, CassandraManagerService cassandraManagerService,
-			KeyspaceRegistPlanService keyspaceRegistPlanService) {
+			KeyspaceRegistPlanService keyspaceRegistPlanService, EndPointService endPointService) {
 		this.keySpaceListInitService = keySpaceListInitService;
 		this.keySpaceListAsyncService = keySpaceListAsyncService;
 		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
+		this.endPointService = endPointService;
 	}
 	
 	/**
@@ -54,8 +59,11 @@ public class  KeySpaceListService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
-			throw new Exception();
+			throw new SystemException();
 		}
-		return new KeySpaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaceList);
+
+		String endPoint = endPointService.getEndPoint(user);
+
+		return new KeySpaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaceList, endPoint);
 	}
 }

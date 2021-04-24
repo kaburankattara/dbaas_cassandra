@@ -116,4 +116,22 @@ public class Instances implements Serializable {
 		}
 		return instanceList.size();
 	}
+
+	/**
+	 * 全てのインスタンスがrunning状態か判定
+	 *
+	 * @return 判定結果
+	 */
+	public boolean isAllRunning() {
+		if (isEmpty()) {
+			return false;
+		}
+
+		for (Instance instance : instanceList) {
+			if (!instance.isRunning()) {
+				return false;
+			}
+		}
+		return true;
+	}
  }
