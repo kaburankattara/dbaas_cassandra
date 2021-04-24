@@ -22,4 +22,6 @@ public class UrlConsts {
 	
 	public static final String URL_IS_COMPLETE_KEYSPACE_REGIST = "/isCompleteKeyspaceRegist";
 
+	public static final String URL_GET_END_POINT = "/getEndPoint";
+
 }

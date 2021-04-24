@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<!-- エンドポイント -->
+<th:block th:fragment="endPointTitle"><label>エンドポイント</label></th:block>
+<th:block th:fragment="endPoint(endPoint)"><span th:id="endPoint" th:text="${endPoint}">dummy</span></th:block>
+</html>

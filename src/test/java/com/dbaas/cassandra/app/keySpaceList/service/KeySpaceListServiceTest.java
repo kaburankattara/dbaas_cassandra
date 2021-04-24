@@ -3,6 +3,7 @@ package com.dbaas.cassandra.app.keySpaceList.service;
 import static com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDtoTest.getKeySpaceListServiceCassandraサーバ未構築_未登録;
 import static com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDtoTest.getKeySpaceListServiceCassandraサーバ構築済_登録済;
 
+import com.dbaas.cassandra.domain.endPoint.EndPointService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -54,6 +55,9 @@ public class KeySpaceListServiceTest {
     
     @Mock
     private CassandraManagerService cassandraManagerService;
+
+	@Mock
+	private EndPointService endPointService;
 	
     @InjectMocks
     private KeySpaceListService keySpaceListService;
@@ -61,7 +65,7 @@ public class KeySpaceListServiceTest {
     @Autowired
 	public KeySpaceListServiceTest(KeyspaceRegistPlanService keyspaceRegistPlanService) {
 		this.keySpaceListService = new KeySpaceListService(keySpaceListInitService, keySpaceListAsyncService,
-				cassandraManagerService, keyspaceRegistPlanService);
+				cassandraManagerService, keyspaceRegistPlanService, endPointService);
 	}
     
     @BeforeAll
