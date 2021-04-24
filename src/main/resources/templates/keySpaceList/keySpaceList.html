@@ -19,6 +19,7 @@
 	<table border="1">
 		<th style="background:#DDFFFF"><th:block th:replace="/domain/endPoint/endPoint :: endPointTitle"></th:block></th>
 		<td th:classappend="|${initResultDto.getAppendClassForEndPoint()}|"><th:block th:replace="/domain/endPoint/endPoint :: endPoint(${initResultDto.endPoint})"></th:block></td>
+		<td class="noCellLine" th:classappend="|${initResultDto.getAppendClassForEndPoint()}|"><th:block th:replace="/domain/endPoint/endPoint :: endPointClipBoardCopy"></th:block></td>
 	</table>
 	<br/>
 	<input type="button" id="keySpaceRegister" value="キースペースを作成"/>

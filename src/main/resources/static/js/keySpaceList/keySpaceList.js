@@ -1,12 +1,17 @@
 import { Request } from "../common/request.js";
 import { IsCompleteKeyspaceRegist } from "../async/isCompleteKeyspaceRegist.js";
 import { GetEndPoint } from "../async/getEndPoint.js";
+import { ClipBoardCopy } from "../common/clipBoardCopy.js";
 import { StringUtils } from "../utils/stringUtils.js";
 $(function () {
     /** キースペース登録画面に遷移 **/
     $("#keySpaceRegister").on("click", function () {
         var request = new Request();
         request.getSubmit("/keySpaceRegister");
+    });
+    /** エンドポイントのクリップボードコピーを選択 **/
+    $("#copyEndPoint").on("click", function () {
+        new ClipBoardCopy().execById("endPoint");
     });
     var isCompleteCreateServer = function () {
         // 登録済みチェックを実施
