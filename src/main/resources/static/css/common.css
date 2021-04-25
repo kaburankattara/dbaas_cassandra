@@ -8,3 +8,6 @@ ul {
 .noCellLine{
 	border-width:0 0 0 0 !important;
 }
+.copyAlert {
+  display: none;
+}

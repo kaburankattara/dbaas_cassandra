@@ -5,6 +5,9 @@
 
 <!-- エンドポイント -->
 <th:block th:fragment="endPointTitle"><label>エンドポイント</label></th:block>
-<th:block th:fragment="endPoint(endPoint)"><span th:id="endPoint" th:text="${endPoint}">dummy</span></th:block>
-<th:block th:fragment="endPointClipBoardCopy"><input th:id="copyEndPoint" type="button" value="コピー"/></th:block>
+<th:block th:fragment="endPoint(endPoint)">
+	<span th:id="endPoint" th:text="${endPoint}">dummy</span>
+	<input th:id="copyEndPoint" type="button" value="コピー"/>
+	<p id="copyAlert" class="copyAlert" style="background-color:#BDFFDD;height:30px;width:300px;position:fixed;top:10%;left:40%;text-align:center;padding-top:15px;padding-bottom:15px;border-radius:10px;">クリップボードにコピーしました。</p>
+</th:block>
 </html>

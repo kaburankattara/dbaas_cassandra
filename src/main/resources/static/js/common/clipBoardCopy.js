@@ -16,8 +16,7 @@ var ClipBoardCopy = /** @class */ (function () {
             // テキストエリアの削除
             $textarea.remove();
             // アラート文の表示
-            alert("クリップボードにコピーしました。");
-            //$('#js-copyalert').show().delay(2000).fadeOut(400);
+            $('#copyAlert').show().delay(2000).fadeOut(400);
         };
     }
     return ClipBoardCopy;
