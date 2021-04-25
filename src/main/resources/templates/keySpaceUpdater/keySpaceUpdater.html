@@ -22,12 +22,10 @@
 		<tr>
 			<td colspan='2'><input th:field="*{keySpace}" type="text" disabled></td>
 		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td><input id="createTable" type="button" value="テーブル作成"/></td>
-		</tr>
 	</table>
-	<table border="1">
+	<br/>
+	<input id="createTable" type="button" value="テーブル作成"/>
+	<table border="1" cellspacing="0">
 		<thead style="background:#DDFFFF">
 			<tr>
 				<th><label>テーブル</label></th>
@@ -49,6 +47,7 @@
 		</th:block>
 		</tbody>
 	</table>
+	<br/>
 	<input id="referrer" type="button" value="戻る"/>
 	<input id="deleteKeySpace" type="button" value="削除"/>
 </form>
