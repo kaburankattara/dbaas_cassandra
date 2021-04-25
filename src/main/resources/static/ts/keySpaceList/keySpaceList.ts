@@ -5,6 +5,11 @@ import { ClipBoardCopy } from "../common/clipBoardCopy.js";
 import { StringUtils } from "../utils/stringUtils.js";
 
 $(function () {
+	/** formからエンドポイントを取得 **/
+	var getEndPointByForm = function () {
+		return $("#endPoint");
+	}
+	
 	/** キースペース登録画面に遷移 **/
 	$("#keySpaceRegister").on("click", function () {
 		var request = new Request();
@@ -13,7 +18,7 @@ $(function () {
 
 	/** エンドポイントのクリップボードコピーを選択 **/
 	$("#copyEndPoint").on("click", function () {
-		new ClipBoardCopy().execById("endPoint");
+		new ClipBoardCopy().execById(getEndPointByForm().text());
 	});
 
 	var isCompleteCreateServer = function () {
@@ -34,8 +39,9 @@ $(function () {
 	}
 	setInterval(isCompleteCreateServer, 1000);
 
-	var getEndPoint = function () {
-		var $endPoint = $("#endPoint");
+	/** サーバーからエンドポイントを取得 **/
+	var getEndPointByServer = function () {
+		var $endPoint = getEndPointByForm();
 
 		// エンドポイントを取得済の場合、処理しない
 		if (StringUtils.isNotEmpty($endPoint.html())) {
@@ -47,13 +53,12 @@ $(function () {
 		getEndPoint.execRequest(
 			function (endPoint : string) {
 				if (StringUtils.isNotEmpty(endPoint)) {
-					var $endPoint = $("#endPoint");
 					$endPoint.html(endPoint);
 					$endPoint.closest("td").removeClass('displayNone');
 					return false;
 				}
 			});
 	}
-	setInterval(getEndPoint, 1000);
+	setInterval(getEndPointByServer, 1000);
 
 });

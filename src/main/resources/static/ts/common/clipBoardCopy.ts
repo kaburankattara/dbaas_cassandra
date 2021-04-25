@@ -1,11 +1,9 @@
 class ClipBoardCopy {
-	execById = function (tagId: string) {
-    	// コピーする文章の取得
-		let text = $("#" + tagId).text();
+	execById = function (message: string) {
     	// テキストエリアの作成
     	let $textarea = $('<textarea></textarea>');
     	// テキストエリアに文章を挿入
-    	$textarea.text(text);
+    	$textarea.text(message);
     	//　テキストエリアを挿入
 		$("#form").append($textarea);
     	//　テキストエリアを選択
