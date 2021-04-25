@@ -1,12 +1,10 @@
 var ClipBoardCopy = /** @class */ (function () {
     function ClipBoardCopy() {
-        this.execById = function (tagId) {
-            // コピーする文章の取得
-            var text = $("#" + tagId).text();
+        this.execById = function (message) {
             // テキストエリアの作成
             var $textarea = $('<textarea></textarea>');
             // テキストエリアに文章を挿入
-            $textarea.text(text);
+            $textarea.text(message);
             //　テキストエリアを挿入
             $("#form").append($textarea);
             //　テキストエリアを選択
