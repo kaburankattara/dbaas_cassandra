@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,9 +18,12 @@ public class KeySpaceListController {
 
     private KeySpaceListService keySpaceListService;
 
+    private SmartValidator smartValidator;
+
     @Autowired
-    public KeySpaceListController(KeySpaceListService keySpaceListService) {
+    public KeySpaceListController(KeySpaceListService keySpaceListService, SmartValidator smartValidator) {
         this.keySpaceListService = keySpaceListService;
+        this.smartValidator = smartValidator;
     }
 
     /**
