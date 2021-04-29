@@ -36,7 +36,7 @@ public class UserRegisterForm {
 	}
 
 	public User createUser() {
-		return new User(userId, userName, password);
+		return User.createInstanceByRawPassword(userId, userName, password);
 	}
 
 	public RedirectLoginForm createRedirectLoginForm() {

@@ -3,35 +3,29 @@ package com.dbaas.cassandra.app.userRegister.controller;
 import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
 import com.dbaas.cassandra.app.userRegister.form.UserRegisterForm;
 import com.dbaas.cassandra.app.userRegister.service.UserRegisterService;
-import com.dbaas.cassandra.domain.message.Message;
-import com.dbaas.cassandra.domain.message.MessageSourceService;
-import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_REDIRECT_LOGIN;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_USER_REGISTER;
+import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_ERROR;
 import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
 @Controller
 @RequestMapping(URL_USER_REGISTER)
-@SessionAttributes(names = { "TABLE_REGISTER_REFERER" })
 public class UserRegisterController {
 
 	private final UserRegisterService registerService;
 
-	private final MessageSourceService messageSource;
-
 	@Autowired
-	public UserRegisterController(UserRegisterService registerService, KbnDao kbnDao,
-								  MessageSourceService messageSource) {
+	public UserRegisterController(UserRegisterService registerService) {
 		this.registerService = registerService;
-		this.messageSource = messageSource;
 	}
 
 	/**
@@ -45,15 +39,19 @@ public class UserRegisterController {
 	}
 
 	@GetMapping()
-	public String index(HttpServletRequest request, @ModelAttribute("form") UserRegisterForm form, Model model) {
+	public String index() {
 		return "userRegister/userRegister";
 	}
 
 	@PostMapping("regist")
 	public String regist(@ModelAttribute("form") UserRegisterForm form, RedirectAttributes attributes, Model model) {
-		RegistUserResultDto result = registerService.registUser(form.createUser());
+
+		// 引数で指定したユーザーを登録する
+		RegistUserResultDto result = registerService.regist(form.createUser());
+
+		// 登録の結果、エラーの場合はメッセージを設定して処理を終了する
 		if (result.hasError()) {
-			model.addAttribute(Message.MESSAGE_KEY_ERROR, result.getErrorMessage(messageSource));
+			model.addAttribute(MESSAGE_KEY_ERROR, result.getValidateResult().getFirstErrorMessage());
 			return "userRegister/userRegister";
 		}
 

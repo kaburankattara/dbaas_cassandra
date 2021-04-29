@@ -1,7 +1,6 @@
 package com.dbaas.cassandra.app.userRegister.dto;
 
-import com.dbaas.cassandra.domain.message.Message;
-import com.dbaas.cassandra.domain.message.MessageSourceService;
+import com.dbaas.cassandra.shared.validation.ValidateResult;
 
 public class RegistUserResultDto {
 
@@ -12,26 +11,18 @@ public class RegistUserResultDto {
 		return new RegistUserResultDto();
 	}
 
-	private boolean isRegistedUser;
-	
-	public boolean isRegistedUser() {
-		return isRegistedUser;
+	private ValidateResult validateResult;
+
+	public ValidateResult getValidateResult() {
+		return validateResult;
 	}
 
-	public void setIsRegistedUser() {
-		isRegistedUser = true;
+	public void setValidateResult(ValidateResult validateResult) {
+		this.validateResult = validateResult;
 	}
 
 	public boolean hasError() {
-		return isRegistedUser;
-	}
-	
-	public String getErrorMessage(MessageSourceService messageSource) {
-		if (isRegistedUser) {
-			return messageSource.getMessage(Message.MSG003E);
-		}
-
-		return "";
+		return validateResult.hasErrors();
 	}
 
 }

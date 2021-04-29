@@ -1,13 +1,11 @@
 package com.dbaas.cassandra.app.userRegister.service;
 
+import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
+import com.dbaas.cassandra.domain.user.User;
+import com.dbaas.cassandra.domain.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
-import com.dbaas.cassandra.domain.user.LoginUser;
-import com.dbaas.cassandra.domain.user.User;
-import com.dbaas.cassandra.domain.user.UserService;
 
 @Service
 @Transactional
@@ -21,26 +19,18 @@ public class UserRegisterService {
 	}
 
 	/**
-	 * ユーザーを登録する
+	 * 引数で指定したユーザーを登録する
 	 *
 	 * @param user ユーザー
 	 */
-	public RegistUserResultDto registUser(User user) {
-		// 単項目チェック
-		// TODO 実装する
+	public RegistUserResultDto regist(User user) {
 
-		// 相関チェック
-		// 同じユーザーIDが登録済でないか判定
-		LoginUser registedUser = userService.findUserByUserId(user.getUserId());
-		if (!registedUser.isEmpty()){
-			RegistUserResultDto result = new RegistUserResultDto();
-			result.setIsRegistedUser();
-			return result;
-		}
+		// 引数で指定したユーザーが登録可能かチェックする
+		userService.validateForRegist(user);
 
-		// 登録処理
+		// 引数で指定したユーザーを登録する
 		// TODO insertのみ実行 or 排他制御を実装する
-		userService.registUser(user);
+		userService.regist(user);
 
 		return RegistUserResultDto.createEmptyInstance();
 	}

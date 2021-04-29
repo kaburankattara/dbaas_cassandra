@@ -1,5 +1,8 @@
 package com.dbaas.cassandra.domain.table.user;
 
+import com.dbaas.cassandra.shared.validation.constraints.MaxLength;
+import com.dbaas.cassandra.shared.validation.constraints.Required;
+
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -15,6 +18,16 @@ public class UserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * ユーザーID 最大桁数
+	 */
+	private static final int USER_ID_MAX_LENGTH = 10;
+
+	/**
+	 * ユーザー名 最大桁数
+	 */
+	private static final int USER_NAME_MAX_LENGTH = 10;
+
+	/**
 	 * デフォルトコンストラクタ
 	 */
 	public UserEntity() {
@@ -24,16 +37,21 @@ public class UserEntity implements Serializable {
      * ユーザーID
      */
 	@Id
+	@Required(message = "ユーザーIDの入力は必須です。")
+	@MaxLength(max = USER_ID_MAX_LENGTH, message = "ユーザーIDは" + USER_ID_MAX_LENGTH + "文字以下で入力してください。")
     private String userId;
 
     /**
      * ユーザー名
      */
+	@Required(message = "ユーザー名の入力は必須です。")
+	@MaxLength(max = USER_NAME_MAX_LENGTH, message = "ユーザー名は" + USER_NAME_MAX_LENGTH + "文字以下で入力してください。")
     private String userName;
 
     /**
      * パスワード
      */
+	@Required(message = "パスワードの入力は必須です。")
     private String password;
 
 	/**
