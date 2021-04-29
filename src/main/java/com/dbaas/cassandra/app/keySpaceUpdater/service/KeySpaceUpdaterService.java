@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.app.keySpaceUpdater.service.bean.KeySpaceUpdaterDeleteService;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
@@ -22,16 +22,16 @@ public class KeySpaceUpdaterService {
 
 	private KeySpaceUpdaterDeleteService deleteService;
 
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 
 	@Autowired
-	KeySpaceUpdaterService(KeySpaceUpdaterDeleteService deleteService, ServerManagerService serverManagerService,
-			CassandraManagerService cassandraManagerService) {
+	KeySpaceUpdaterService(KeySpaceUpdaterDeleteService deleteService, ServerService serverService,
+			CassandraService cassandraService) {
 		this.deleteService = deleteService;
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class KeySpaceUpdaterService {
 			boolean isNotAllInstanceRunning = true;
 			while (isNotAllInstanceRunning) {
 				// ユーザに紐づくEC2リストを取得
-				Instances instances = serverManagerService.getInstances(user);
+				Instances instances = serverService.getInstances(user);
 
 				// 保持しているサーバにpendingが存在すればrunningになるまで待つ
 				if (instances.hasPendingInstance()) {
@@ -56,8 +56,8 @@ public class KeySpaceUpdaterService {
 			}
 
 			// 入力されたkeySpaceを登録する
-			Instances instances = serverManagerService.getInstances(user);
-			return cassandraManagerService.findAllTableByKeySpace(instances, keySpace);
+			Instances instances = serverService.getInstances(user);
+			return cassandraService.findAllTableByKeySpace(instances, keySpace);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -75,14 +75,14 @@ public class KeySpaceUpdaterService {
 			deleteService.deleteKeySpace(user, keySpace);
 
 			// 削除後も一つ以上のキースペースを保持しているか判定
-			Instances instances = serverManagerService.getInstances(user);
-			List<String> keySpaceList = cassandraManagerService.findAllKeySpaceWithoutSysKeySpace(instances);
+			Instances instances = serverService.getInstances(user);
+			List<String> keySpaceList = cassandraService.findAllKeySpaceWithoutSysKeySpace(instances);
 			if (isNotEmpty(keySpaceList)) {
 				return;
 			}
 
 			// 全てのキースペースを削除していたらサーバーも削除
-			serverManagerService.deleteAllServer(user);
+			serverService.deleteAllServer(user);
 
 		} catch (Exception e) {
 			// TODO: handle exception

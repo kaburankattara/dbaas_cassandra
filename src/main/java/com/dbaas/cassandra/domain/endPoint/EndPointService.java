@@ -6,34 +6,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
 public class EndPointService {
 
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 
     @Autowired
-    public EndPointService(ServerManagerService serverManagerService,
-						   CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+    public EndPointService(ServerService serverService, CassandraService cassandraService) {
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
     }
     
     public String getEndPoint(LoginUser user) {
 
     	// インスタンスを取得
-		Instances instances = serverManagerService.getInstances(user);
+		Instances instances = serverService.getInstances(user);
 
 		// 全インスタンスがCQLの実行が可能か判定
-		boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
+		boolean canAllExecCql = cassandraService.canAllExecCql(instances);
 
 		// 全インスタンスがCQLの実行が不可の場合、エンドポイント未作成扱いとする
 		if (!canAllExecCql) {

@@ -4,25 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
 public class TableRegisterService {
 
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 
 	@Autowired
-	TableRegisterService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+	TableRegisterService(ServerService serverService, CassandraService cassandraService) {
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
 	}
 
 	/**
@@ -30,9 +30,9 @@ public class TableRegisterService {
 	 */
 	public void registTable(LoginUser user, String keySpace, Table table) {
 		// 入力されたテーブルを登録する
-		Instances instances = serverManagerService.getInstances(user);
+		Instances instances = serverService.getInstances(user);
 		for (Instance instance : instances.getInstanceList()) {
-			cassandraManagerService.registTable(instance, keySpace, table);
+			cassandraService.registTable(instance, keySpace, table);
 		}
 	}
 
@@ -41,7 +41,7 @@ public class TableRegisterService {
 	 */
 	public Table findTableByRetry(LoginUser user, String keySpace, Table table) {
 		//  登録済みのテーブルを取得する
-		Instances instances = serverManagerService.getInstances(user);
+		Instances instances = serverService.getInstances(user);
 
 		int tryCount = 1;
 		int MAX_TRY_COUNT = 3;
@@ -49,7 +49,7 @@ public class TableRegisterService {
 		boolean isRetry = true;
 		while (isRetry) {
 			// テーブルが取得出来るか、最大リトライ回数まで検索処理を実施
-			findedTable = cassandraManagerService.findTableByKeySpace(instances, keySpace, table.getTableName());
+			findedTable = cassandraService.findTableByKeySpace(instances, keySpace, table.getTableName());
 			if (findedTable.isEmpty() && tryCount <= MAX_TRY_COUNT) {
 				tryCount++;
 				continue;

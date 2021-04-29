@@ -7,30 +7,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
 public class IsCompleteKeyspaceRegistService {
 
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 
 	@Autowired
-	IsCompleteKeyspaceRegistService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+	IsCompleteKeyspaceRegistService(ServerService serverService, CassandraService cassandraService) {
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
 	}
 
 	/**
 	 * サーバの作成が完了し、キースペースが登録済みか判定
 	 */
 	public List<String> isCompleteKeyspaceRegist(LoginUser user) {
-		Instances instances = serverManagerService.getInstances(user);
+		Instances instances = serverService.getInstances(user);
 		
 		// サーバが起動中ならfalse
 		if (instances.hasPendingInstance()) {
@@ -38,6 +38,6 @@ public class IsCompleteKeyspaceRegistService {
 		}
 		
 		// サーバが起動済みであればキースペースを一覧取得し、cassandraの起動を確認
-		return cassandraManagerService.findAllKeySpaceWithoutSysKeySpace(instances);
+		return cassandraService.findAllKeySpaceWithoutSysKeySpace(instances);
 	}
 }

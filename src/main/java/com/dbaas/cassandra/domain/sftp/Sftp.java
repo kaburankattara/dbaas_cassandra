@@ -1,7 +1,7 @@
 package com.dbaas.cassandra.domain.sftp;
 
 import com.dbaas.cassandra.domain.jsch.Jsch;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.jcraft.jsch.*;
 
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;

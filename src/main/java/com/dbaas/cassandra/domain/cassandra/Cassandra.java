@@ -15,7 +15,7 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_TMP;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.sftp.Sftp;
 import com.dbaas.cassandra.domain.ssh.Ssh;
 import com.dbaas.cassandra.domain.user.LoginUser;

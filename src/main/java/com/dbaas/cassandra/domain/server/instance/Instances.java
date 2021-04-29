@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.serverManager.instance;
+package com.dbaas.cassandra.domain.server.instance;
 
 import static java.util.Arrays.asList;
 

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncService;
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -31,7 +31,7 @@ public class  KeySpaceListService {
 	private EndPointService endPointService;
 	
 	@Autowired
-	KeySpaceListService(KeySpaceListInitService keySpaceListInitService, KeySpaceListAsyncService keySpaceListAsyncService, CassandraManagerService cassandraManagerService,
+	KeySpaceListService(KeySpaceListInitService keySpaceListInitService, KeySpaceListAsyncService keySpaceListAsyncService, CassandraService cassandraManagerService,
 			KeyspaceRegistPlanService keyspaceRegistPlanService, EndPointService endPointService) {
 		this.keySpaceListInitService = keySpaceListInitService;
 		this.keySpaceListAsyncService = keySpaceListAsyncService;

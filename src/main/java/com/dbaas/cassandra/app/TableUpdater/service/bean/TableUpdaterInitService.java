@@ -1,10 +1,10 @@
 package com.dbaas.cassandra.app.TableUpdater.service.bean;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableUpdaterInitService {
 
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 
 	@Autowired
-	TableUpdaterInitService(ServerManagerService serverManagerService, CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+	TableUpdaterInitService(ServerService serverService, CassandraService cassandraService) {
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
 	}
 
 	/**
@@ -30,9 +30,9 @@ public class TableUpdaterInitService {
 	 */
 	public Table findTableByKeySpaceAndTableName(LoginUser user, String keySpace, String tableName) {
 		try {
-			Instances instances = serverManagerService.getInstances(user);
+			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				return cassandraManagerService.findTableByKeySpace(instance, keySpace, tableName);
+				return cassandraService.findTableByKeySpace(instance, keySpace, tableName);
 				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {

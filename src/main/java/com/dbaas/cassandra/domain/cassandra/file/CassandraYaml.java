@@ -2,7 +2,7 @@ package com.dbaas.cassandra.domain.cassandra.file;
 
 import java.io.File;
 
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 public class CassandraYaml {

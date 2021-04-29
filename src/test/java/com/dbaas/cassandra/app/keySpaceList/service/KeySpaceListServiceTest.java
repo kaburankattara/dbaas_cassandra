@@ -28,7 +28,7 @@ import com.dbaas.cassandra.app.keySpaceList.dto.KeySpaceListInitServiceResultDto
 import com.dbaas.cassandra.app.keySpaceList.service.async.KeySpaceListAsyncService;
 import com.dbaas.cassandra.app.keySpaceList.service.bean.KeySpaceListInitService;
 import com.dbaas.cassandra.config.DatasourceConfig;
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
@@ -54,7 +54,7 @@ public class KeySpaceListServiceTest {
 	private KeySpaceListAsyncService keySpaceListAsyncService;
     
     @Mock
-    private CassandraManagerService cassandraManagerService;
+    private CassandraService cassandraService;
 
 	@Mock
 	private EndPointService endPointService;
@@ -65,7 +65,7 @@ public class KeySpaceListServiceTest {
     @Autowired
 	public KeySpaceListServiceTest(KeyspaceRegistPlanService keyspaceRegistPlanService) {
 		this.keySpaceListService = new KeySpaceListService(keySpaceListInitService, keySpaceListAsyncService,
-				cassandraManagerService, keyspaceRegistPlanService, endPointService);
+				cassandraService, keyspaceRegistPlanService, endPointService);
 	}
     
     @BeforeAll
