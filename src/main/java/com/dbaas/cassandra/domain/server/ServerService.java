@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.serverManager;
+package com.dbaas.cassandra.domain.server;
 
 import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDateYyyymmddhhmmssSSSSSS;
 import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
@@ -23,18 +23,18 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.ec2.model.TagSpecification;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
-public class  ServerManagerService {
+public class ServerService {
 
 	ApplicationProperties ap = ApplicationProperties.createInstance();
 
     @Autowired
-    public ServerManagerService(){
+    public ServerService(){
     }
 	
     /**

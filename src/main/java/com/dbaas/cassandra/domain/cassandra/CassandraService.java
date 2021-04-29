@@ -4,8 +4,8 @@ import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.exception.SystemException;
 import com.dbaas.cassandra.utils.ThreadUtils;
@@ -27,10 +27,10 @@ import static java.util.Arrays.asList;
 
 @Service
 @Transactional
-public class CassandraManagerService {
+public class CassandraService {
 
 	@Autowired
-	public CassandraManagerService() {
+	public CassandraService() {
 	}
 
 	/**

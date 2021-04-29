@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.serverManager.instance;
+package com.dbaas.cassandra.domain.server.instance;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

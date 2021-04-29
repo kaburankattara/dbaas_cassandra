@@ -5,7 +5,7 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CHANNEL_TYPE_
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SUDO;
 
 import com.dbaas.cassandra.domain.jsch.Jsch;
-import com.dbaas.cassandra.domain.serverManager.instance.Instance;
+import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
 

@@ -9,24 +9,24 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraManagerService;
-import com.dbaas.cassandra.domain.serverManager.ServerManagerService;
-import com.dbaas.cassandra.domain.serverManager.instance.Instances;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
 public class  KeySpaceRegisterAsyncService {
 	
-	private ServerManagerService serverManagerService;
+	private ServerService serverService;
 	
-	private CassandraManagerService cassandraManagerService;
+	private CassandraService cassandraService;
 	
 	@Autowired
-	KeySpaceRegisterAsyncService(ServerManagerService serverManagerService,
-			CassandraManagerService cassandraManagerService) {
-		this.serverManagerService = serverManagerService;
-		this.cassandraManagerService = cassandraManagerService;
+	KeySpaceRegisterAsyncService(ServerService serverService,
+								 CassandraService cassandraService) {
+		this.serverService = serverService;
+		this.cassandraService = cassandraService;
 	}
 	
 	/**
@@ -37,40 +37,40 @@ public class  KeySpaceRegisterAsyncService {
 		setSysDate(sysDate);
 		
 		try {
-			Instances instances = serverManagerService.getInstances(user);
-			boolean canAllExecCql = cassandraManagerService.canAllExecCql(instances);
+			Instances instances = serverService.getInstances(user);
+			boolean canAllExecCql = cassandraService.canAllExecCql(instances);
 
 			// CQLが実行可能の場合、キースペースの登録のみ実施
 			if (canAllExecCql) {
 				// ※他画面からの登録処理とバッティングを考慮して登録する
-				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keySpace);
+				cassandraService.registKeySpaceByDuplicatIgnore(instances, keySpace);
 				return;
 			}
 			
 			// サーバはあるが、cassandraが起動来ていない場合
 			// cassandraを再セットアップし、起動してからキースペースを登録
 			if (!instances.isEmpty() && !canAllExecCql) {
-				cassandraManagerService.setup(user, instances);
-				cassandraManagerService.execCassandraByWait(instances);
+				cassandraService.setup(user, instances);
+				cassandraService.execCassandraByWait(instances);
 				// ※他画面からの登録処理とバッティングを考慮して登録する
-				cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keySpace);
+				cassandraService.registKeySpaceByDuplicatIgnore(instances, keySpace);
 				return;
 			}
 
 			// サーバが無ければ構築し、キースペースを登録する
 			// EC2を構築
 			// TODO マルチノードにしたときにメソッドを統合する
-			serverManagerService.createServer(user);
+			serverService.createServer(user);
 			// 保持しているサーバの状態が全てrunningになるまで待つ
-			serverManagerService.waitCompleteCreateServer(user);
+			serverService.waitCompleteCreateServer(user);
 							
 			// cassandraをセットアップし、cassandraを起動
-			cassandraManagerService.setup(user, instances);
-			cassandraManagerService.execCassandraByWait(instances);
+			cassandraService.setup(user, instances);
+			cassandraService.execCassandraByWait(instances);
 			
 			// 入力されたkeySpaceを登録する
 			// ※他画面からの登録処理とバッティングを考慮して登録する
-			cassandraManagerService.registKeySpaceByDuplicatIgnore(instances, keySpace);
+			cassandraService.registKeySpaceByDuplicatIgnore(instances, keySpace);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());

@@ -43,7 +43,7 @@ public class  KeySpaceRegisterService {
 		// 登録するキースペースをキースペースマネージャーテーブルに登録
 		keyspaceRegistPlanService.insert(user, keySpace);
 		
-		// サーバ構築を行う必要も発生する場合があるため、
+		// サーバ構築が必要となる場合があるため、
 		// 物理的なキースペースの登録は非同期で行う
 		asyncService.registKeySpace(user, keySpace, getSysDate());
 	}
