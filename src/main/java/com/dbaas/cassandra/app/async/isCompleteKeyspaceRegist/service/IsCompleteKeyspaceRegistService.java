@@ -38,6 +38,6 @@ public class IsCompleteKeyspaceRegistService {
 		}
 		
 		// サーバが起動済みであればキースペースを一覧取得し、cassandraの起動を確認
-		return cassandraService.findAllKeySpaceWithoutSysKeySpace(instances);
+		return cassandraService.findAllKeyspaceWithoutSysKeyspace(instances);
 	}
 }

@@ -87,10 +87,10 @@ public class Table {
 		this.columns = columns;
 	}
 	
-	public String getCreateCql(String keySpace) {
+	public String getCreateCql(String keyspace) {
 		StringBuilder sb = new StringBuilder();
 		// キースペース選択
-		sb.append("use " + keySpace + ";");
+		sb.append("use " + keyspace + ";");
 		
 		
 		// cretate文

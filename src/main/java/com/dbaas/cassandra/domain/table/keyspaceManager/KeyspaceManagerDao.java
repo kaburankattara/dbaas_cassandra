@@ -38,12 +38,12 @@ public class  KeyspaceManagerDao {
 	 * キースペースマネージャーに登録
 	 * 
 	 * @param user
-	 * @param keySpace
+	 * @param keyspace
 	 */
-	public void insert(LoginUser user, String keySpace) {
+	public void insert(LoginUser user, String keyspace) {
 		KeyspaceManagerEntity entity = new KeyspaceManagerEntity();
 		entity.setUserId(user.getUserId());
-		entity.setKeyspace(keySpace);
+		entity.setKeyspace(keyspace);
 		repository.save(entity);
 	}
 	
@@ -51,12 +51,12 @@ public class  KeyspaceManagerDao {
 	 * キースペースマネージャーに削除
 	 * 
 	 * @param user
-	 * @param keySpace
+	 * @param keyspace
 	 */
-	public void delete(LoginUser user, String keySpace) {
+	public void delete(LoginUser user, String keyspace) {
 		KeyspaceManagerEntity entity = new KeyspaceManagerEntity();
 		entity.setUserId(user.getUserId());
-		entity.setKeyspace(keySpace);
+		entity.setKeyspace(keyspace);
 		repository.delete(entity);
 	}
 }

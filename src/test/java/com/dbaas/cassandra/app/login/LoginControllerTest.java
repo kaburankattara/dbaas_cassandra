@@ -54,7 +54,7 @@ public class LoginControllerTest {
                 .perform(MockMvcRequestBuilders.post("/authenticate").param("userId", "aaa").param("password", "aaa")
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/keySpaceList"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/keyspaceList"));
     }
 
     @Test

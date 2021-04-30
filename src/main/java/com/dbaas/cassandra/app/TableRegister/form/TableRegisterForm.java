@@ -16,18 +16,18 @@ public class TableRegisterForm {
 		columns = new ColumnsForm();
 	}
 	
-	public String keySpace;
+	public String keyspace;
 	
 	public String tableName;
 	
 	public ColumnsForm columns;
 	
-	public String getKeySpace() {
-		return keySpace;
+	public String getKeyspace() {
+		return keyspace;
 	}
 	
-	public void setKeySpace(String keySpace) {
-		this.keySpace = keySpace;
+	public void setKeyspace(String keyspace) {
+		this.keyspace = keyspace;
 	}
 	
 	public String getTableName() {

@@ -28,11 +28,11 @@ public class TableUpdaterInitService {
 	/**
 	 * テーブルを取得する
 	 */
-	public Table findTableByKeySpaceAndTableName(LoginUser user, String keySpace, String tableName) {
+	public Table findTableByKeyspaceAndTableName(LoginUser user, String keyspace, String tableName) {
 		try {
 			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				return cassandraService.findTableByKeySpace(instance, keySpace, tableName);
+				return cassandraService.findTableByKeyspace(instance, keyspace, tableName);
 				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {

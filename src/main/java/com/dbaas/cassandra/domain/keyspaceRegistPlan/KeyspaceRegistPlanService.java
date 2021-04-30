@@ -39,7 +39,7 @@ public class KeyspaceRegistPlanService {
     	return new KeyspaceRegistPlans(KeyspaceRegistPlanList);
     }
     
-    public void insert(LoginUser user, String keySpace) {
-    	keyspaceManagerDao.insert(user, keySpace);
+    public void insert(LoginUser user, String keyspace) {
+    	keyspaceManagerDao.insert(user, keyspace);
     }
 }

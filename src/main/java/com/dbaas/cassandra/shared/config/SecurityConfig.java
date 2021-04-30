@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/authenticate") // ログインフォームのアクションに指定したURL[action="@{/login}"]を設定
                 .usernameParameter("userId") // ログインフォームのユーザー欄のname属性を設定
 				.passwordParameter("password") // ログインフォームのパスワード欄のname属性を設定
-				.defaultSuccessUrl(UrlConsts.URL_KEY_SPACE_LIST) // ログイン成功時に遷移するURL
+				.defaultSuccessUrl(UrlConsts.URL_KEYSPACE_LIST) // ログイン成功時に遷移するURL
 //                .successForwardUrl("/menu")
                 .failureUrl("/loginError") // ログイン失敗時に遷移するURL
                 .permitAll()
@@ -72,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		.loginProcessingUrl("/authenticate")
 //		
 //		// 認証成功時の遷移先のデフォルト
-//		.defaultSuccessUrl("/keySpaceList/index")
+//		.defaultSuccessUrl("/keyspaceList/index")
 //		// 認証失敗時の遷移先
 //		.failureUrl("/loginFailure")
 //		.permitAll();
@@ -103,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		// 認証失敗時のフォワード先
 //		.failureForwardUrl("/error")
 //		// ログイン成功時の画面設定
-//		.defaultSuccessUrl("/keySpaceList/index", true)
+//		.defaultSuccessUrl("/keyspaceList/index", true)
 //		// 認証情報のパラメーター名の設定
 //		.usernameParameter("userId")
 //		.passwordParameter("password")

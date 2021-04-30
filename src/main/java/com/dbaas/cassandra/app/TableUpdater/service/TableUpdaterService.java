@@ -31,21 +31,21 @@ public class TableUpdaterService {
 	/**
 	 * テーブルを検索する
 	 */
-	public Table findTable(LoginUser user, String keySpace, String tableName) {
-		return initService.findTableByKeySpaceAndTableName(user, keySpace, tableName);
+	public Table findTable(LoginUser user, String keyspace, String tableName) {
+		return initService.findTableByKeyspaceAndTableName(user, keyspace, tableName);
 	}
 
 	/**
 	 * テーブルを更新する
 	 */
-	public void updateTable(LoginUser user, String keySpace, Table table) {
-		updateService.updateTable(user, keySpace, table);
+	public void updateTable(LoginUser user, String keyspace, Table table) {
+		updateService.updateTable(user, keyspace, table);
 	}
 
 	/**
 	 * テーブルを削除する
 	 */
-	public void deleteTable(LoginUser user, String keySpace, String tableName) {
-		deleteService.deleteTable(user, keySpace, tableName);
+	public void deleteTable(LoginUser user, String keyspace, String tableName) {
+		deleteService.deleteTable(user, keyspace, tableName);
 	}
 }
