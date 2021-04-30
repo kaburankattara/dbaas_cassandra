@@ -1,10 +1,11 @@
 package com.dbaas.cassandra.domain.cassandra;
 
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -169,7 +170,7 @@ public class CassandraService {
 		return true;
 	}
 	
-	public void registKeyspace(Instances instances, String keyspace) {
+	public void registKeyspace(Instances instances, Keyspace keyspace) {
 		for (Instance instance : instances.getInstanceList()) {
 			registKeyspace(instance, keyspace);
 		}
@@ -183,11 +184,11 @@ public class CassandraService {
 	 */
 	public void registKeyspaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
 		for (String keyspace : keyspaceRegistPlans.getKeyspaceList()) {
-			registKeyspaceByDuplicatIgnore(instances, keyspace);
+			registKeyspaceByDuplicatIgnore(instances, Keyspace.createInstance(keyspace));
 		}
 	}
 	
-	public void registKeyspaceByDuplicatIgnore(Instances instances, String keyspace) {
+	public void registKeyspaceByDuplicatIgnore(Instances instances, Keyspace keyspace) {
 		for (Instance instance : instances.getInstanceList()) {
 			registKeyspaceByDuplicatIgnore(instance, keyspace);
 		}
@@ -199,7 +200,7 @@ public class CassandraService {
 	 * @param instance
 	 * @param keyspace
 	 */
-	public void registKeyspaceByDuplicatIgnore(Instance instance, String keyspace) {
+	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
 		// 対象インスタンスのキースペース一覧を取得
 		List<String> keyspaceList = findAllKeyspaceWithoutSysKeyspace(instance);
 		
@@ -212,12 +213,12 @@ public class CassandraService {
 		registKeyspace(instance, keyspace);
 	}
 
-	public void registKeyspace(Instance instance, String keyspace) {
+	public void registKeyspace(Instance instance, Keyspace keyspace) {
 		// サーバインスタンスを生成する
 		Cassandra cassandraServer = Cassandra.createInstance();
 
 		// create文を作成して実行
-		String cqlCommand = "create keyspace if not exists " + keyspace
+		String cqlCommand = "create keyspace if not exists " + keyspace.getKeyspace()
 				+ " with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };";
 		cassandraServer.execCql(instance, cqlCommand);
 	}

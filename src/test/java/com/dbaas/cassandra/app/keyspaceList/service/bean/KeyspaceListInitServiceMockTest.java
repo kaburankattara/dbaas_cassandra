@@ -1,6 +1,6 @@
 package com.dbaas.cassandra.app.keyspaceList.service.bean;
 
-import static com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
+import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
 import static com.github.springtestdbunit.annotation.DatabaseOperation.CLEAN_INSERT;
 
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.DbaasCassandraApplication;
 import com.dbaas.cassandra.config.DatasourceConfig;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.server.instance.InstancesServiceForTest;
@@ -51,7 +51,7 @@ public class KeyspaceListInitServiceMockTest {
 
 	private UserService userService;
 
-	private KeyspaceRegistPlanService keyspaceRegistPlanService;
+	private KeyspaceService keyspaceService;
 
 	private InstancesServiceForTest instancesServiceForTest;
 
@@ -59,10 +59,10 @@ public class KeyspaceListInitServiceMockTest {
 	private KeyspaceListInitService keyspaceListInitService;
 
 	@Autowired
-	public KeyspaceListInitServiceMockTest(UserService userService, KeyspaceRegistPlanService keyspaceRegistPlanService,
+	public KeyspaceListInitServiceMockTest(UserService userService, KeyspaceService keyspaceService,
 										   InstancesServiceForTest instancesServiceForTest) {
 		this.userService = userService;
-		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
+		this.keyspaceService = keyspaceService;
 		this.instancesServiceForTest = instancesServiceForTest;
 	}
 
@@ -188,7 +188,7 @@ public class KeyspaceListInitServiceMockTest {
 	public void refreshCassandra_cassandraサーバ未構築_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ未構築状態();
 
 		// 条件
@@ -259,7 +259,7 @@ public class KeyspaceListInitServiceMockTest {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築中状態();
-		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 
 		// 条件
 		// サーバが構築中である
@@ -329,7 +329,7 @@ public class KeyspaceListInitServiceMockTest {
 	public void cassandraサーバ構築済_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
 
 		// 条件
@@ -365,7 +365,7 @@ public class KeyspaceListInitServiceMockTest {
 	public void cassandraサーバ構築済_かつcassandra実行可能_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
-		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
 
 		// 条件

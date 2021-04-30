@@ -1,6 +1,6 @@
 package com.dbaas.cassandra.app.keyspaceList.dto;
 
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.utils.ObjectUtils;
 
 import java.util.List;

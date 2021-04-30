@@ -14,8 +14,8 @@ import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto
 import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncService;
 import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
@@ -26,16 +26,16 @@ public class KeyspaceListService {
 
 	private KeyspaceListAsyncService keyspaceListAsyncService;
 	
-	private KeyspaceRegistPlanService keyspaceRegistPlanService;
+	private KeyspaceService keyspaceService;
 
 	private EndPointService endPointService;
 	
 	@Autowired
 	KeyspaceListService(KeyspaceListInitService keyspaceListInitService, KeyspaceListAsyncService keyspaceListAsyncService, CassandraService cassandraManagerService,
-						KeyspaceRegistPlanService keyspaceRegistPlanService, EndPointService endPointService) {
+						KeyspaceService keyspaceService, EndPointService endPointService) {
 		this.keyspaceListInitService = keyspaceListInitService;
 		this.keyspaceListAsyncService = keyspaceListAsyncService;
-		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
+		this.keyspaceService = keyspaceService;
 		this.endPointService = endPointService;
 	}
 	
@@ -48,7 +48,7 @@ public class KeyspaceListService {
 	 */
 	public KeyspaceListInitServiceResultDto init(LoginUser user) throws Exception {
 		// 画面の一覧表示用にキースペースマネージャに登録されているキースペースリストを取得
-		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user);
+		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 
 		// cassandraサーバに登録済のキースペースリストを取得する
 		List<String> createdKeyspaceList = keyspaceListInitService.findCreatedKeyspaceList(user);

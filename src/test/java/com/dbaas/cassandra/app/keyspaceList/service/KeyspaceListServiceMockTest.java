@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncService;
 import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
 
@@ -32,7 +32,7 @@ public class KeyspaceListServiceMockTest {
 	private KeyspaceListAsyncService keyspaceListAsyncService;
 	
     @Mock
-	private KeyspaceRegistPlanService keyspaceRegistPlanService;
+	private KeyspaceService keyspaceService;
     
     @InjectMocks
     private KeyspaceListService keyspaceListService;
@@ -58,7 +58,7 @@ public class KeyspaceListServiceMockTest {
     	loginUser.setUserName("test");
     	loginUser.setPassword("");
 		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
-		Mockito.when(keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(loginUser)).thenReturn(compTarget.getKeyspaceRegistPlans());
+		Mockito.when(keyspaceService.findKeyspaceRegistPlanByUserId(loginUser)).thenReturn(compTarget.getKeyspaceRegistPlans());
 				
 		// テスト対象の実行
 		KeyspaceListInitServiceResultDto checkTarget = keyspaceListService.init(loginUser);
@@ -109,7 +109,7 @@ public class KeyspaceListServiceMockTest {
     	user.setPassword("");
     	LoginUser loginUser = new LoginUser(user);
 		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
-		Mockito.when(keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(loginUser)).thenReturn(compTarget.getKeyspaceRegistPlans());
+		Mockito.when(keyspaceService.findKeyspaceRegistPlanByUserId(loginUser)).thenReturn(compTarget.getKeyspaceRegistPlans());
 		
 		// テスト対象の実行
 		KeyspaceListInitServiceResultDto checkTarget;

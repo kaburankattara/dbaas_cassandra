@@ -4,6 +4,7 @@ import static com.dbaas.cassandra.domain.sysDate.SysDateContext.setSysDate;
 
 import java.time.LocalDateTime;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class  KeyspaceRegisterAsyncService {
 	 * キースペースを登録する
 	 */
 	@Async()
-	public void registKeyspace(LoginUser user, String keyspace, LocalDateTime sysDate) {
+	public void registKeyspace(LoginUser user, Keyspace keyspace, LocalDateTime sysDate) {
 		setSysDate(sysDate);
 		
 		try {

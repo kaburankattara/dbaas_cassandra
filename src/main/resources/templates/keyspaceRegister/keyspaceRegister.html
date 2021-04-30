@@ -13,6 +13,7 @@
 <section layout:fragment="content">
 <h3>キースペース登録</h3>
 <form id="form" th:object="${form}" th:action="@{/keyspaceRegister/regist}" method="post">
+	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table>
 		<tr>
 			<td><label>キースペース名</label></td>

@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.keyspaceRegistPlan;
+package com.dbaas.cassandra.domain.cassandra.keyspace;
 
 import java.util.ArrayList;
 import java.util.List;

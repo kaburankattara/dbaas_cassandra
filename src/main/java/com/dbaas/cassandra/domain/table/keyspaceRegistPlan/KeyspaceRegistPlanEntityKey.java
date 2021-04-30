@@ -29,4 +29,12 @@ public class KeyspaceRegistPlanEntityKey implements Serializable {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+
+	public String getKeyspace() {
+		return keyspace;
+	}
+
+	public void setKeyspace(String keyspace) {
+		this.keyspace = keyspace;
+	}
 }
