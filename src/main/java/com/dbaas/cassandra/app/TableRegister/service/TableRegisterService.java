@@ -28,18 +28,18 @@ public class TableRegisterService {
 	/**
 	 * テーブルを登録する
 	 */
-	public void registTable(LoginUser user, String keySpace, Table table) {
+	public void registTable(LoginUser user, String keyspace, Table table) {
 		// 入力されたテーブルを登録する
 		Instances instances = serverService.getInstances(user);
 		for (Instance instance : instances.getInstanceList()) {
-			cassandraService.registTable(instance, keySpace, table);
+			cassandraService.registTable(instance, keyspace, table);
 		}
 	}
 
 	/**
 	 * テーブルを取得する
 	 */
-	public Table findTableByRetry(LoginUser user, String keySpace, Table table) {
+	public Table findTableByRetry(LoginUser user, String keyspace, Table table) {
 		//  登録済みのテーブルを取得する
 		Instances instances = serverService.getInstances(user);
 
@@ -49,7 +49,7 @@ public class TableRegisterService {
 		boolean isRetry = true;
 		while (isRetry) {
 			// テーブルが取得出来るか、最大リトライ回数まで検索処理を実施
-			findedTable = cassandraService.findTableByKeySpace(instances, keySpace, table.getTableName());
+			findedTable = cassandraService.findTableByKeyspace(instances, keyspace, table.getTableName());
 			if (findedTable.isEmpty() && tryCount <= MAX_TRY_COUNT) {
 				tryCount++;
 				continue;

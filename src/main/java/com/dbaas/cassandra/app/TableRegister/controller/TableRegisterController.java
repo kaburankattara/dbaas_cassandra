@@ -1,7 +1,7 @@
 package com.dbaas.cassandra.app.TableRegister.controller;
 
-import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_LIST;
-import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_UPDATER;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_LIST;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_REGISTER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_WARNING;
@@ -75,7 +75,7 @@ public class TableRegisterController {
 
 		// テーブルを登録
 		try {
-			registerService.registTable(user, form.getKeySpace(), form.toTable());
+			registerService.registTable(user, form.getKeyspace(), form.toTable());
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
@@ -83,16 +83,16 @@ public class TableRegisterController {
 
 		// 登録したテーブルが取得可能かチェック
 		// 取得できなければ、登録失敗かもしれないため、ワーニングメッセージを表示する
-		Table findedTable = registerService.findTableByRetry(user, form.getKeySpace(), form.toTable());
+		Table findedTable = registerService.findTableByRetry(user, form.getKeyspace(), form.toTable());
 		if (findedTable.isEmpty()) {
 			attributes.addFlashAttribute(MESSAGE_KEY_WARNING, messageSource.getMessage(MSG001W));
 		}
 
 		// 遷移元の画面によって遷移先を分岐する
 		String referer = (String) model.asMap().get("TABLE_REGISTER_REFERER");
-		String url = isContains(URL_KEY_SPACE_LIST, referer) ? URL_KEY_SPACE_LIST : URL_KEY_SPACE_UPDATER;
-		if (isEquals(url, URL_KEY_SPACE_UPDATER)) {
-			attributes.addAttribute("keySpace", form.getKeySpace());
+		String url = isContains(URL_KEYSPACE_LIST, referer) ? URL_KEYSPACE_LIST : URL_KEYSPACE_UPDATER;
+		if (isEquals(url, URL_KEYSPACE_UPDATER)) {
+			attributes.addAttribute("keyspace", form.getKeyspace());
 		}
 		return createRedirectUri(url);
 	}

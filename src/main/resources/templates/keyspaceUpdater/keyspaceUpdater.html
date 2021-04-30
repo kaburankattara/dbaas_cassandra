@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	layout:decorate="layout/onMenuLayout">
+<head>
+<title>キースペース更新</title>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" >
+</head>
+<body>
+<section layout:fragment="content">
+<h3>キースペース更新</h3>
+<form id="form" th:object="${form}" th:action="@{/keyspaceUpdater/regist}" method="post">
+	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
+	<table>
+		<tr>
+			<td><label>キースペース名</label></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan='2'><input th:field="*{keyspace}" type="text" disabled></td>
+		</tr>
+	</table>
+	<br/>
+	<input id="createTable" type="button" value="テーブル作成"/>
+	<table border="1" cellspacing="0">
+		<thead style="background:#DDFFFF">
+			<tr>
+				<th><label>テーブル</label></th>
+<!-- TODO 追加実装は後で
+ 				<th><label>テーブル数</label></th>
+				<th><label>ステータス</label></th>
+ -->
+			</tr>
+		</thead>
+		<tbody>
+		<th:block th:each="table, iterStat : ${tableList}" th:unless="${#lists.isEmpty(tableList)}">
+			<tr>
+				<td><a th:text="${table.getTableName()}" th:href="${'/tableUpdater?keyspace=' + form.keyspace + '&tableName=' + table.getTableName()}">テーブル名</a></td>
+<!-- TODO 追加実装は後で
+				<td><label>1</label></td>
+				<td><label>ステータス</label></td>
+ -->
+			</tr>
+		</th:block>
+		</tbody>
+	</table>
+	<br/>
+	<input id="referrer" type="button" value="戻る"/>
+	<input id="deleteKeyspace" type="button" value="削除"/>
+</form>
+<script src="/js/keyspaceUpdater/keyspaceUpdater.js" th:src="@{/js/keyspaceUpdater/keyspaceUpdater.js}" type="module"></script>
+</section>
+</body>
+</html>

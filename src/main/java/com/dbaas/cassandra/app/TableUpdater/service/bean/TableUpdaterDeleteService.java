@@ -27,11 +27,11 @@ public class TableUpdaterDeleteService {
 	/**
 	 * テーブルを削除する
 	 */
-	public void deleteTable(LoginUser user, String keySpace, String tableName) {
+	public void deleteTable(LoginUser user, String keyspace, String tableName) {
 		try {
 			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				cassandraService.deleteTable(instance, keySpace, tableName);
+				cassandraService.deleteTable(instance, keyspace, tableName);
 				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {

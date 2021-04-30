@@ -8,11 +8,11 @@ public class UrlConsts {
 
 	public static final String URL_KEY_REDIRECT_LOGIN = "/redirectLogin";
 
-	public static final String URL_KEY_SPACE_REGISTER = "/keySpaceRegister";
+	public static final String URL_KEYSPACE_REGISTER = "/keyspaceRegister";
 	
-	public static final String URL_KEY_SPACE_UPDATER = "/keySpaceUpdater";
+	public static final String URL_KEYSPACE_UPDATER = "/keyspaceUpdater";
 
-	public static final String URL_KEY_SPACE_LIST = "/keySpaceList";
+	public static final String URL_KEYSPACE_LIST = "/keyspaceList";
 	
 	public static final String URL_TABLE_REGISTER = "/tableRegister";
 	

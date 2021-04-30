@@ -28,11 +28,11 @@ public class TableUpdaterUpdateService {
 	/**
 	 * テーブルを更新する
 	 */
-	public void updateTable(LoginUser user, String keySpace, Table table) {
+	public void updateTable(LoginUser user, String keyspace, Table table) {
 		try {
 			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				cassandraService.addColumns(instance, keySpace, table);
+				cassandraService.addColumns(instance, keyspace, table);
 				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {

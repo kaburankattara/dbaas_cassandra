@@ -1,6 +1,6 @@
 package com.dbaas.cassandra.app.TableUpdater.controller;
 
-import static com.dbaas.cassandra.consts.UrlConsts.URL_KEY_SPACE_UPDATER;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
@@ -54,7 +54,7 @@ public class TableUpdaterController {
 			@ModelAttribute("form") TableUpdaterForm form, Model model) {
 		model.addAttribute("TABLE_REGISTER_REFERER", getReferer(request));
 		initModelForAlways(model);
-		Table table = updaterService.findTable(user, form.getKeySpace(), form.getTableName());
+		Table table = updaterService.findTable(user, form.getKeyspace(), form.getTableName());
 		form.setColumns(table.getColumns());
 		form.getColumns().setAllDisabled();
 		form.init();
@@ -65,14 +65,14 @@ public class TableUpdaterController {
 	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
 			@ModelAttribute("form") TableUpdaterForm form, RedirectAttributes attributes, Model model) {
 		try {
-			updaterService.updateTable(user, form.getKeySpace(), form.toTable());
+			updaterService.updateTable(user, form.getKeyspace(), form.toTable());
 		} catch (Exception e) {
 
 		}
 
 		// キースペース更新画面に遷移
-		attributes.addAttribute("keySpace", form.getKeySpace());
-		return createRedirectUri(URL_KEY_SPACE_UPDATER);
+		attributes.addAttribute("keyspace", form.getKeyspace());
+		return createRedirectUri(URL_KEYSPACE_UPDATER);
 	}
 
 	@PostMapping("/addColumn")
@@ -94,12 +94,12 @@ public class TableUpdaterController {
 	public String deleteTable(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") TableUpdaterForm form,
 			Model model, RedirectAttributes redirectAttributes) {
 		try {
-			updaterService.deleteTable(user, form.getKeySpace(), form.getTableName());
+			updaterService.deleteTable(user, form.getKeyspace(), form.getTableName());
 		} catch (Exception e) {
 			// TODO
 		}
-		redirectAttributes.addAttribute("keySpace", form.getKeySpace());
-		return createRedirectUri(URL_KEY_SPACE_UPDATER);
+		redirectAttributes.addAttribute("keyspace", form.getKeyspace());
+		return createRedirectUri(URL_KEYSPACE_UPDATER);
 	}
 
 	private void initModelForAlways(Model model) {
