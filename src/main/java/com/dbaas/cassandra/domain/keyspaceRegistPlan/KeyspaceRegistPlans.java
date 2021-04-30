@@ -3,7 +3,7 @@ package com.dbaas.cassandra.domain.keyspaceRegistPlan;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerEntity;
+import com.dbaas.cassandra.domain.table.keyspaceRegistPlan.KeyspaceRegistPlanEntity;
 import com.dbaas.cassandra.utils.ObjectUtils;
 
 /**
@@ -58,7 +58,7 @@ public class KeyspaceRegistPlans {
 		}
 		
 		List<String> keyspaceList = new ArrayList<String>();
-		for (KeyspaceManagerEntity entity : keyspaceRegistPlanList) {
+		for (KeyspaceRegistPlanEntity entity : keyspaceRegistPlanList) {
 			keyspaceList.add(entity.getKeyspace());
 		}
 		return keyspaceList;

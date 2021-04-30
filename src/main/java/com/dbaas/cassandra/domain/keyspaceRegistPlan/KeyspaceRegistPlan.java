@@ -1,13 +1,13 @@
 package com.dbaas.cassandra.domain.keyspaceRegistPlan;
 
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerEntity;
+import com.dbaas.cassandra.domain.table.keyspaceRegistPlan.KeyspaceRegistPlanEntity;
 import com.dbaas.cassandra.utils.StringUtils;
 
 /**
  * キースペース登録予定情報
  *
  */
-public class KeyspaceRegistPlan extends KeyspaceManagerEntity {
+public class KeyspaceRegistPlan extends KeyspaceRegistPlanEntity {
 	/**
 	 * シリアルバージョンUID
 	 */
@@ -22,7 +22,7 @@ public class KeyspaceRegistPlan extends KeyspaceManagerEntity {
 	/**
 	 * デフォルトコンストラクタ
 	 */
-	public KeyspaceRegistPlan(KeyspaceManagerEntity entity) {
+	public KeyspaceRegistPlan(KeyspaceRegistPlanEntity entity) {
 		this.setUserId(entity.getUserId());
 		this.setKeyspace(entity.getKeyspace());
 	}
