@@ -184,7 +184,7 @@ public class KeyspaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceRegistPlan/keyspace登録予定有り.xml", type = CLEAN_INSERT)
 	public void refreshCassandra_cassandraサーバ未構築_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -325,7 +325,7 @@ public class KeyspaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceRegistPlan/keyspace登録予定有り.xml", type = CLEAN_INSERT)
 	public void cassandraサーバ構築済_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
@@ -361,7 +361,7 @@ public class KeyspaceListInitServiceMockTest {
 	}
 
 	@Test
-	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceManager/keyspace登録予定有り.xml", type = CLEAN_INSERT)
+	@DatabaseSetup(value = "/static/dbunit/domain/table/keyspaceRegistPlan/keyspace登録予定有り.xml", type = CLEAN_INSERT)
 	public void cassandraサーバ構築済_かつcassandra実行可能_かつキースペースの登録予定がある() {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");

@@ -8,7 +8,7 @@ import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
-import com.dbaas.cassandra.domain.table.keyspaceManager.KeyspaceManagerDao;
+import com.dbaas.cassandra.domain.table.keyspaceRegistPlan.KeyspaceRegistPlanDao;
 import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
@@ -19,13 +19,13 @@ public class KeyspaceUpdaterDeleteService {
 	
 	private CassandraService cassandraService;
 	
-	private KeyspaceManagerDao keyspaceManagerDao;
+	private KeyspaceRegistPlanDao keyspaceRegistPlanDao;
 
 	@Autowired
-	KeyspaceUpdaterDeleteService(ServerService serverService, CassandraService cassandraService, KeyspaceManagerDao keyspaceManagerDao) {
+	KeyspaceUpdaterDeleteService(ServerService serverService, CassandraService cassandraService, KeyspaceRegistPlanDao keyspaceRegistPlanDao) {
 		this.serverService = serverService;
 		this.cassandraService = cassandraService;
-		this.keyspaceManagerDao = keyspaceManagerDao;
+		this.keyspaceRegistPlanDao = keyspaceRegistPlanDao;
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class KeyspaceUpdaterDeleteService {
 			// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 		}
 		// キースペースを削除したら、キースペースマネージャートランも削除
-		keyspaceManagerDao.delete(user, keyspace);
+		keyspaceRegistPlanDao.delete(user, keyspace);
 	}
 
 }

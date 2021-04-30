@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.table.keyspaceManager;
+package com.dbaas.cassandra.domain.table.keyspaceRegistPlan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 
 @Service
 @Transactional
-public class  KeyspaceManagerDao {
+public class KeyspaceRegistPlanDao {
 	
-    private final KeyspaceManagerRepository repository;
+    private final KeyspaceRegistPlanRepository repository;
 
     @Autowired
-    public KeyspaceManagerDao(KeyspaceManagerRepository repository){
+    public KeyspaceRegistPlanDao(KeyspaceRegistPlanRepository repository){
         this.repository = repository;
     }
 	
@@ -26,10 +26,10 @@ public class  KeyspaceManagerDao {
      * @param userId ユーザーID
      * @return ユーザー
      */
-	public List<KeyspaceManagerEntity> findByUserId(String userId) {
-		List<KeyspaceManagerEntity> serverList = repository.findByUserId(userId);
+	public List<KeyspaceRegistPlanEntity> findByUserId(String userId) {
+		List<KeyspaceRegistPlanEntity> serverList = repository.findByUserId(userId);
 		if (serverList == null) {
-			return new ArrayList<KeyspaceManagerEntity>();
+			return new ArrayList<KeyspaceRegistPlanEntity>();
 		}
 		return serverList;
 	}
@@ -41,7 +41,7 @@ public class  KeyspaceManagerDao {
 	 * @param keyspace
 	 */
 	public void insert(LoginUser user, String keyspace) {
-		KeyspaceManagerEntity entity = new KeyspaceManagerEntity();
+		KeyspaceRegistPlanEntity entity = new KeyspaceRegistPlanEntity();
 		entity.setUserId(user.getUserId());
 		entity.setKeyspace(keyspace);
 		repository.save(entity);
@@ -54,7 +54,7 @@ public class  KeyspaceManagerDao {
 	 * @param keyspace
 	 */
 	public void delete(LoginUser user, String keyspace) {
-		KeyspaceManagerEntity entity = new KeyspaceManagerEntity();
+		KeyspaceRegistPlanEntity entity = new KeyspaceRegistPlanEntity();
 		entity.setUserId(user.getUserId());
 		entity.setKeyspace(keyspace);
 		repository.delete(entity);

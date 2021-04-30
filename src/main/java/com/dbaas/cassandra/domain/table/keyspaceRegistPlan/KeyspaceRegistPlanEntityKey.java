@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.table.keyspaceManager;
+package com.dbaas.cassandra.domain.table.keyspaceRegistPlan;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Embeddable
 @Data
-public class KeyspaceManagerEntityKey implements Serializable {
+public class KeyspaceRegistPlanEntityKey implements Serializable {
 
 	/**
 	 * シリアルバージョンUID
