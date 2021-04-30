@@ -1,13 +1,13 @@
 package com.dbaas.cassandra.app.keyspaceList.dto;
 
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlan;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
-import static com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
+import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
 
 public class KeyspaceListInitServiceResultDtoTest {
 	
@@ -26,7 +26,7 @@ public class KeyspaceListInitServiceResultDtoTest {
 		KeyspaceRegistPlan keyspaceRegistPlan = new KeyspaceRegistPlan();
 		keyspaceRegistPlan.setKeyspace("keyspace");
 		keyspaceRegistPlan.setUserId("aaa");
-		keyspaceRegistPlanList.add(new KeyspaceRegistPlan(keyspaceRegistPlan));
+		keyspaceRegistPlanList.add(keyspaceRegistPlan);
 		KeyspaceRegistPlans keyspaceRegistPlans = new KeyspaceRegistPlans(keyspaceRegistPlanList);
 
 		List<String> createdKeyspaceList = new ArrayList<String>();

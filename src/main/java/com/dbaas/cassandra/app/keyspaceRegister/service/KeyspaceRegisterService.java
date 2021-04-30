@@ -1,20 +1,19 @@
 package com.dbaas.cassandra.app.keyspaceRegister.service;
 
-import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
-
-import java.util.List;
-
+import com.dbaas.cassandra.app.keyspaceRegister.service.async.KeyspaceRegisterAsyncService;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
 import com.dbaas.cassandra.domain.server.ServerService;
-import com.dbaas.cassandra.domain.server.instance.Instances;
+import com.dbaas.cassandra.domain.user.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.app.keyspaceRegister.service.async.KeyspaceRegisterAsyncService;
-import com.dbaas.cassandra.domain.keyspaceRegistPlan.KeyspaceRegistPlanService;
-import com.dbaas.cassandra.domain.user.LoginUser;
+import java.util.List;
+
+import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
 
 @Service
 @Transactional
@@ -22,16 +21,16 @@ public class  KeyspaceRegisterService {
 	
 	private KeyspaceRegisterAsyncService asyncService;
 	
-	private KeyspaceRegistPlanService keyspaceRegistPlanService;
+	private KeyspaceService keyspaceService;
 
 	private ServerService serverService;
 
 	private CassandraService cassandraService;
 	
 	@Autowired
-	KeyspaceRegisterService(KeyspaceRegisterAsyncService asyncService, KeyspaceRegistPlanService keyspaceRegistPlanService, ServerService serverService, CassandraService cassandraService) {
+	KeyspaceRegisterService(KeyspaceRegisterAsyncService asyncService, KeyspaceService keyspaceService, ServerService serverService, CassandraService cassandraService) {
 		this.asyncService = asyncService;
-		this.keyspaceRegistPlanService = keyspaceRegistPlanService;
+		this.keyspaceService = keyspaceService;
 		this.serverService = serverService;
 		this.cassandraService = cassandraService;
 	}
@@ -43,7 +42,7 @@ public class  KeyspaceRegisterService {
 	 * @return
 	 */
 	public List<String> findAllKeyspace(LoginUser user) {
-		return keyspaceRegistPlanService.findKeyspaceRegistPlanByUserId(user).getKeyspaceList();
+		return keyspaceService.findKeyspaceRegistPlanByUserId(user).getKeyspaceList();
 	}
 	
 	/**
@@ -53,22 +52,20 @@ public class  KeyspaceRegisterService {
 	 * @param keyspace キースペース
 	 * @return 登録の成功判定S
 	 */
-	public boolean registKeyspace(LoginUser user, String keyspace) {
-		// cassandraからキースペース一覧を取得する
-		Instances instances = serverService.getAllInstances(user);
-		Keyspaces keyspaces = cassandraService.findAllKeyspace(instances);
-
-		// 引数のキースペースが登録済の場合、エラーとして処理を中断する
-		if (keyspaces.hasKeyspace(keyspace)) {
-			return false;
+	public RegistKeyspaceResultDto registKeyspace(LoginUser user, Keyspace keyspace) {
+		// 登録用にチェックする
+		RegistKeyspaceResultDto validateResult = keyspaceService.validateForRegist(user, keyspace);
+		// チェック結果がエラーの場合、処理を中断する
+		if (validateResult.hasError()) {
+			return validateResult;
 		}
 
-		// 登録するキースペースをキースペースマネージャーテーブルに登録
-		keyspaceRegistPlanService.insert(user, keyspace);
+		// 引数のキースペースをキースペース登録予定に登録
+		keyspaceService.insertKeyspaceRegistPlan(user, keyspace);
 		
-		// サーバ構築が必要となる場合があるため、
-		// 物理的なキースペースの登録は非同期で行う
+		// cassandraにキースペースを登録する
+		// ※サーバ構築が必要となる場合があるため、非同期で行う
 		asyncService.registKeyspace(user, keyspace, getSysDate());
-		return true;
+		return validateResult;
 	}
 }

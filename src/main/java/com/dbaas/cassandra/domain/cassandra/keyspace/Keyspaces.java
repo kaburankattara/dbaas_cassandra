@@ -38,7 +38,7 @@ public class Keyspaces {
         this.keyspaceList = keyspaceList;
     }
 
-    public boolean hasKeyspace(String keyspaceArg) {
+    public boolean hasKeyspace(Keyspace keyspaceArg) {
 
         if (ObjectUtils.isEmpty(keyspaceList)) {
             return false;

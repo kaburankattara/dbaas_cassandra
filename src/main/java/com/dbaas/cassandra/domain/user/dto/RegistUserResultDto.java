@@ -1,24 +1,21 @@
-package com.dbaas.cassandra.app.userRegister.dto;
+package com.dbaas.cassandra.domain.user.dto;
 
 import com.dbaas.cassandra.shared.validation.ValidateResult;
 
 public class RegistUserResultDto {
 
-	public RegistUserResultDto() {
+	public RegistUserResultDto(ValidateResult validateResult) {
+		this.validateResult = validateResult;
 	}
 
-	public static RegistUserResultDto createEmptyInstance() {
-		return new RegistUserResultDto();
+	public static RegistUserResultDto createEmptyInstance(ValidateResult validateResult) {
+		return new RegistUserResultDto(validateResult);
 	}
 
 	private ValidateResult validateResult;
 
 	public ValidateResult getValidateResult() {
 		return validateResult;
-	}
-
-	public void setValidateResult(ValidateResult validateResult) {
-		this.validateResult = validateResult;
 	}
 
 	public boolean hasError() {

@@ -20,6 +20,9 @@ public class Message {
 	/** {0}の入力は必須です。 */
 	public static final String MSG004E = "MSG004E";
 
+	/** 入力されたキースペースは登録済です。 */
+	public static final String MSG005E = "MSG005E";
+
 	/** 登録処理後、テーブルの存在確認に失敗しました。正常に登録されているかご確認ください。 */
 	public static final String MSG001W = "MSG001W";
 		

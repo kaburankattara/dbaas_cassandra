@@ -1,6 +1,6 @@
 package com.dbaas.cassandra.app.userRegister.controller;
 
-import com.dbaas.cassandra.app.userRegister.dto.RegistUserResultDto;
+import com.dbaas.cassandra.domain.user.dto.RegistUserResultDto;
 import com.dbaas.cassandra.app.userRegister.form.UserRegisterForm;
 import com.dbaas.cassandra.app.userRegister.service.UserRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;

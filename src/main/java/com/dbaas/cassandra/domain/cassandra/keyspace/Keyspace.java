@@ -33,8 +33,8 @@ public class Keyspace {
      */
     private static final int MAX_LENGTH = 10;
 
-    @Required
-    @MaxLength(max = MAX_LENGTH)
+    @Required(message = "キースペースの入力は必須です。")
+    @MaxLength(max = MAX_LENGTH, message = "キースペースは" + MAX_LENGTH + "文字以下で入力してください。")
     private String keyspace;
 
     public String getKeyspace() {
@@ -49,7 +49,7 @@ public class Keyspace {
         return validator.validate(this, CLASS_NAME);
     }
 
-    public boolean isEquals(String keyspace) {
-        return StringUtils.isEquals(this.keyspace, keyspace);
+    public boolean isEquals(Keyspace keyspace) {
+        return StringUtils.isEquals(this.keyspace, keyspace.getKeyspace());
     }
 }

@@ -5,6 +5,7 @@ import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_REGISTER;
 import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_ERROR;
 import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -46,13 +47,13 @@ public class  KeyspaceRegisterController {
 	@PostMapping("regist")
 	public String regist(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") KeyspaceRegisterForm form, Model model) {
 		
-		// サーバ情報を取得する
-		// キースペースが作成済みじゃないか判定
 		try {
-			boolean isRegist = registerService.registKeyspace(user,form.getKeyspaceName());
-
-			if (!isRegist) {
-				model.addAttribute(MESSAGE_KEY_ERROR, "入力されたキースペースは登録済です。");
+			// キースペースを登録する
+			RegistKeyspaceResultDto validateResult = registerService.registKeyspace(user,form.getKeyspace());
+			// 登録結果がエラーの場合、メッセージを表示する
+			if (validateResult.hasError()) {
+				model.addAttribute(MESSAGE_KEY_ERROR, validateResult.getValidateResult().getFirstErrorMessage());
+				return "keyspaceRegister/keyspaceRegister";
 			}
 		} catch(Exception e) {
 			// TODO 後で追記
