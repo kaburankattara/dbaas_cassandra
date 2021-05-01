@@ -1,12 +1,11 @@
 package com.dbaas.cassandra.app.TableUpdater.service.bean;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.cassandra.table.service.TableService;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +16,12 @@ public class TableUpdaterInitService {
 
 	private ServerService serverService;
 
-	private CassandraService cassandraService;
+	private TableService tableService;
 
 	@Autowired
-	TableUpdaterInitService(ServerService serverService, CassandraService cassandraService) {
+	TableUpdaterInitService(ServerService serverService, TableService tableService) {
 		this.serverService = serverService;
-		this.cassandraService = cassandraService;
+		this.tableService = tableService;
 	}
 
 	/**
@@ -32,7 +31,7 @@ public class TableUpdaterInitService {
 		try {
 			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {
-				return cassandraService.findTableByKeyspace(instance, keyspace, tableName);
+				return tableService.findTableByKeyspace(instance, keyspace, tableName);
 				// TODO マルチノード対応したときに複数インスタンスを考慮した修正を行う
 			}
 		} catch (Exception e) {

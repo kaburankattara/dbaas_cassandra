@@ -1,9 +1,6 @@
 package com.dbaas.cassandra.domain.cassandra;
 
-import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
-import com.dbaas.cassandra.domain.cassandra.table.Table;
-import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -13,10 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
-import static com.dbaas.cassandra.domain.cassandra.table.Table.createEmptyTable;
 import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
 
 @Service
@@ -107,6 +100,14 @@ public class CassandraService {
 		}
 	}
 
+	public String getProcessIdByCassandra(Instance instance) {
+		// サーバインスタンスを生成する
+		Cassandra cassandraServer = Cassandra.createInstance();
+
+		// cassandraの起動確認
+		return cassandraServer.getProcessIdByCassandra(instance);
+	}
+
 	/**
 	 * 全インスタンスがCQLの実行が可能か判定
 	 * 
@@ -137,25 +138,6 @@ public class CassandraService {
 		return !keyspaceService.findAllKeyspace(instance).isEmpty();
 	}
 
-	/**
-	 * casssandraが起動済みか判定
-	 * 
-	 * @param instance　インスタンス
-	 * @return 判定結果
-	 */
-	public boolean isExecCassandra(Instance instance) {
-		// cassandraのプロセスIDを取得し起動済みか判定
-		return isNotEmpty(getProcessIdByCassandra(instance));
-	}
-
-	public String getProcessIdByCassandra(Instance instance) {
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// cassandraの起動確認
-		return cassandraServer.getProcessIdByCassandra(instance);
-	}
-
 	public boolean isExecAllCassandra(Instances instances) {
 		for (Instance instance : instances.getInstanceList()) {
 			if (!isExecCassandra(instance)) {
@@ -165,115 +147,14 @@ public class CassandraService {
 		return true;
 	}
 
-	public void registTable(Instance instance, String keyspace, Table table) {
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// create文を作成して実行
-		String cqlCommand = table.getCreateCql(keyspace);
-		cassandraServer.execCql(instance, cqlCommand);
-	}
-
-	public Tables findAllTableByKeyspace(Instances instances, String keyspace) {
-		// 各サーバの保持しているテーブル一覧を取得
-		for (Instance instance : instances.getInstanceList()) {
-				Tables tables = findAllTableByKeyspace(instance, keyspace);
-				if (!tables.isEmpty()) {
-					return tables;
-				}
-		}
-		return new Tables();	
-		
-		// 各サーバで取得したテーブルの重複を削除
-		// TODO マルチノードで
-	}
-
-	public Table findTableByKeyspace(Instances instances, String keyspace, String tableName) {
-		// 各サーバの保持しているテーブル一覧を取得
-		for (Instance instance : instances.getInstanceList()) {
-				Table table = findTableByKeyspace(instance, keyspace, tableName);
-				if (!table.isEmpty()) {
-					return table;
-				}
-		}
-		return createEmptyTable();	
-		
-		// 各サーバで取得したテーブルの重複を削除
-		// TODO マルチノードで
-	}
-
-	public Tables findAllTableByKeyspace(Instance instance, String keyspace) {
-		String result = null;
-
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// create文を作成
-		String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
-		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keyspace + "'";
-		cqlCommand = cqlCommand + ";";
-			
-		// 実行
-		result = cassandraServer.execCql(instance, cqlCommand);
-		return new Tables(result);
-	}
-
-	public Table findTableByKeyspace(Instance instance, String keyspace, String tableName) {
-		String result = null;
-
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// create文を作成
-		String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
-		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keyspace + "'";
-		if (isNotEmpty(tableName)) {
-			cqlCommand = cqlCommand + " and table_name = '" + tableName + "'";
-		}
-		cqlCommand = cqlCommand + ";";
-
-		// 実行
-		result = cassandraServer.execCql(instance, cqlCommand);
-		return new Tables(result).getFirstTable();
-
-	}
-
-	public Tables addColumns(Instance instance, String keyspace, Table newTable) {
-		String result = null;
-
-		// 現行のテーブル情報を取得
-		Instances instances = Instances.createInstance(instance);
-		// TODO  返り値がおかしい？
-		Table oldTable = findTableByKeyspace(instances, keyspace, newTable.getTableName());
-
-		// テーブルを現行と次期で比較し、Alter文を生成
-		CqlFactory cqlFactory = new CqlFactory();
-		List<String> cqlAlterCommandList = cqlFactory.createAlterCqlForAddColumns(keyspace, oldTable, newTable);
-
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// 実行文を生成
-		StringBuilder sb = new StringBuilder();
-		sb.append(CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + ";");
-		for (String cqlAlterCommand : cqlAlterCommandList) {
-			sb.append(cqlAlterCommand);
-		}
-		String cqlCommand = sb.toString();
-
-		// 実行
-		result = cassandraServer.execCql(instance, cqlCommand);
-		return new Tables(result);
-	}
-
-	public void deleteTable(Instance instance, String keyspace, String tableName) {
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// 実行文を生成
-		String cqlCommand = "drop table " + keyspace + "." + tableName + ";";
-
-		// 実行
-		cassandraServer.execCql(instance, cqlCommand);
+	/**
+	 * casssandraが起動済みか判定
+	 * 
+	 * @param instance　インスタンス
+	 * @return 判定結果
+	 */
+	public boolean isExecCassandra(Instance instance) {
+		// cassandraのプロセスIDを取得し起動済みか判定
+		return isNotEmpty(getProcessIdByCassandra(instance));
 	}
 }
