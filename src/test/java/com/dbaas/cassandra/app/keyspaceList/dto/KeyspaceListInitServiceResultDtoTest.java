@@ -1,7 +1,9 @@
 package com.dbaas.cassandra.app.keyspaceList.dto;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,9 @@ public class KeyspaceListInitServiceResultDtoTest {
 	}
 	
 	public static KeyspaceListInitServiceResultDto getKeyspaceListServiceCassandraサーバ未構築_未登録() {
-		List<String> createdKeyspaceList = new ArrayList<String>();
+		Keyspaces createdKeyspaces = Keyspaces.createEmptyInstance();
 		String endPoint = EMPTY;
-		return new KeyspaceListInitServiceResultDto(createEmptyKeyspaceRegistPlans(), createdKeyspaceList, endPoint);
+		return new KeyspaceListInitServiceResultDto(createEmptyKeyspaceRegistPlans(), createdKeyspaces, endPoint);
 	}
 	
 	public static KeyspaceListInitServiceResultDto getKeyspaceListServiceCassandraサーバ構築済_登録済() {
@@ -29,12 +31,13 @@ public class KeyspaceListInitServiceResultDtoTest {
 		keyspaceRegistPlanList.add(keyspaceRegistPlan);
 		KeyspaceRegistPlans keyspaceRegistPlans = new KeyspaceRegistPlans(keyspaceRegistPlanList);
 
-		List<String> createdKeyspaceList = new ArrayList<String>();
-		createdKeyspaceList.add("keyspace");
+		List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
+		keyspaceList.add(Keyspace.createInstance("keyspace"));
+		Keyspaces createdKeyspaces = Keyspaces.createInstance(keyspaceList);
 
 		String endPoint = "127.0.0.1";
 
-		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaceList, endPoint);
+		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces, endPoint);
 	}
 	
 }

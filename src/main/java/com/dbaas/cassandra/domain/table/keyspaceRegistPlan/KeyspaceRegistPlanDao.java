@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,12 +70,32 @@ public class KeyspaceRegistPlanDao {
 	 * キースペースマネージャーに削除
 	 * 
 	 * @param user
+	 * @param keyspaces
+	 */
+	public void delete(LoginUser user, Keyspaces keyspaces) {
+		if (keyspaces.isEmpty()) {
+			return;
+		}
+
+		for (Keyspace keyspace : keyspaces.getKeyspaceList()) {
+			delete(user, keyspace);
+		}
+	}
+
+	/**
+	 * キースペースマネージャーに削除
+	 *
+	 * @param user
 	 * @param keyspace
 	 */
-	public void delete(LoginUser user, String keyspace) {
+	public void delete(LoginUser user, Keyspace keyspace) {
+		if (keyspace.isEmpty()) {
+			return;
+		}
+
 		KeyspaceRegistPlanEntity entity = new KeyspaceRegistPlanEntity();
 		entity.setUserId(user.getUserId());
-		entity.setKeyspace(keyspace);
+		entity.setKeyspace(keyspace.getKeyspace());
 		repository.delete(entity);
 	}
 }

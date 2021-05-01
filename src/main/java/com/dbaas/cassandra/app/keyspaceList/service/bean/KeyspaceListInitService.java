@@ -3,6 +3,7 @@ package com.dbaas.cassandra.app.keyspaceList.service.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +35,12 @@ public class KeyspaceListInitService {
 	 * @param user
 	 * @return
 	 */
-	public List<String> findCreatedKeyspaceList(LoginUser user) {
+	public Keyspaces findCreatedKeyspaceList(LoginUser user) {
 			Instances instances = serverService.getInstances(user);
 			
 			// サーバが起動中なら空のキースペースリストを返す
 			if (instances.hasPendingInstance()) {
-				return new ArrayList<String>();
+				return Keyspaces.createEmptyInstance();
 			}
 			
 			// 登録済みのキースペースリストを取得する

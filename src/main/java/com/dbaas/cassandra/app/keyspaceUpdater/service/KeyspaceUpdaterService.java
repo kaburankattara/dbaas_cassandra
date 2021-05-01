@@ -1,20 +1,18 @@
 package com.dbaas.cassandra.app.keyspaceUpdater.service;
 
-import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
-import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dbaas.cassandra.app.keyspaceUpdater.service.bean.KeyspaceUpdaterDeleteService;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.dbaas.cassandra.utils.ThreadUtils.sleep;
 
 @Service
 @Transactional
@@ -69,15 +67,15 @@ public class KeyspaceUpdaterService {
 	/**
 	 * キースペースを削除
 	 */
-	public void deleteKeyspace(LoginUser user, String keyspace) {
+	public void deleteKeyspace(LoginUser user, Keyspace keyspace) {
 		try {
 			// キースペースの削除
 			deleteService.deleteKeyspace(user, keyspace);
 
 			// 削除後も一つ以上のキースペースを保持しているか判定
 			Instances instances = serverService.getInstances(user);
-			List<String> keyspaceList = cassandraService.findAllKeyspaceWithoutSysKeyspace(instances);
-			if (isNotEmpty(keyspaceList)) {
+			Keyspaces keyspaces = cassandraService.findAllKeyspaceWithoutSysKeyspace(instances);
+			if (!keyspaces.isEmpty()) {
 				return;
 			}
 

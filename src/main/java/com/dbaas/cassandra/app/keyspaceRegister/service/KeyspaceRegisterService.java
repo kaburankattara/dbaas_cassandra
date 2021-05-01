@@ -3,7 +3,7 @@ package com.dbaas.cassandra.app.keyspaceRegister.service;
 import com.dbaas.cassandra.app.keyspaceRegister.service.async.KeyspaceRegisterAsyncService;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.user.LoginUser;

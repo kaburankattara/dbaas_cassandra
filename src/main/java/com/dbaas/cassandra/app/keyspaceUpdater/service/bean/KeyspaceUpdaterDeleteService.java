@@ -1,5 +1,6 @@
 package com.dbaas.cassandra.app.keyspaceUpdater.service.bean;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class KeyspaceUpdaterDeleteService {
 	/**
 	 * キースペースの削除
 	 */
-	public void deleteKeyspace(LoginUser user, String keyspace) {
+	public void deleteKeyspace(LoginUser user, Keyspace keyspace) {
 		Instances instances = serverService.getInstances(user);
 		for (Instance instance : instances.getInstanceList()) {
 			cassandraService.deleteKeyspace(instance, keyspace);

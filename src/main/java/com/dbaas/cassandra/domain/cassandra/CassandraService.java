@@ -202,10 +202,10 @@ public class CassandraService {
 	 */
 	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
 		// 対象インスタンスのキースペース一覧を取得
-		List<String> keyspaceList = findAllKeyspaceWithoutSysKeyspace(instance);
+		Keyspaces keyspaces = findAllKeyspaceWithoutSysKeyspace(instance);
 		
 		// キースペースが重複するのであれば登録しない
-		if (keyspaceList.contains(keyspace)) {
+		if (keyspaces.hasKeyspace(keyspace)) {
 			return;
 		}
 		
@@ -223,48 +223,48 @@ public class CassandraService {
 		cassandraServer.execCql(instance, cqlCommand);
 	}
 
-	public void deleteKeyspace(Instance instance, String keyspace) {
+	public void deleteKeyspace(Instance instance, Keyspace keyspace) {
 		// サーバインスタンスを生成する
 		Cassandra cassandraServer = Cassandra.createInstance();
 
 		// 実行文を生成
-		String cqlCommand = "drop keyspace " + keyspace + ";";
+		String cqlCommand = "drop keyspace " + keyspace.getKeyspace() + ";";
 
 		// 実行
 		cassandraServer.execCql(instance, cqlCommand);
 	}
 
-	public List<String> findAllKeyspaceWithoutSysKeyspace(Instances instances) {
-		List<String> keyspaceList = new ArrayList<>();
+	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instances instances) {
+		List<Keyspace> keyspaceList = new ArrayList<>();
 		// システム管理用キースペース以外を抽出
 		for (Instance instance : instances.getInstanceList()) {
-			keyspaceList.addAll(findAllKeyspaceWithoutSysKeyspace(instance));
-		}
-		return keyspaceList;
-	}
-
-	public List<String> findAllKeyspaceWithoutSysKeyspace(Instance instance) {
-		List<String> keyspaceList = new ArrayList<>();
-		// システム管理用キースペース以外を抽出
-		for (String keyspace : findAllKeyspace(instance)) {
-			if (SYSTEM_KEYSPACE_LIST.contains(keyspace)) {
-				continue;
-			}
-			keyspaceList.add(keyspace);
-		}
-		return keyspaceList;
-	}
-
-	public Keyspaces findAllKeyspace(Instances instances) {
-		// 各サーバの保持しているキースペース一覧を取得
-		List<String> keyspaceList = new ArrayList<>();
-		for (Instance instance : instances.getInstanceList()) {
-			keyspaceList.addAll(findAllKeyspace(instance));
+			keyspaceList.addAll(findAllKeyspaceWithoutSysKeyspace(instance).getKeyspaceList());
 		}
 		return Keyspaces.createInstance(keyspaceList);
 	}
 
-	public List<String> findAllKeyspace(Instance instance) {
+	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instance instance) {
+		List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
+		// システム管理用キースペース以外を抽出
+		for (Keyspace keyspace : findAllKeyspace(instance).getKeyspaceList()) {
+			if (SYSTEM_KEYSPACE_LIST.contains(keyspace.getKeyspace())) {
+				continue;
+			}
+			keyspaceList.add(keyspace);
+		}
+		return Keyspaces.createInstance(keyspaceList);
+	}
+
+	public Keyspaces findAllKeyspace(Instances instances) {
+		// 各サーバの保持しているキースペース一覧を取得
+		Keyspaces keyspaces = Keyspaces.createEmptyInstance();
+		for (Instance instance : instances.getInstanceList()) {
+			keyspaces.addAll(findAllKeyspace(instance));
+		}
+		return keyspaces;
+	}
+
+	public Keyspaces findAllKeyspace(Instance instance) {
 		// 各サーバの保持しているキースペース一覧を取得
 		List<String> keyspaceList = new ArrayList<>();
 		String result = null;
@@ -286,7 +286,7 @@ public class CassandraService {
 			keyspaceList.add(keyspace);
 		}
 
-		return keyspaceList;
+		return Keyspaces.createInstanceByStringList(keyspaceList);
 	}
 
 	public void registTable(Instance instance, String keyspace, Table table) {
