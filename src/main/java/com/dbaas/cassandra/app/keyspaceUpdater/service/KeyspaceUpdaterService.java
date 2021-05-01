@@ -1,11 +1,11 @@
 package com.dbaas.cassandra.app.keyspaceUpdater.service;
 
 import com.dbaas.cassandra.app.keyspaceUpdater.service.bean.KeyspaceUpdaterDeleteService;
-import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
+import com.dbaas.cassandra.domain.cassandra.table.service.TableService;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -23,17 +23,17 @@ public class KeyspaceUpdaterService {
 
 	private ServerService serverService;
 
-	private CassandraService cassandraService;
-
 	private KeyspaceService keyspaceService;
 
+	private TableService tableService;
+
 	@Autowired
-	KeyspaceUpdaterService(KeyspaceUpdaterDeleteService deleteService, ServerService serverService,
-						   CassandraService cassandraService, KeyspaceService keyspaceService) {
+	KeyspaceUpdaterService(KeyspaceUpdaterDeleteService deleteService, ServerService serverService
+			, KeyspaceService keyspaceService , TableService tableService) {
 		this.deleteService = deleteService;
 		this.serverService = serverService;
-		this.cassandraService = cassandraService;
 		this.keyspaceService = keyspaceService;
+		this.tableService = tableService;
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class KeyspaceUpdaterService {
 
 			// 入力されたkeyspaceを登録する
 			Instances instances = serverService.getInstances(user);
-			return cassandraService.findAllTableByKeyspace(instances, keyspace);
+			return tableService.findAllTableByKeyspace(instances, keyspace);
 
 		} catch (Exception e) {
 			// TODO: handle exception

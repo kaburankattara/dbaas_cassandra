@@ -1,6 +1,5 @@
 package com.dbaas.cassandra.domain.jsch;
 
-import com.dbaas.cassandra.domain.cassandra.SessionUser;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import com.dbaas.cassandra.shared.exception.SystemException;
