@@ -114,7 +114,7 @@ public class KeyspaceListInitServiceMockTest {
 		// 条件
 		// サーバが未構築である
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
-		Mockito.when(cassandraService.findAllKeyspaceWithoutSysKeyspace(instances))
+		Mockito.when(keyspaceService.findAllKeyspaceWithoutSysKeyspace(instances))
 				.thenReturn(createdKeyspaces);
 
 		// テストの実行
@@ -137,7 +137,7 @@ public class KeyspaceListInitServiceMockTest {
 		// 条件
 		// サーバが未構築である
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
-		Mockito.when(cassandraService.findAllKeyspaceWithoutSysKeyspace(instances))
+		Mockito.when(keyspaceService.findAllKeyspaceWithoutSysKeyspace(instances))
 				.thenReturn(createdKeyspaces);
 
 		// テストの実行
@@ -168,12 +168,12 @@ public class KeyspaceListInitServiceMockTest {
 		// TODO whenで指定する引数の書き方を検証する
 		// Mockito.doNothing().when(Mockito.mock(ServerManagerService.class)).waitCompleteCreateServer(Mockito.isA(LoginUser.class));
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class))
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class))
 				.registKeyspaceByDuplicatIgnore(emptyInstances, keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, emptyInstances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(emptyInstances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class))
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class))
 				.registKeyspaceByDuplicatIgnore(emptyInstances, keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -204,12 +204,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -239,12 +239,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -274,12 +274,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -309,12 +309,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -345,12 +345,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証
@@ -381,12 +381,12 @@ public class KeyspaceListInitServiceMockTest {
 		// サーバ起動完了待ちメソッドはvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(ServerService.class)).waitCompleteCreateServer(user);
 		// キースペース登録メソッドはvoidのため処理しない
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 		// cassandranのセットアップ〜キースペース登録メソッドまではvoidのため処理しない
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).setup(user, instances);
 		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).execCassandraByWait(instances);
-		Mockito.doNothing().when(Mockito.mock(CassandraService.class)).registKeyspaceByDuplicatIgnore(instances,
+		Mockito.doNothing().when(Mockito.mock(KeyspaceService.class)).registKeyspaceByDuplicatIgnore(instances,
 				keyspaceRegistPlans);
 
 		// テスト対象の実行と検証

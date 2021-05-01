@@ -4,6 +4,7 @@ import com.dbaas.cassandra.app.keyspaceUpdater.service.bean.KeyspaceUpdaterDelet
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
@@ -24,12 +25,15 @@ public class KeyspaceUpdaterService {
 
 	private CassandraService cassandraService;
 
+	private KeyspaceService keyspaceService;
+
 	@Autowired
 	KeyspaceUpdaterService(KeyspaceUpdaterDeleteService deleteService, ServerService serverService,
-						   CassandraService cassandraService) {
+						   CassandraService cassandraService, KeyspaceService keyspaceService) {
 		this.deleteService = deleteService;
 		this.serverService = serverService;
 		this.cassandraService = cassandraService;
+		this.keyspaceService = keyspaceService;
 	}
 
 	/**
@@ -74,7 +78,7 @@ public class KeyspaceUpdaterService {
 
 			// 削除後も一つ以上のキースペースを保持しているか判定
 			Instances instances = serverService.getInstances(user);
-			Keyspaces keyspaces = cassandraService.findAllKeyspaceWithoutSysKeyspace(instances);
+			Keyspaces keyspaces = keyspaceService.findAllKeyspaceWithoutSysKeyspace(instances);
 			if (!keyspaces.isEmpty()) {
 				return;
 			}
