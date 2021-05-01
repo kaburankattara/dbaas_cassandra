@@ -1,51 +1,52 @@
 package com.dbaas.cassandra.domain.cassandra.keyspace.service;
 
-import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
-import com.dbaas.cassandra.domain.message.MessageSourceService;
-import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.bean.KeyspaceDeleteService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.bean.KeyspaceFindService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.bean.KeyspaceRegistService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.bean.KeyspaceValidateService;
+import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.table.keyspaceRegistPlan.KeyspaceRegistPlanDao;
 import com.dbaas.cassandra.domain.table.keyspaceRegistPlan.KeyspaceRegistPlanEntity;
 import com.dbaas.cassandra.domain.user.LoginUser;
-import com.dbaas.cassandra.shared.validation.ValidateResult;
-import com.dbaas.cassandra.shared.validation.Validator;
 import com.dbaas.cassandra.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.SmartValidator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
-import static com.dbaas.cassandra.domain.message.Message.MSG005E;
 
 @Service
 @Transactional
 public class KeyspaceService {
 
-	private ServerService serverService;
+	private KeyspaceFindService keyspaceFindService;
 
-	private CassandraService cassandraService;
+	private KeyspaceRegistService keyspaceRegistService;
+
+	private KeyspaceDeleteService keyspaceDeleteService;
+
+	private KeyspaceValidateService keyspaceValidateService;
 
 	private KeyspaceRegistPlanDao keyspaceRegistPlanDao;
 
-	private Validator validator;
-	
     @Autowired
-	public KeyspaceService(ServerService serverService, CassandraService cassandraService
-			, KeyspaceRegistPlanDao keyspaceRegistPlanDao, SmartValidator smartValidator
-			, MessageSourceService messageSource) {
-		this.serverService = serverService;
-		this.cassandraService = cassandraService;
+	public KeyspaceService(KeyspaceFindService keyspaceFindService, KeyspaceRegistService keyspaceRegistService
+			, KeyspaceDeleteService keyspaceDeleteService, KeyspaceValidateService keyspaceValidateService
+			, KeyspaceRegistPlanDao keyspaceRegistPlanDao) {
+		this.keyspaceFindService = keyspaceFindService;
+		this.keyspaceRegistService = keyspaceRegistService;
+		this.keyspaceDeleteService = keyspaceDeleteService;
+		this.keyspaceValidateService = keyspaceValidateService;
 		this.keyspaceRegistPlanDao = keyspaceRegistPlanDao;
-		this.validator = Validator.getInstance(smartValidator, messageSource);
 	}
     
     public KeyspaceRegistPlans findKeyspaceRegistPlanByUserId(LoginUser user) {
@@ -63,31 +64,7 @@ public class KeyspaceService {
     }
 
 	public RegistKeyspaceResultDto validateForRegist(LoginUser user, Keyspace keyspace) {
-
-		// 単項目チェック
-		ValidateResult validateResult = keyspace.validate(validator);
-		RegistKeyspaceResultDto result = new RegistKeyspaceResultDto(validateResult);
-		if (validateResult.hasErrors()){
-			return result;
-		}
-
-		// cassandraからキースペース一覧を取得する
-		Instances instances = serverService.getAllInstances(user);
-		Keyspaces keyspaces = cassandraService.findAllKeyspace(instances);
-		// 引数のキースペースが登録済の場合、エラーとして処理を中断する
-		if (keyspaces.hasKeyspace(keyspace)) {
-			validateResult.addError(MSG005E);
-		}
-
-		// 引数のキースペースでキースペース登録予定を取得する
-		KeyspaceRegistPlan keyspaceRegistPlan = keyspaceRegistPlanDao.findByUserIdAndKeyspace(user, keyspace);
-		// キースペースが登録予定に登録済であればエラーとする
-		if (!keyspaceRegistPlan.isEmpty()) {
-			validateResult.addError(MSG005E);
-			return result;
-		}
-
-		return result;
+		return keyspaceValidateService.validateForRegist(user, keyspace);
 	}
     
     public void insertKeyspaceRegistPlan(LoginUser user, Keyspace keyspace) {
@@ -96,5 +73,57 @@ public class KeyspaceService {
 
 	public void deleteKeyspaceRegistPlan(LoginUser user, Keyspaces keyspaces) {
     	keyspaceRegistPlanDao.delete(user, keyspaces);
+	}
+
+	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instances instances) {
+		return keyspaceFindService.findAllKeyspaceWithoutSysKeyspace(instances);
+	}
+
+	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instance instance) {
+		return keyspaceFindService.findAllKeyspaceWithoutSysKeyspace(instance);
+	}
+
+	public Keyspaces findAllKeyspace(Instances instances) {
+		return keyspaceFindService.findAllKeyspace(instances);
+	}
+
+	public Keyspaces findAllKeyspace(Instance instance) {
+		return keyspaceFindService.findAllKeyspace(instance);
+	}
+
+	public void registKeyspace(Instances instances, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspace(instances, keyspace);
+	}
+
+	/**
+	 * 重複は無視してキースペースを登録
+	 *
+	 * @param instances
+	 * @param keyspaceRegistPlans
+	 */
+	public void registKeyspaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
+		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instances, keyspaceRegistPlans);
+	}
+
+	public void registKeyspaceByDuplicatIgnore(Instances instances, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instances, keyspace);
+	}
+
+	/**
+	 * 重複は無視してキースペースを登録
+	 *
+	 * @param instance
+	 * @param keyspace
+	 */
+	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instance, keyspace);
+	}
+
+	public void registKeyspace(Instance instance, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspace(instance, keyspace);
+	}
+
+	public void deleteKeyspace(Instance instance, Keyspace keyspace) {
+		keyspaceDeleteService.deleteKeyspace(instance, keyspace);
 	}
 }

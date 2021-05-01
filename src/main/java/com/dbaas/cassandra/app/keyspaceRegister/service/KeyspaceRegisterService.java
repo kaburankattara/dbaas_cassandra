@@ -22,17 +22,11 @@ public class  KeyspaceRegisterService {
 	private KeyspaceRegisterAsyncService asyncService;
 	
 	private KeyspaceService keyspaceService;
-
-	private ServerService serverService;
-
-	private CassandraService cassandraService;
 	
 	@Autowired
-	KeyspaceRegisterService(KeyspaceRegisterAsyncService asyncService, KeyspaceService keyspaceService, ServerService serverService, CassandraService cassandraService) {
+	KeyspaceRegisterService(KeyspaceRegisterAsyncService asyncService, KeyspaceService keyspaceService) {
 		this.asyncService = asyncService;
 		this.keyspaceService = keyspaceService;
-		this.serverService = serverService;
-		this.cassandraService = cassandraService;
 	}
 	
 	/**

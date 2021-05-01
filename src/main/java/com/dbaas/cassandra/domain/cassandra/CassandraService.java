@@ -1,11 +1,9 @@
 package com.dbaas.cassandra.domain.cassandra;
 
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -15,24 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 import static com.dbaas.cassandra.domain.cassandra.table.Table.createEmptyTable;
-import static com.dbaas.cassandra.utils.ObjectUtils.isEmpty;
-import static com.dbaas.cassandra.utils.ObjectUtils.isNotEmpty;
 import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
-import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
-import static com.dbaas.cassandra.utils.StringUtils.split;
-import static java.util.Arrays.asList;
 
 @Service
 @Transactional
 public class CassandraService {
 
+	private KeyspaceService keyspaceService;
+
 	@Autowired
-	public CassandraService() {
+	public CassandraService(KeyspaceService keyspaceService) {
+		this.keyspaceService = keyspaceService;
 	}
 
 	/**
@@ -125,7 +120,7 @@ public class CassandraService {
 		
 		for (Instance instance : instances.getInstanceList()) {
 			// CQL実行が出来ないインスタンスが存在すればfalse
-			if (isEmpty(findAllKeyspace(instance))) {
+			if (keyspaceService.findAllKeyspace(instance).isEmpty()) {
 				return false;
 			}
 		}
@@ -139,7 +134,7 @@ public class CassandraService {
 	 */
 	public boolean canExecCql(Instance instance) {
 		// CQLでキースペース一覧が取得出来るか判定
-		return isNotEmpty(findAllKeyspace(instance));
+		return !keyspaceService.findAllKeyspace(instance).isEmpty();
 	}
 
 	/**
@@ -168,125 +163,6 @@ public class CassandraService {
 			}
 		}
 		return true;
-	}
-	
-	public void registKeyspace(Instances instances, Keyspace keyspace) {
-		for (Instance instance : instances.getInstanceList()) {
-			registKeyspace(instance, keyspace);
-		}
-	}
-	
-	/**
-	 * 重複は無視してキースペースを登録
-	 * 
-	 * @param instances
-	 * @param keyspaceRegistPlans
-	 */
-	public void registKeyspaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
-		for (String keyspace : keyspaceRegistPlans.getKeyspaceList()) {
-			registKeyspaceByDuplicatIgnore(instances, Keyspace.createInstance(keyspace));
-		}
-	}
-	
-	public void registKeyspaceByDuplicatIgnore(Instances instances, Keyspace keyspace) {
-		for (Instance instance : instances.getInstanceList()) {
-			registKeyspaceByDuplicatIgnore(instance, keyspace);
-		}
-	}
-	
-	/**
-	 * 重複は無視してキースペースを登録
-	 * 
-	 * @param instance
-	 * @param keyspace
-	 */
-	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
-		// 対象インスタンスのキースペース一覧を取得
-		Keyspaces keyspaces = findAllKeyspaceWithoutSysKeyspace(instance);
-		
-		// キースペースが重複するのであれば登録しない
-		if (keyspaces.hasKeyspace(keyspace)) {
-			return;
-		}
-		
-		// キースペースが重複しないのであれば登録
-		registKeyspace(instance, keyspace);
-	}
-
-	public void registKeyspace(Instance instance, Keyspace keyspace) {
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// create文を作成して実行
-		String cqlCommand = "create keyspace if not exists " + keyspace.getKeyspace()
-				+ " with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };";
-		cassandraServer.execCql(instance, cqlCommand);
-	}
-
-	public void deleteKeyspace(Instance instance, Keyspace keyspace) {
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// 実行文を生成
-		String cqlCommand = "drop keyspace " + keyspace.getKeyspace() + ";";
-
-		// 実行
-		cassandraServer.execCql(instance, cqlCommand);
-	}
-
-	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instances instances) {
-		List<Keyspace> keyspaceList = new ArrayList<>();
-		// システム管理用キースペース以外を抽出
-		for (Instance instance : instances.getInstanceList()) {
-			keyspaceList.addAll(findAllKeyspaceWithoutSysKeyspace(instance).getKeyspaceList());
-		}
-		return Keyspaces.createInstance(keyspaceList);
-	}
-
-	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instance instance) {
-		List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
-		// システム管理用キースペース以外を抽出
-		for (Keyspace keyspace : findAllKeyspace(instance).getKeyspaceList()) {
-			if (SYSTEM_KEYSPACE_LIST.contains(keyspace.getKeyspace())) {
-				continue;
-			}
-			keyspaceList.add(keyspace);
-		}
-		return Keyspaces.createInstance(keyspaceList);
-	}
-
-	public Keyspaces findAllKeyspace(Instances instances) {
-		// 各サーバの保持しているキースペース一覧を取得
-		Keyspaces keyspaces = Keyspaces.createEmptyInstance();
-		for (Instance instance : instances.getInstanceList()) {
-			keyspaces.addAll(findAllKeyspace(instance));
-		}
-		return keyspaces;
-	}
-
-	public Keyspaces findAllKeyspace(Instance instance) {
-		// 各サーバの保持しているキースペース一覧を取得
-		List<String> keyspaceList = new ArrayList<>();
-		String result = null;
-
-		// サーバインスタンスを生成する
-		Cassandra cassandraServer = Cassandra.createInstance();
-
-		// create文を作成して実行
-		String cqlCommand = "DESC KEYSPACES";
-		result = cassandraServer.execCql(instance, cqlCommand);
-
-		// 検索結果をListに整形
-		result = replaceAll(result, "\n", "");
-		result = replaceAll(result, "  ", " ");
-		List<String> cqlResultKeyspaceList = new ArrayList<String>(asList(split(result, ' ')));
-
-		// システム管理用キースペース以外を抽出
-		for (String keyspace : cqlResultKeyspaceList) {
-			keyspaceList.add(keyspace);
-		}
-
-		return Keyspaces.createInstanceByStringList(keyspaceList);
 	}
 
 	public void registTable(Instance instance, String keyspace, Table table) {
