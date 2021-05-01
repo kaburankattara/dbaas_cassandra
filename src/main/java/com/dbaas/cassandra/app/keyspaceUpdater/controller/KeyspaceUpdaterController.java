@@ -47,12 +47,11 @@ public class KeyspaceUpdaterController {
 	}
 
 	@PostMapping("update")
-	public String regist(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") KeyspaceUpdaterForm form) {
+	public String update(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") KeyspaceUpdaterForm form) {
 		// TODO 後で実装
 		
 		// サーバ情報を取得する
 		// キースペースが作成済みじゃないか判定
-		
 		try {
 			// updaterService.registKeyspace(user,form.getKeyspace());
 		} catch(Exception e) {
@@ -64,13 +63,11 @@ public class KeyspaceUpdaterController {
 	@PostMapping("delete")
 	public String delete(@AuthenticationPrincipal LoginUser user, @ModelAttribute("form") KeyspaceUpdaterForm form) {
 		try {
-			updaterService.deleteKeyspace(user, form.getKeyspace());
+			updaterService.deleteKeyspace(user, form.toKeyspace());
 		} catch(Exception e) {
 			
 		}
 		return createRedirectUri(URL_KEYSPACE_LIST);
 	}
-	
-	
-	
+
 }

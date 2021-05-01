@@ -45,6 +45,10 @@ public class Keyspace {
         return this.keyspace = keyspace;
     }
 
+    public boolean isEmpty() {
+        return StringUtils.isEmpty(this.keyspace);
+    }
+
     public ValidateResult validate(Validator validator) {
         return validator.validate(this, CLASS_NAME);
     }

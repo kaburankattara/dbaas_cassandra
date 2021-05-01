@@ -29,7 +29,7 @@ import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncServi
 import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
 import com.dbaas.cassandra.config.DatasourceConfig;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.domain.user.User;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -88,14 +88,14 @@ public class KeyspaceListServiceTest {
     	loginUser.setUserId("aaa");
     	loginUser.setUserName("test");
     	loginUser.setPassword("");
-		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
+		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaces());
 
 		// テスト対象の実行
 		KeyspaceListInitServiceResultDto checkTarget = keyspaceListService.init(loginUser);
 
 		// テスト対象の検証
 		Assertions.assertThat(checkTarget.getKeyspaceList().size()).isEqualTo(compTarget.getKeyspaceList().size());
-   		Assertions.assertThat(checkTarget.getCreatedKeyspaceList().size()).isEqualTo(compTarget.getCreatedKeyspaceList().size());
+   		Assertions.assertThat(checkTarget.getCreatedKeyspaces().toStringList().size()).isEqualTo(compTarget.getCreatedKeyspaces().toStringList().size());
 	}
 
     @Test
@@ -140,7 +140,7 @@ public class KeyspaceListServiceTest {
     	user.setUserName("test");
     	user.setPassword("");
     	LoginUser loginUser = new LoginUser(user);
-		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaceList());
+		Mockito.when(keyspaceListInitService.findCreatedKeyspaceList(loginUser)).thenReturn(compTarget.getCreatedKeyspaces());
 		
 		// テスト対象の実行
 		KeyspaceListInitServiceResultDto checkTarget;
@@ -155,7 +155,7 @@ public class KeyspaceListServiceTest {
 			
 		// テスト対象の検証
    		Assertions.assertThat(checkTarget.getKeyspaceList().size()).isEqualTo(compTarget.getKeyspaceList().size());
-   		Assertions.assertThat(checkTarget.getCreatedKeyspaceList().size()).isEqualTo(compTarget.getCreatedKeyspaceList().size());
+   		Assertions.assertThat(checkTarget.getCreatedKeyspaces().toStringList().size()).isEqualTo(compTarget.getCreatedKeyspaces().toStringList().size());
 	}
 
     @AfterEach

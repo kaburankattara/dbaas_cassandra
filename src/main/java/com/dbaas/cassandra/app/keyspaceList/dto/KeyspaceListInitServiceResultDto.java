@@ -1,7 +1,8 @@
 package com.dbaas.cassandra.app.keyspaceList.dto;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
-import com.dbaas.cassandra.utils.ObjectUtils;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 
 import java.util.List;
 
@@ -13,16 +14,16 @@ public class KeyspaceListInitServiceResultDto {
 		
 	}
 
-	public KeyspaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, List<String> createdKeyspaceList, String endPoint) {
+	public KeyspaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, Keyspaces createdKeyspaces, String endPoint) {
 		this.keyspaceRegistPlans = keyspaceRegistPlans;
-		this.createdKeyspaceList = createdKeyspaceList;
+		this.createdKeyspaces = createdKeyspaces;
 		setKeyspaceList();
 		this.endPoint = endPoint;
 	}
 	
 	public KeyspaceRegistPlans keyspaceRegistPlans;
 
-	public List<String> createdKeyspaceList;
+	public Keyspaces createdKeyspaces;
 
 	public List<String> keyspaceList;
 
@@ -34,12 +35,12 @@ public class KeyspaceListInitServiceResultDto {
 
 	public void setKeyspaceList() {
 		this.keyspaceList = keyspaceRegistPlans.getKeyspaceList();
-		if (ObjectUtils.isEmpty(createdKeyspaceList)) {
+		if (createdKeyspaces.isEmpty()) {
 			return;
 		}
-		for (String keyspace : createdKeyspaceList) {
-			if (!createdKeyspaceList.contains(keyspace)) {
-				keyspaceList.add(keyspace);
+		for (Keyspace keyspace : createdKeyspaces.getKeyspaceList()) {
+			if (!keyspaceList.contains(keyspace)) {
+				keyspaceList.add(keyspace.getKeyspace());
 			}
 		}
 	}
@@ -52,12 +53,12 @@ public class KeyspaceListInitServiceResultDto {
 		this.keyspaceRegistPlans = keyspaceRegistPlans;
 	}
 
-	public List<String> getCreatedKeyspaceList() {
-		return createdKeyspaceList;
+	public Keyspaces getCreatedKeyspaces() {
+		return createdKeyspaces;
 	}
 	
-	public void setCreatedKeyspaceList(List<String> createdKeyspaceList) {
-		this.createdKeyspaceList = createdKeyspaceList;
+	public void setCreatedKeyspaces(Keyspaces createdKeyspaces) {
+		this.createdKeyspaces = createdKeyspaces;
 	}
 
 	public String getEndPoint() {
@@ -79,11 +80,11 @@ public class KeyspaceListInitServiceResultDto {
 	 * @return
 	 */
 	public String getAppendClassForStatusComplete(String keyspace) {
-		return createdKeyspaceList.contains(keyspace) ? "" : "displayNone";
+		return createdKeyspaces.hasKeyspace(Keyspace.createInstance(keyspace)) ? "" : "displayNone";
 	}
 	
 	public String getAppendClassForStatusPending(String keyspace) {
-		return !createdKeyspaceList.contains(keyspace) ? "" : "displayNone";
+		return !createdKeyspaces.hasKeyspace(Keyspace.createInstance(keyspace)) ? "" : "displayNone";
 	}
 
 	public String getAppendClassForEndPoint() {
@@ -91,7 +92,7 @@ public class KeyspaceListInitServiceResultDto {
 	}
 
 	public boolean hasKeyspaceList() {
-		return ObjectUtils.isNotEmpty(createdKeyspaceList);
+		return !createdKeyspaces.isEmpty();
 	}
 	
 }

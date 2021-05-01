@@ -6,6 +6,8 @@ import static com.github.springtestdbunit.annotation.DatabaseOperation.CLEAN_INS
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbaas.cassandra.DbaasCassandraApplication;
 import com.dbaas.cassandra.config.DatasourceConfig;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
@@ -77,11 +79,11 @@ public class KeyspaceListInitServiceMockTest {
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
 
 		// テストの実行
-		List<String> createdKeyspaceList = keyspaceListInitService.findCreatedKeyspaceList(user);
+		Keyspaces createdKeyspaces= keyspaceListInitService.findCreatedKeyspaceList(user);
 
 		// 検証
 		// 登録済みキースペースリストが空であること
-		Assertions.assertThat(createdKeyspaceList.size()).isEqualTo(0);
+		Assertions.assertThat(createdKeyspaces.toStringList().size()).isEqualTo(0);
 	}
 
 	@Test
@@ -95,11 +97,11 @@ public class KeyspaceListInitServiceMockTest {
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
 
 		// テストの実行
-		List<String> createdKeyspaceList = keyspaceListInitService.findCreatedKeyspaceList(user);
+		Keyspaces createdKeyspaces = keyspaceListInitService.findCreatedKeyspaceList(user);
 
 		// 検証
 		// 登録済みキースペースリストが空であること
-		Assertions.assertThat(createdKeyspaceList.size()).isEqualTo(0);
+		Assertions.assertThat(createdKeyspaces.toStringList().size()).isEqualTo(0);
 	}
 
 	@Test
@@ -107,20 +109,20 @@ public class KeyspaceListInitServiceMockTest {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
-		List<String> createdKeyspaceList = new ArrayList<String>();
+		Keyspaces createdKeyspaces = Keyspaces.createEmptyInstance();
 
 		// 条件
 		// サーバが未構築である
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
 		Mockito.when(cassandraService.findAllKeyspaceWithoutSysKeyspace(instances))
-				.thenReturn(createdKeyspaceList);
+				.thenReturn(createdKeyspaces);
 
 		// テストの実行
-		List<String> resultList = keyspaceListInitService.findCreatedKeyspaceList(user);
+		Keyspaces resultList = keyspaceListInitService.findCreatedKeyspaceList(user);
 
 		// 検証
 		// 登録済みキースペースリストが空であること
-		Assertions.assertThat(resultList.size()).isEqualTo(createdKeyspaceList.size());
+		Assertions.assertThat(resultList.toStringList().size()).isEqualTo(createdKeyspaces.toStringList().size());
 	}
 
 	@Test
@@ -128,22 +130,23 @@ public class KeyspaceListInitServiceMockTest {
 		// テスト用データ作成
 		LoginUser user = userService.findUserByUserId("aaa");
 		Instances instances = instancesServiceForTest.createMockInstances_サーバ構築済状態();
-		List<String> createdKeyspaceList = new ArrayList<String>();
-		createdKeyspaceList.add("keyspace");
+		List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
+		keyspaceList.add(Keyspace.createInstance("keyspace"));
+		Keyspaces createdKeyspaces = Keyspaces.createInstance(keyspaceList);
 
 		// 条件
 		// サーバが未構築である
 		Mockito.when(serverService.getInstances(user)).thenReturn(instances);
 		Mockito.when(cassandraService.findAllKeyspaceWithoutSysKeyspace(instances))
-				.thenReturn(createdKeyspaceList);
+				.thenReturn(createdKeyspaces);
 
 		// テストの実行
-		List<String> resultList = keyspaceListInitService.findCreatedKeyspaceList(user);
+		Keyspaces resultList = keyspaceListInitService.findCreatedKeyspaceList(user);
 
 		// 検証
 		// 登録済みキースペースリストの内容がcassandra管理Serviceから取得したキースペースリスト(sys系除く)と一致すること
-		Assertions.assertThat(resultList.size()).isEqualTo(createdKeyspaceList.size());
-		Assertions.assertThat(resultList.get(0)).isEqualTo(createdKeyspaceList.get(0));
+		Assertions.assertThat(resultList.toStringList().size()).isEqualTo(createdKeyspaces.toStringList().size());
+		Assertions.assertThat(resultList.toStringList().get(0)).isEqualTo(createdKeyspaces.toStringList().get(0));
 	}
 
 	@Test

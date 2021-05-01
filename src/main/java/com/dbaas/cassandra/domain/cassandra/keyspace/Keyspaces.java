@@ -11,31 +11,50 @@ public class Keyspaces {
         return new Keyspaces();
     }
 
-    public static Keyspaces createInstance(List<String> keyspaceList) {
+    public static Keyspaces createInstance(List<Keyspace> keyspaceList) {
+        return new Keyspaces(keyspaceList);
+    }
+
+    public static Keyspaces createInstanceByStringList(List<String> keyspaceListStr) {
+        List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
+        for (String keyspaceStr :  keyspaceListStr) {
+            keyspaceList.add(Keyspace.createInstance(keyspaceStr));
+        }
+
         return new Keyspaces(keyspaceList);
     }
 
     public Keyspaces() {
-        this.keyspaceList = new ArrayList<Keyspace>();
     }
 
-    public Keyspaces(List<String> keyspaceListArg) {
-        List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
-        for (String keyspaceArg : keyspaceListArg) {
-            keyspaceList.add(Keyspace.createInstance(keyspaceArg));
-        }
-
+    public Keyspaces(List<Keyspace> keyspaceList) {
         this.keyspaceList = keyspaceList;
     }
 
-    private List<Keyspace> keyspaceList;
+    private List<Keyspace> keyspaceList = new ArrayList<Keyspace>();
 
     public List<Keyspace> getKeyspaceList() {
         return keyspaceList;
     }
 
+    public List<String> toStringList() {
+        if (isEmpty()) {
+            return new ArrayList<String>();
+        }
+
+        List<String> resultList = new ArrayList<String>();
+        for (Keyspace keyspace : keyspaceList) {
+            resultList.add(keyspace.getKeyspace());
+        }
+        return resultList;
+    }
+
     public void setKeyspaceList(List<Keyspace> keyspaceList) {
         this.keyspaceList = keyspaceList;
+    }
+
+    public boolean isEmpty() {
+        return ObjectUtils.isEmpty(keyspaceList);
     }
 
     public boolean hasKeyspace(Keyspace keyspaceArg) {
@@ -52,4 +71,14 @@ public class Keyspaces {
 
         return false;
     }
+
+    public void addAll(Keyspaces keyspaces) {
+
+        if (keyspaces.isEmpty()) {
+            return;
+        }
+
+        this.keyspaceList.addAll(keyspaces.getKeyspaceList());
+    }
+
 }

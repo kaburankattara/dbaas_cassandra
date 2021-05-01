@@ -1,22 +1,20 @@
 package com.dbaas.cassandra.app.keyspaceList.service;
 
-import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
-
-import java.util.List;
-
+import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto;
+import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncService;
+import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
+import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.endPoint.EndPointService;
+import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.exception.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto;
-import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncService;
-import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
-import com.dbaas.cassandra.domain.cassandra.CassandraService;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceService;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
-import com.dbaas.cassandra.domain.user.LoginUser;
+import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
 
 @Service
 @Transactional
@@ -51,7 +49,7 @@ public class KeyspaceListService {
 		KeyspaceRegistPlans keyspaceRegistPlans = keyspaceService.findKeyspaceRegistPlanByUserId(user);
 
 		// cassandraサーバに登録済のキースペースリストを取得する
-		List<String> createdKeyspaceList = keyspaceListInitService.findCreatedKeyspaceList(user);
+		Keyspaces createdKeyspaces = keyspaceListInitService.findCreatedKeyspaceList(user);
 		
 		// cassandraサーバの起動状況をリフレッシュする
 		try {
@@ -64,6 +62,6 @@ public class KeyspaceListService {
 
 		String endPoint = endPointService.getEndPoint(user);
 
-		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaceList, endPoint);
+		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces, endPoint);
 	}
 }

@@ -1,6 +1,10 @@
-package com.dbaas.cassandra.domain.cassandra.keyspace;
+package com.dbaas.cassandra.domain.cassandra.keyspace.service;
 
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
 import com.dbaas.cassandra.domain.message.MessageSourceService;
 import com.dbaas.cassandra.domain.server.ServerService;
@@ -89,4 +93,8 @@ public class KeyspaceService {
     public void insertKeyspaceRegistPlan(LoginUser user, Keyspace keyspace) {
 		keyspaceRegistPlanDao.insert(user, keyspace);
     }
+
+	public void deleteKeyspaceRegistPlan(LoginUser user, Keyspaces keyspaces) {
+    	keyspaceRegistPlanDao.delete(user, keyspaces);
+	}
 }

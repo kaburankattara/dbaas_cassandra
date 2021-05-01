@@ -19,16 +19,16 @@ import com.dbaas.cassandra.domain.user.LoginUser;
 @RequestMapping(URL_IS_COMPLETE_KEYSPACE_REGIST)
 public class  IsCompleteKeyspaceRegistController {
 
-    private final IsCompleteKeyspaceRegistService isCompleteKeyspaceRegistService;
+    private final IsCompleteKeyspaceRegistService service;
     
     @Autowired
-    public IsCompleteKeyspaceRegistController(IsCompleteKeyspaceRegistService isCompleteKeyspaceRegistService){
-        this.isCompleteKeyspaceRegistService = isCompleteKeyspaceRegistService;
+    public IsCompleteKeyspaceRegistController(IsCompleteKeyspaceRegistService service){
+        this.service = service;
     }
 
 	@GetMapping()
 	@ResponseBody
 	public List<String> index(@AuthenticationPrincipal LoginUser user, Model model) {
-		return isCompleteKeyspaceRegistService.isCompleteKeyspaceRegist(user);
+		return service.isCompleteKeyspaceRegist(user).toStringList();
 	}
 }
