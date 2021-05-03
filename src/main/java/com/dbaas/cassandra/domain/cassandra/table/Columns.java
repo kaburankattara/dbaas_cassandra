@@ -1,11 +1,10 @@
 package com.dbaas.cassandra.domain.cassandra.table;
 
 import javax.validation.Valid;
-
-import static com.dbaas.cassandra.utils.StringUtils.isEquals;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dbaas.cassandra.utils.StringUtils.isEquals;
 
 public class Columns {
 	
@@ -57,6 +56,26 @@ public class Columns {
 		for (Column column : columnList) {
 			if (column.isRowKey()) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasDuplicateColumnName() {
+		if (isEmpty()) {
+			return false;
+		}
+
+		for (Column columnMain : columnList) {
+			int count = 0;
+			for (Column columnSub : columnList) {
+				if (isEquals(columnMain.getColumnName(), columnSub.getColumnName())) {
+					count++;
+				}
+
+				if (count >= 2) {
+					return true;
+				}
 			}
 		}
 		return false;

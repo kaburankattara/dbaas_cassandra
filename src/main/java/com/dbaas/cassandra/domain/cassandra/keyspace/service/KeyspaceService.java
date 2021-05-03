@@ -101,12 +101,12 @@ public class KeyspaceService {
 	 * @param instances
 	 * @param keyspaceRegistPlans
 	 */
-	public void registKeyspaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
-		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instances, keyspaceRegistPlans);
+	public void registKeyspaceByDuplicateIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
+		keyspaceRegistService.registKeyspaceByDuplicateIgnore(instances, keyspaceRegistPlans);
 	}
 
-	public void registKeyspaceByDuplicatIgnore(Instances instances, Keyspace keyspace) {
-		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instances, keyspace);
+	public void registKeyspaceByDuplicateIgnore(Instances instances, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspaceByDuplicateIgnore(instances, keyspace);
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class KeyspaceService {
 	 * @param instance
 	 * @param keyspace
 	 */
-	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
-		keyspaceRegistService.registKeyspaceByDuplicatIgnore(instance, keyspace);
+	public void registKeyspaceByDuplicateIgnore(Instance instance, Keyspace keyspace) {
+		keyspaceRegistService.registKeyspaceByDuplicateIgnore(instance, keyspace);
 	}
 
 	public void registKeyspace(Instance instance, Keyspace keyspace) {

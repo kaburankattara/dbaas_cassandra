@@ -13,6 +13,7 @@
 <section layout:fragment="content">
 <h3>テーブル更新</h3>
 <form id="form" th:object="${form}" th:action="@{/tableUpdater/update}" method="post">
+	<div layout:replace="~{/layout/messages :: messagesArea}">メッセージエリア</div>
 	<table>
 		<tr>
 			<td><label>キースペース名</label></td>

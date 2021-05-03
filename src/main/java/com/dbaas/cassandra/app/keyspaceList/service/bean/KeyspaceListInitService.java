@@ -73,7 +73,7 @@ public class KeyspaceListInitService {
 			instances = serverService.getInstances(user);
 			boolean canAllExecCql = cassandraService.canAllExecCql(instances);
 			if (!instances.isEmpty() && canAllExecCql) {
-				keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspaceRegistPlans);
+				keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspaceRegistPlans);
 				return;
 			}
 			
@@ -83,7 +83,7 @@ public class KeyspaceListInitService {
 			if (!instances.isEmpty() && !canAllExecCql) {
 				cassandraService.setup(user, instances);
 				cassandraService.execCassandraByWait(instances);
-				keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspaceRegistPlans);
+				keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspaceRegistPlans);
 				return;
 			}
 
@@ -100,7 +100,7 @@ public class KeyspaceListInitService {
 			cassandraService.setup(user, instances);
 			cassandraService.execCassandraByWait(instances);
 			// そしてキースペースの登録漏れがあれば登録
-			keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspaceRegistPlans);
+			keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspaceRegistPlans);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());

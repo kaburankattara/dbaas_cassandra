@@ -181,6 +181,10 @@ public class Table {
 		return StringUtils.isEmpty(tableName) || columns.isEmpty();
 	}
 
+	public boolean hasDuplicateColumnName() {
+		return columns.hasDuplicateColumnName();
+	}
+
 	public ValidateResult validate(Validator validator) {
 		return validator.validate(this, CLASS_NAME);
 	}
