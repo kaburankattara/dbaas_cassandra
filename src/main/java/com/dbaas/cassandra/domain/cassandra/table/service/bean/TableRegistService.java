@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.domain.cassandra.table.service.bean;
 
 import com.dbaas.cassandra.domain.cassandra.Cassandra;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class TableRegistService {
 	public TableRegistService() {
 	}
 
-	public void registTable(Instance instance, String keyspace, Table table) {
+	public void registTable(Instance instance, Keyspace keyspace, Table table) {
 		// サーバインスタンスを生成する
 		Cassandra cassandraServer = Cassandra.createInstance();
 

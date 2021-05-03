@@ -28,8 +28,7 @@ import java.util.List;
 import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
 import static com.dbaas.cassandra.domain.message.Message.MSG005E;
-import static com.dbaas.cassandra.utils.StringUtils.replaceAll;
-import static com.dbaas.cassandra.utils.StringUtils.split;
+import static com.dbaas.cassandra.utils.StringUtils.*;
 import static java.util.Arrays.asList;
 
 @Service
@@ -81,6 +80,11 @@ public class KeyspaceFindService {
 		// create文を作成して実行
 		String cqlCommand = "DESC KEYSPACES";
 		result = cassandraServer.execCql(instance, cqlCommand);
+
+		// 検索結果が空の場合、処理を中断する
+		if (isEmpty(result)) {
+			return Keyspaces.createEmptyInstance();
+		}
 
 		// 検索結果をListに整形
 		result = replaceAll(result, "\n", "");

@@ -2,6 +2,7 @@ package com.dbaas.cassandra.domain.cassandra.table.service.bean;
 
 import com.dbaas.cassandra.domain.cassandra.Cassandra;
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.instance.Instance;
@@ -29,7 +30,7 @@ public class TableAlterService {
 		this.tableFindService = tableFindService;
 	}
 
-	public Tables addColumns(Instance instance, String keyspace, Table newTable) {
+	public Tables addColumns(Instance instance, Keyspace keyspace, Table newTable) {
 		String result = null;
 
 		// 現行のテーブル情報を取得

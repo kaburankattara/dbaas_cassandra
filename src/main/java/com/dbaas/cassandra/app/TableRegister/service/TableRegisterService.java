@@ -1,6 +1,8 @@
 package com.dbaas.cassandra.app.TableRegister.service;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.cassandra.table.dto.RegistTableResultDto;
 import com.dbaas.cassandra.domain.cassandra.table.service.TableService;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instance;
@@ -27,18 +29,27 @@ public class TableRegisterService {
 	/**
 	 * テーブルを登録する
 	 */
-	public void registTable(LoginUser user, String keyspace, Table table) {
+	public RegistTableResultDto registTable(LoginUser user, Keyspace keyspace, Table table) {
+
+		// 入力チェックしエラーの場合、処理を中断する
+		RegistTableResultDto validateResult = tableService.validateForRegist(user, keyspace, table);
+		if (validateResult.hasError()) {
+			return validateResult;
+		}
+
 		// 入力されたテーブルを登録する
 		Instances instances = serverService.getInstances(user);
 		for (Instance instance : instances.getInstanceList()) {
 			tableService.registTable(instance, keyspace, table);
 		}
+
+		return validateResult;
 	}
 
 	/**
 	 * テーブルを取得する
 	 */
-	public Table findTableByRetry(LoginUser user, String keyspace, Table table) {
+	public Table findTableByRetry(LoginUser user, Keyspace keyspace, Table table) {
 		// 登録済みのテーブルを取得する
 		Instances instances = serverService.getInstances(user);
 

@@ -1,5 +1,6 @@
 package com.dbaas.cassandra.app.TableUpdater.service;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +32,14 @@ public class TableUpdaterService {
 	/**
 	 * テーブルを検索する
 	 */
-	public Table findTable(LoginUser user, String keyspace, String tableName) {
+	public Table findTable(LoginUser user, Keyspace keyspace, String tableName) {
 		return initService.findTableByKeyspaceAndTableName(user, keyspace, tableName);
 	}
 
 	/**
 	 * テーブルを更新する
 	 */
-	public void updateTable(LoginUser user, String keyspace, Table table) {
+	public void updateTable(LoginUser user, Keyspace keyspace, Table table) {
 		updateService.updateTable(user, keyspace, table);
 	}
 
