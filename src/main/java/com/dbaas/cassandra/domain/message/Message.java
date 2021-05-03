@@ -32,6 +32,9 @@ public class Message {
 	/** 入力されたテーブルは登録済です。*/
 	public static final String MSG008E = "MSG008E";
 
+	/** カラム名は重複しないように入力して下さい。*/
+	public static final String MSG009E = "MSG009E";
+
 	/** 登録処理後、テーブルの存在確認に失敗しました。正常に登録されているかご確認ください。 */
 	public static final String MSG001W = "MSG001W";
 		

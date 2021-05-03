@@ -41,15 +41,15 @@ public class KeyspaceRegistService {
 	 * @param instances
 	 * @param keyspaceRegistPlans
 	 */
-	public void registKeyspaceByDuplicatIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
+	public void registKeyspaceByDuplicateIgnore(Instances instances, KeyspaceRegistPlans keyspaceRegistPlans) {
 		for (String keyspace : keyspaceRegistPlans.getKeyspaceList()) {
-			registKeyspaceByDuplicatIgnore(instances, Keyspace.createInstance(keyspace));
+			registKeyspaceByDuplicateIgnore(instances, Keyspace.createInstance(keyspace));
 		}
 	}
 
-	public void registKeyspaceByDuplicatIgnore(Instances instances, Keyspace keyspace) {
+	public void registKeyspaceByDuplicateIgnore(Instances instances, Keyspace keyspace) {
 		for (Instance instance : instances.getInstanceList()) {
-			registKeyspaceByDuplicatIgnore(instance, keyspace);
+			registKeyspaceByDuplicateIgnore(instance, keyspace);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class KeyspaceRegistService {
 	 * @param instance
 	 * @param keyspace
 	 */
-	public void registKeyspaceByDuplicatIgnore(Instance instance, Keyspace keyspace) {
+	public void registKeyspaceByDuplicateIgnore(Instance instance, Keyspace keyspace) {
 		// 対象インスタンスのキースペース一覧を取得
 		Keyspaces keyspaces = keyspaceFindService.findAllKeyspaceWithoutSysKeyspace(instance);
 

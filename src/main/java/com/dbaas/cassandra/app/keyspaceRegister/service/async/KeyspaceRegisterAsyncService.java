@@ -47,7 +47,7 @@ public class  KeyspaceRegisterAsyncService {
 			// CQLが実行可能の場合、キースペースの登録のみ実施
 			if (canAllExecCql) {
 				// ※他画面からの登録処理とバッティングを考慮して登録する
-				keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspace);
+				keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspace);
 				return;
 			}
 			
@@ -57,7 +57,7 @@ public class  KeyspaceRegisterAsyncService {
 				cassandraService.setup(user, instances);
 				cassandraService.execCassandraByWait(instances);
 				// ※他画面からの登録処理とバッティングを考慮して登録する
-				keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspace);
+				keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspace);
 				return;
 			}
 
@@ -74,7 +74,7 @@ public class  KeyspaceRegisterAsyncService {
 			
 			// 入力されたkeyspaceを登録する
 			// ※他画面からの登録処理とバッティングを考慮して登録する
-			keyspaceService.registKeyspaceByDuplicatIgnore(instances, keyspace);
+			keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspace);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());

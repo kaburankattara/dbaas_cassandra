@@ -55,6 +55,12 @@ public class TableValidateService {
 			return result;
 		}
 
+		// カラム名の重複がある場合、エラー
+		if (table.hasDuplicateColumnName()) {
+			validateResult.addError(MSG009E);
+			return result;
+		}
+
 		// 対象のキースペースから引数のテーブルを取得する
 		Instances instances = serverService.getAllInstances(user);
 		Table registedTable = tableFindService.findTableByKeyspace(instances, keyspace, table.getTableName());
