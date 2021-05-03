@@ -1,29 +1,24 @@
 package com.dbaas.cassandra.app.TableUpdater.controller;
 
-import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
-import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
-import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
-import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
-import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.dbaas.cassandra.app.TableUpdater.form.TableUpdaterForm;
 import com.dbaas.cassandra.app.TableUpdater.service.TableUpdaterService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 import com.dbaas.cassandra.domain.user.LoginUser;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
+import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
+import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
+import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
+import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
 @Controller
 @RequestMapping(URL_TABLE_UPDATER)
@@ -54,7 +49,7 @@ public class TableUpdaterController {
 			@ModelAttribute("form") TableUpdaterForm form, Model model) {
 		model.addAttribute("TABLE_REGISTER_REFERER", getReferer(request));
 		initModelForAlways(model);
-		Table table = updaterService.findTable(user, form.getKeyspace(), form.getTableName());
+		Table table = updaterService.findTable(user, form.toKeyspace(), form.getTableName());
 		form.setColumns(table.getColumns());
 		form.getColumns().setAllDisabled();
 		form.init();
@@ -65,7 +60,7 @@ public class TableUpdaterController {
 	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
 			@ModelAttribute("form") TableUpdaterForm form, RedirectAttributes attributes, Model model) {
 		try {
-			updaterService.updateTable(user, form.getKeyspace(), form.toTable());
+			updaterService.updateTable(user, form.toKeyspace(), form.toTable());
 		} catch (Exception e) {
 
 		}

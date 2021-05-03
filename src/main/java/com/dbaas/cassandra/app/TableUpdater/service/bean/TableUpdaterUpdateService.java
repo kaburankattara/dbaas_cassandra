@@ -1,5 +1,6 @@
 package com.dbaas.cassandra.app.TableUpdater.service.bean;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.service.TableService;
 import com.dbaas.cassandra.domain.server.ServerService;
@@ -27,7 +28,7 @@ public class TableUpdaterUpdateService {
 	/**
 	 * テーブルを更新する
 	 */
-	public void updateTable(LoginUser user, String keyspace, Table table) {
+	public void updateTable(LoginUser user, Keyspace keyspace, Table table) {
 		try {
 			Instances instances = serverService.getInstances(user);
 			for (Instance instance : instances.getInstanceList()) {

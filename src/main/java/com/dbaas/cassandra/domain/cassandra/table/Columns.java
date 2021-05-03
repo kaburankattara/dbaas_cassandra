@@ -1,5 +1,7 @@
 package com.dbaas.cassandra.domain.cassandra.table;
 
+import javax.validation.Valid;
+
 import static com.dbaas.cassandra.utils.StringUtils.isEquals;
 
 import java.util.ArrayList;
@@ -18,7 +20,8 @@ public class Columns {
 	public Columns(List<Column> columnList) {
 		this.columnList = columnList;
 	}
-	
+
+	@Valid
 	public List<Column> columnList;
 
 	public List<Column> getColumnList() {
@@ -40,6 +43,19 @@ public class Columns {
 		
 		for (Column column : columnList) {
 			if (isEquals(column.getColumnName(), columnArg.columnName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasRowKeyColumn() {
+		if (isEmpty()) {
+			return false;
+		}
+
+		for (Column column : columnList) {
+			if (column.isRowKey()) {
 				return true;
 			}
 		}

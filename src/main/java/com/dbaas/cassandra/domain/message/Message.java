@@ -23,6 +23,15 @@ public class Message {
 	/** 入力されたキースペースは登録済です。 */
 	public static final String MSG005E = "MSG005E";
 
+	/** カラムは一つ以上入力してください。*/
+	public static final String MSG006E = "MSG006E";
+
+	/** 主キーとなるカラムを一つ以上入力してください。*/
+	public static final String MSG007E = "MSG007E";
+
+	/** 入力されたテーブルは登録済です。*/
+	public static final String MSG008E = "MSG008E";
+
 	/** 登録処理後、テーブルの存在確認に失敗しました。正常に登録されているかご確認ください。 */
 	public static final String MSG001W = "MSG001W";
 		

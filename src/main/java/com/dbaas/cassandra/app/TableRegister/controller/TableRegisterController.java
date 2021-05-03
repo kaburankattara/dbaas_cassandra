@@ -4,8 +4,7 @@ import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_LIST;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_REGISTER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
-import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_WARNING;
-import static com.dbaas.cassandra.domain.message.Message.MSG001W;
+import static com.dbaas.cassandra.domain.message.Message.*;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
 import static com.dbaas.cassandra.utils.StringUtils.isContains;
 import static com.dbaas.cassandra.utils.StringUtils.isEquals;
@@ -16,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.dbaas.cassandra.app.TableRegister.form.TableRegisterForm;
 import com.dbaas.cassandra.app.TableRegister.service.TableRegisterService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.cassandra.table.dto.RegistTableResultDto;
 import com.dbaas.cassandra.domain.message.MessageSourceService;
 import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 import com.dbaas.cassandra.domain.user.LoginUser;
@@ -73,9 +73,18 @@ public class TableRegisterController {
 	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
 			@ModelAttribute("form") TableRegisterForm form, RedirectAttributes attributes, Model model) {
 
-		// テーブルを登録
 		try {
-			registerService.registTable(user, form.getKeyspace(), form.toTable());
+
+			// テーブルを登録
+			RegistTableResultDto validateResult = registerService.registTable(user, form.toKeyspace(), form.toTable());
+
+			// 登録結果がエラーの場合、メッセージを表示する
+			if (validateResult.hasError()) {
+				model.addAttribute(MESSAGE_KEY_ERROR, validateResult.getValidateResult().getFirstErrorMessage());
+				initModelForAlways(model);
+				return "tableRegister/tableRegister";
+			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
@@ -83,7 +92,7 @@ public class TableRegisterController {
 
 		// 登録したテーブルが取得可能かチェック
 		// 取得できなければ、登録失敗かもしれないため、ワーニングメッセージを表示する
-		Table findedTable = registerService.findTableByRetry(user, form.getKeyspace(), form.toTable());
+		Table findedTable = registerService.findTableByRetry(user, form.toKeyspace(), form.toTable());
 		if (findedTable.isEmpty()) {
 			attributes.addFlashAttribute(MESSAGE_KEY_WARNING, messageSource.getMessage(MSG001W));
 		}

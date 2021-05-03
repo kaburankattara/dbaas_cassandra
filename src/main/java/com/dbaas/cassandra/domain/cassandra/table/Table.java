@@ -1,35 +1,44 @@
 package com.dbaas.cassandra.domain.cassandra.table;
 
-import static com.dbaas.cassandra.domain.cassandra.table.Columns.createEmptyColumns;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.shared.validation.ValidateResult;
+import com.dbaas.cassandra.shared.validation.Validator;
+import com.dbaas.cassandra.shared.validation.constraints.MaxLength;
+import com.dbaas.cassandra.shared.validation.constraints.Required;
+import com.dbaas.cassandra.utils.StringUtils;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbaas.cassandra.utils.StringUtils;
+import static com.dbaas.cassandra.domain.cassandra.table.Columns.createEmptyColumns;
 
 public class Table {
-
-	/**
-	 * テーブル名
-	 */
-	private String tableName;
-
-	/**
-	 * カラムリスト
-	 */
-	private Columns columns;
-
-	/**
-	 * コンストラクタ
-	 */
-	public Table() {
-	}
 
 	/**
 	 * コンストラクタ
 	 */
 	public static Table createEmptyTable() {
 		return new Table(null, createEmptyColumns());
+	}
+
+	/**
+	 * テーブル名
+	 */
+	@Required(message = "テーブル名の入力は必須です。")
+	@MaxLength(max = TABLE_NAME_MAX_LENGTH, message = "テーブル名は" + TABLE_NAME_MAX_LENGTH + "文字以下で入力してください。")
+	private String tableName;
+
+	/**
+	 * カラムリスト
+	 */
+	@Valid
+	private Columns columns;
+
+	/**
+	 * コンストラクタ
+	 */
+	public Table() {
 	}
 
 	/**
@@ -71,6 +80,16 @@ public class Table {
 		this.columns = new Columns(columnList);
 	}
 
+	/**
+	 * クラス名
+	 */
+	public static final String CLASS_NAME = Table.class.getSimpleName();
+
+	/**
+	 * 最大桁数
+	 */
+	private static final int TABLE_NAME_MAX_LENGTH = 10;
+
 	public String getTableName() {
 		return tableName;
 	}
@@ -87,10 +106,10 @@ public class Table {
 		this.columns = columns;
 	}
 	
-	public String getCreateCql(String keyspace) {
+	public String getCreateCql(Keyspace keyspace) {
 		StringBuilder sb = new StringBuilder();
 		// キースペース選択
-		sb.append("use " + keyspace + ";");
+		sb.append("use " + keyspace.getKeyspace() + ";");
 		
 		
 		// cretate文
@@ -146,12 +165,24 @@ public class Table {
 		return columns.getColumnList();
 	}
 
+	public boolean hasColumn() {
+		return !columns.isEmpty();
+	}
+
 	public boolean hasColumn(Column column) {
 		return columns.hasColumn(column);
 	}
 
+	public boolean hasRowKeyColumn() {
+		return columns.hasRowKeyColumn();
+	}
+
 	public boolean isEmpty() {
 		return StringUtils.isEmpty(tableName) || columns.isEmpty();
+	}
+
+	public ValidateResult validate(Validator validator) {
+		return validator.validate(this, CLASS_NAME);
 	}
 }
 

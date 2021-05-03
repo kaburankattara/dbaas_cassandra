@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.domain.cassandra.table.service.bean;
 
 import com.dbaas.cassandra.domain.cassandra.Cassandra;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.instance.Instance;
@@ -35,7 +36,7 @@ public class TableFindService {
 		// TODO マルチノードで
 	}
 
-	public Table findTableByKeyspace(Instances instances, String keyspace, String tableName) {
+	public Table findTableByKeyspace(Instances instances, Keyspace keyspace, String tableName) {
 		// 各サーバの保持しているテーブル一覧を取得
 		for (Instance instance : instances.getInstanceList()) {
 			Table table = findTableByKeyspace(instance, keyspace, tableName);
@@ -65,7 +66,7 @@ public class TableFindService {
 		return new Tables(result);
 	}
 
-	public Table findTableByKeyspace(Instance instance, String keyspace, String tableName) {
+	public Table findTableByKeyspace(Instance instance, Keyspace keyspace, String tableName) {
 		String result = null;
 
 		// サーバインスタンスを生成する
@@ -73,7 +74,7 @@ public class TableFindService {
 
 		// create文を作成
 		String cqlCommand = CQL_COMMAND_USE + KEYSPACE_SYSTEM_SCHEMA + "; ";
-		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keyspace + "'";
+		cqlCommand = cqlCommand + "select * from " + TABLE_COLUMNS + " where keyspace_name = '" + keyspace.getKeyspace() + "'";
 		if (isNotEmpty(tableName)) {
 			cqlCommand = cqlCommand + " and table_name = '" + tableName + "'";
 		}

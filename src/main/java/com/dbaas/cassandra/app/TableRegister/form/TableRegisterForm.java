@@ -5,6 +5,7 @@ import static com.dbaas.cassandra.utils.StringUtils.toLowerCase;
 
 import java.util.List;
 
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
 import com.dbaas.cassandra.domain.cassandra.table.ColumnForm;
 import com.dbaas.cassandra.domain.cassandra.table.ColumnsForm;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
@@ -24,6 +25,10 @@ public class TableRegisterForm {
 	
 	public String getKeyspace() {
 		return keyspace;
+	}
+
+	public Keyspace toKeyspace() {
+		return Keyspace.createInstance(keyspace);
 	}
 	
 	public void setKeyspace(String keyspace) {
