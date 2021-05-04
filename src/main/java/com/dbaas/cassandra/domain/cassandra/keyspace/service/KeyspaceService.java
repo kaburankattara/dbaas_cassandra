@@ -79,12 +79,20 @@ public class KeyspaceService {
 		return keyspaceFindService.findAllKeyspaceWithoutSysKeyspace(instances);
 	}
 
+	public Keyspaces findAllKeyspaceWithoutSysKeyspaceNoRetry(Instances instances) {
+		return keyspaceFindService.findAllKeyspaceWithoutSysKeyspaceNoRetry(instances);
+	}
+
 	public Keyspaces findAllKeyspaceWithoutSysKeyspace(Instance instance) {
 		return keyspaceFindService.findAllKeyspaceWithoutSysKeyspace(instance);
 	}
 
 	public Keyspaces findAllKeyspace(Instances instances) {
 		return keyspaceFindService.findAllKeyspace(instances);
+	}
+
+	public Keyspaces findAllKeyspaceNoRetry(Instances instances) {
+		return keyspaceFindService.findAllKeyspaceNoRetry(instances);
 	}
 
 	public Keyspaces findAllKeyspace(Instance instance) {

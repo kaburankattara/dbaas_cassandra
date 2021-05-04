@@ -24,7 +24,7 @@ public class  KeyspaceRegisterAsyncService {
 	private KeyspaceService keyspaceService;
 	
 	private CassandraService cassandraService;
-	
+
 	@Autowired
 	KeyspaceRegisterAsyncService(ServerService serverService, KeyspaceService keyspaceService
 			, CassandraService cassandraService) {

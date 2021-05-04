@@ -1,17 +1,13 @@
 package com.dbaas.cassandra.app.keyspaceRegister.service;
 
 import com.dbaas.cassandra.app.keyspaceRegister.service.async.KeyspaceRegisterAsyncService;
-import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
-import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.dto.RegistKeyspaceResultDto;
-import com.dbaas.cassandra.domain.server.ServerService;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
 
@@ -27,16 +23,6 @@ public class  KeyspaceRegisterService {
 	KeyspaceRegisterService(KeyspaceRegisterAsyncService asyncService, KeyspaceService keyspaceService) {
 		this.asyncService = asyncService;
 		this.keyspaceService = keyspaceService;
-	}
-	
-	/**
-	 * キースペース一覧の取得
-	 * 
-	 * @param user
-	 * @return
-	 */
-	public List<String> findAllKeyspace(LoginUser user) {
-		return keyspaceService.findKeyspaceRegistPlanByUserId(user).getKeyspaceList();
 	}
 	
 	/**
