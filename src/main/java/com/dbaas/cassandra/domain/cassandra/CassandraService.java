@@ -118,14 +118,8 @@ public class CassandraService {
 		if (instances.isEmpty()) {
 			return false;
 		}
-		
-		for (Instance instance : instances.getInstanceList()) {
-			// CQL実行が出来ないインスタンスが存在すればfalse
-			if (keyspaceService.findAllKeyspace(instance).isEmpty()) {
-				return false;
-			}
-		}
-		return true;
+
+		return !keyspaceService.findAllKeyspaceNoRetry(instances).isEmpty();
 	}
 
 	/**

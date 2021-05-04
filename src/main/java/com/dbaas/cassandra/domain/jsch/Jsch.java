@@ -38,13 +38,13 @@ public class Jsch {
                 continue;
             }
         }
-        throw new RuntimeException();
+        throw new SystemException();
     }
 
     /**
      * Sessionを開始
      */
-    private Session connectSession(Instance instance) {
+    public Session connectSession(Instance instance) {
         try {
             final JSch jsch = new JSch();
             // 鍵追加

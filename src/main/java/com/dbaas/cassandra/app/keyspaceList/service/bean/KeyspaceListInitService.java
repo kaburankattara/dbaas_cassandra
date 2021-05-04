@@ -48,7 +48,7 @@ public class KeyspaceListInitService {
 			}
 			
 			// 登録済みのキースペースリストを取得する
-			return keyspaceService.findAllKeyspaceWithoutSysKeyspace(instances);
+			return keyspaceService.findAllKeyspaceWithoutSysKeyspaceNoRetry(instances);
 	}
 
 	

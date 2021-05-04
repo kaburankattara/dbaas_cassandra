@@ -1,17 +1,5 @@
 package com.dbaas.cassandra.domain.cassandra;
 
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_MV;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_RM;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SOURCE;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_STATUS_SUCCESS;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_CASSANDRA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_JAVA;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.FILE_PROFILE;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_EC2_USER_HOME;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_ETC;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_OPT;
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.PATH_TMP;
-
 import com.dbaas.cassandra.domain.cassandra.file.CassandraRepo;
 import com.dbaas.cassandra.domain.cassandra.file.CassandraYaml;
 import com.dbaas.cassandra.domain.cassandra.file.Profile;
@@ -20,6 +8,10 @@ import com.dbaas.cassandra.domain.sftp.Sftp;
 import com.dbaas.cassandra.domain.ssh.Ssh;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
+import com.dbaas.cassandra.shared.exception.SystemException;
+
+import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 
 public class Cassandra {
 
@@ -193,6 +185,25 @@ public class Cassandra {
 	 */
 	public String execCql(Instance instance, String cqlCommand) {
 		return ssh.exec(instance, ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+//		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
+//		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+//		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");
+//		return exec("touch aaa | cassandra -v 2> aaa");
+	}
+
+	/**
+	 * Cqlコマンドを実行（リトライ無し）
+	 *
+	 * @param instance
+	 * @param cqlCommand
+	 * @return 実効結果
+	 */
+	public String execCqlNoRetry(Instance instance, String cqlCommand) {
+		try {
+			return ssh.execNoRetry(instance, ap.getCqlInstallDir() + "cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
+		} catch (SystemException e) {
+			return EMPTY;
+		}
 //		return exec("cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"  | tr -d '\\n'");
 //		return exec("sudo source /etc/profile && cqlsh " + instance.getPublicIpAddress() + " -e \"" + cqlCommand + "\"");
 //		return exec("/home/ec2-user/testCql.sh | touch aaa | printenv > aaa");

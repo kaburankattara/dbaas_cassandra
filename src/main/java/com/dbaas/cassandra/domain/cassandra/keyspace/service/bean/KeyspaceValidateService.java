@@ -50,8 +50,15 @@ public class KeyspaceValidateService {
 		}
 
 		// cassandraからキースペース一覧を取得する
+		// キーペース登録時点でcassandraサーバが起動していない場合、キースペースは空とする
 		Instances instances = serverService.getAllInstances(user);
-		Keyspaces keyspaces = keyspaceFindService.findAllKeyspace(instances);
+		Keyspaces keyspaces = Keyspaces.createEmptyInstance();
+		try {
+			keyspaces = keyspaceFindService.findAllKeyspaceNoRetry(instances);
+		} catch (Exception e) {
+			// 処理無し
+		}
+
 		// 引数のキースペースが登録済の場合、エラーとして処理を中断する
 		if (keyspaces.hasKeyspace(keyspace)) {
 			validateResult.addError(MSG005E);
