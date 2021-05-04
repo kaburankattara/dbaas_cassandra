@@ -5,8 +5,8 @@ import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncServi
 import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
-import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.endPoint.EndPointService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.exception.SystemException;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional

@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.domain.jsch;
 
 import com.dbaas.cassandra.domain.server.instance.Instance;
+import com.dbaas.cassandra.domain.ssh.SocketFactoryWithTimeout;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import com.dbaas.cassandra.shared.exception.SystemException;
 import com.jcraft.jsch.*;
@@ -23,7 +24,7 @@ public class Jsch {
     private Jsch() {
     }
 
-    ApplicationProperties ap = ApplicationProperties.createInstance();
+    private final ApplicationProperties ap = ApplicationProperties.createInstance();
 
     public Session connectSessionToRetryCount(Instance instance) {
         int execCount = 0;
@@ -52,6 +53,7 @@ public class Jsch {
             // Session設定
             final Session session = jsch.getSession(ap.getRemoteServerUser(), instance.getPublicIpAddress(), ap.getSshPort());
             session.setUserInfo(new SessionUser());
+            session.setSocketFactory(SocketFactoryWithTimeout.createInstance(instance));
             session.connect();
 
             return session;
