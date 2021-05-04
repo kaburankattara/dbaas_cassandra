@@ -7,6 +7,7 @@ import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import java.util.List;
 
 import static com.dbaas.cassandra.utils.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class KeyspaceListInitServiceResultDto {
 	
@@ -14,11 +15,11 @@ public class KeyspaceListInitServiceResultDto {
 		
 	}
 
-	public KeyspaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, Keyspaces createdKeyspaces, String endPoint) {
+	public KeyspaceListInitServiceResultDto(KeyspaceRegistPlans keyspaceRegistPlans, Keyspaces createdKeyspaces) {
 		this.keyspaceRegistPlans = keyspaceRegistPlans;
 		this.createdKeyspaces = createdKeyspaces;
 		setKeyspaceList();
-		this.endPoint = endPoint;
+		this.endPoint = EMPTY;
 	}
 	
 	public KeyspaceRegistPlans keyspaceRegistPlans;

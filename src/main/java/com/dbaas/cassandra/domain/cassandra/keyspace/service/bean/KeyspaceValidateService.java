@@ -49,6 +49,14 @@ public class KeyspaceValidateService {
 			return result;
 		}
 
+		// 引数のキースペースでキースペース登録予定を取得する
+		KeyspaceRegistPlan keyspaceRegistPlan = keyspaceRegistPlanDao.findByUserIdAndKeyspace(user, keyspace);
+		// キースペースが登録予定に登録済であればエラーとする
+		if (!keyspaceRegistPlan.isEmpty()) {
+			validateResult.addError(MSG005E);
+			return result;
+		}
+
 		// cassandraからキースペース一覧を取得する
 		// キーペース登録時点でcassandraサーバが起動していない場合、キースペースは空とする
 		Instances instances = serverService.getAllInstances(user);
@@ -62,14 +70,6 @@ public class KeyspaceValidateService {
 		// 引数のキースペースが登録済の場合、エラーとして処理を中断する
 		if (keyspaces.hasKeyspace(keyspace)) {
 			validateResult.addError(MSG005E);
-		}
-
-		// 引数のキースペースでキースペース登録予定を取得する
-		KeyspaceRegistPlan keyspaceRegistPlan = keyspaceRegistPlanDao.findByUserIdAndKeyspace(user, keyspace);
-		// キースペースが登録予定に登録済であればエラーとする
-		if (!keyspaceRegistPlan.isEmpty()) {
-			validateResult.addError(MSG005E);
-			return result;
 		}
 
 		return result;
