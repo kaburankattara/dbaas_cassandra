@@ -19,8 +19,7 @@ public class KeyspaceListInitServiceResultDtoTest {
 	
 	public static KeyspaceListInitServiceResultDto getKeyspaceListServiceCassandraサーバ未構築_未登録() {
 		Keyspaces createdKeyspaces = Keyspaces.createEmptyInstance();
-		String endPoint = EMPTY;
-		return new KeyspaceListInitServiceResultDto(createEmptyKeyspaceRegistPlans(), createdKeyspaces, endPoint);
+		return new KeyspaceListInitServiceResultDto(createEmptyKeyspaceRegistPlans(), createdKeyspaces);
 	}
 	
 	public static KeyspaceListInitServiceResultDto getKeyspaceListServiceCassandraサーバ構築済_登録済() {
@@ -35,9 +34,7 @@ public class KeyspaceListInitServiceResultDtoTest {
 		keyspaceList.add(Keyspace.createInstance("keyspace"));
 		Keyspaces createdKeyspaces = Keyspaces.createInstance(keyspaceList);
 
-		String endPoint = "127.0.0.1";
-
-		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces, endPoint);
+		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces);
 	}
 	
 }

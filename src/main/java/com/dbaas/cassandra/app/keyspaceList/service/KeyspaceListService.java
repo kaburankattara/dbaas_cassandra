@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional
@@ -60,8 +61,6 @@ public class KeyspaceListService {
 			throw new SystemException();
 		}
 
-		String endPoint = endPointService.getEndPoint(user);
-
-		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces, endPoint);
+		return new KeyspaceListInitServiceResultDto(keyspaceRegistPlans, createdKeyspaces);
 	}
 }
