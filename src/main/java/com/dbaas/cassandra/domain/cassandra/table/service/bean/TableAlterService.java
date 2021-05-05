@@ -1,5 +1,14 @@
 package com.dbaas.cassandra.domain.cassandra.table.service.bean;
 
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.CQL_COMMAND_USE;
+import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.KEYSPACE_SYSTEM_SCHEMA;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.dbaas.cassandra.domain.cassandra.Cassandra;
 import com.dbaas.cassandra.domain.cassandra.cql.CqlFactory;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
@@ -7,23 +16,12 @@ import com.dbaas.cassandra.domain.cassandra.table.Table;
 import com.dbaas.cassandra.domain.cassandra.table.Tables;
 import com.dbaas.cassandra.domain.server.instance.Instance;
 import com.dbaas.cassandra.domain.server.instance.Instances;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.*;
 
 @Service
 @Transactional
 public class TableAlterService {
 
 	private TableFindService tableFindService;
-
-	private TableRegistService tableRegistService;
-
-	private TableDeleteService tableDeleteService;
 
 	@Autowired
 	public TableAlterService(TableFindService tableFindService) {

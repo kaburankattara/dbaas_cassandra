@@ -40,7 +40,7 @@ public class KeyspaceListInitServiceResultDto {
 			return;
 		}
 		for (Keyspace keyspace : createdKeyspaces.getKeyspaceList()) {
-			if (!keyspaceList.contains(keyspace)) {
+			if (!keyspaceList.contains(keyspace.getKeyspace())) {
 				keyspaceList.add(keyspace.getKeyspace());
 			}
 		}

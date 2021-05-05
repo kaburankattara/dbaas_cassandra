@@ -6,13 +6,9 @@ import static com.dbaas.cassandra.domain.cassandra.CassandraConsts.COMMAND_SUDO;
 
 import com.dbaas.cassandra.domain.jsch.Jsch;
 import com.dbaas.cassandra.domain.server.instance.Instance;
-import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import com.dbaas.cassandra.shared.exception.SystemException;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SocketFactory;
-
-import java.net.Socket;
 
 public class Ssh {
 
@@ -24,8 +20,6 @@ public class Ssh {
     }
 
     private final Jsch jsch = Jsch.createInstance();
-
-    private final ApplicationProperties ap = ApplicationProperties.createInstance();
 
     /**
      * コマンドを実行する
