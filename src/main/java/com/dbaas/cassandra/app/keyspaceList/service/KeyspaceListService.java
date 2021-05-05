@@ -1,5 +1,11 @@
 package com.dbaas.cassandra.app.keyspaceList.service;
 
+import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto;
 import com.dbaas.cassandra.app.keyspaceList.service.async.KeyspaceListAsyncService;
 import com.dbaas.cassandra.app.keyspaceList.service.bean.KeyspaceListInitService;
@@ -7,14 +13,8 @@ import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
-import com.dbaas.cassandra.domain.endPoint.EndPointService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import com.dbaas.cassandra.shared.exception.SystemException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import static com.dbaas.cassandra.domain.sysDate.SysDateContext.getSysDate;
 
 @Service
 @Transactional
@@ -25,16 +25,13 @@ public class KeyspaceListService {
 	private KeyspaceListAsyncService keyspaceListAsyncService;
 	
 	private KeyspaceService keyspaceService;
-
-	private EndPointService endPointService;
 	
 	@Autowired
 	KeyspaceListService(KeyspaceListInitService keyspaceListInitService, KeyspaceListAsyncService keyspaceListAsyncService, CassandraService cassandraManagerService,
-						KeyspaceService keyspaceService, EndPointService endPointService) {
+						KeyspaceService keyspaceService) {
 		this.keyspaceListInitService = keyspaceListInitService;
 		this.keyspaceListAsyncService = keyspaceListAsyncService;
 		this.keyspaceService = keyspaceService;
-		this.endPointService = endPointService;
 	}
 	
 	/**

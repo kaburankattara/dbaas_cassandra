@@ -1,15 +1,14 @@
 package com.dbaas.cassandra.app.keyspaceList.dto;
 
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
-import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
-import static com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans.createEmptyKeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlan;
+import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
 
 public class KeyspaceListInitServiceResultDtoTest {
 	

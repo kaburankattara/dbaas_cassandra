@@ -1,16 +1,13 @@
 package com.dbaas.cassandra.app.keyspaceList.service.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
-import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbaas.cassandra.domain.cassandra.CassandraService;
 import com.dbaas.cassandra.domain.cassandra.keyspace.KeyspaceRegistPlans;
+import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspaces;
+import com.dbaas.cassandra.domain.cassandra.keyspace.service.KeyspaceService;
 import com.dbaas.cassandra.domain.server.ServerService;
 import com.dbaas.cassandra.domain.server.instance.Instances;
 import com.dbaas.cassandra.domain.user.LoginUser;

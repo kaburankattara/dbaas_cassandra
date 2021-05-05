@@ -1,15 +1,15 @@
 package com.dbaas.cassandra.shared.validation;
 
-import com.dbaas.cassandra.domain.message.MessageSourceService;
-import org.springframework.lang.Nullable;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
+import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dbaas.cassandra.consts.SysConsts.EMPTY;
+import org.springframework.lang.Nullable;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import com.dbaas.cassandra.domain.message.MessageSourceService;
 
 public class ValidateResult {
 
