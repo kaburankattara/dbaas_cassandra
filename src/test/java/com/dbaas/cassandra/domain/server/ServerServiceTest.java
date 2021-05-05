@@ -62,7 +62,7 @@ public class ServerServiceTest {
 		user.setUserId(user.getUserId() + getSysDateYyyymmddhhmmssSSSSSS());
 
 		// テストの実行
-		Instances instances = serverService.getAllInstances(user);
+		Instances instances = serverService.getInstances(user);
 		
 		// 検証
 		// 取得出来たインスタンスが0であること
@@ -83,7 +83,7 @@ public class ServerServiceTest {
 		serverService.createServer(user);
 
 		// テストの実行
-		Instances instances = serverService.getAllInstances(user);
+		Instances instances = serverService.getInstances(user);
 		
 		// 検証
 		// 取得出来たインスタンスが`1以上であること
@@ -111,7 +111,7 @@ public class ServerServiceTest {
 		serverService.waitCompleteCreateServer(user);
 
 		// テストの実行
-		Instances instances = serverService.getAllInstances(user);
+		Instances instances = serverService.getInstances(user);
 		
 		// 検証
 		// 取得出来たインスタンスが`1以上であること
@@ -140,7 +140,7 @@ public class ServerServiceTest {
 		serverService.deleteAllServer(user);
 
 		// テストの実行
-		Instances instances = serverService.getAllInstances(user);
+		Instances instances = serverService.getInstances(user);
 		
 		// 検証
 		// 取得出来たインスタンスが`1以上であること

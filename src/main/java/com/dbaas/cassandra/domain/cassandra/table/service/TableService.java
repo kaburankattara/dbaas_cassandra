@@ -57,6 +57,10 @@ public class TableService {
 		return tableValidateService.validateForRegist(user, keyspace, table);
 	}
 
+	public RegistTableResultDto validateForUpdate(LoginUser user, Keyspace keyspace, Table table) {
+		return tableValidateService.validateForUpdate(user, keyspace, table);
+	}
+
 	public void registTable(Instance instance, Keyspace keyspace, Table table) {
 		tableRegistService.registTable(instance, keyspace, table);
 	}

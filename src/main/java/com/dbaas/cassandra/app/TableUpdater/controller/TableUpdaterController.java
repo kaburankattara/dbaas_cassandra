@@ -3,6 +3,7 @@ package com.dbaas.cassandra.app.TableUpdater.controller;
 import com.dbaas.cassandra.app.TableUpdater.form.TableUpdaterForm;
 import com.dbaas.cassandra.app.TableUpdater.service.TableUpdaterService;
 import com.dbaas.cassandra.domain.cassandra.table.Table;
+import com.dbaas.cassandra.domain.cassandra.table.dto.RegistTableResultDto;
 import com.dbaas.cassandra.domain.table.kbn.KbnDao;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_KEYSPACE_UPDATER;
 import static com.dbaas.cassandra.consts.UrlConsts.URL_TABLE_UPDATER;
 import static com.dbaas.cassandra.domain.kbn.KbnConsts.COLUMN_TYPE;
+import static com.dbaas.cassandra.domain.message.Message.MESSAGE_KEY_ERROR;
 import static com.dbaas.cassandra.utils.HttpUtils.getReferer;
 import static com.dbaas.cassandra.utils.UriUtils.createRedirectUri;
 
@@ -60,7 +62,14 @@ public class TableUpdaterController {
 	public String regist(HttpServletRequest request, @AuthenticationPrincipal LoginUser user,
 			@ModelAttribute("form") TableUpdaterForm form, RedirectAttributes attributes, Model model) {
 		try {
-			updaterService.updateTable(user, form.toKeyspace(), form.toTable());
+			RegistTableResultDto validateResult = updaterService.updateTable(user, form.toKeyspace(), form.toTable());
+
+			// 更新結果がエラーの場合、メッセージを表示する
+			if (validateResult.hasError()) {
+				model.addAttribute(MESSAGE_KEY_ERROR, validateResult.getValidateResult().getFirstErrorMessage());
+				initModelForAlways(model);
+				return "tableUpdater/tableUpdater";
+			}
 		} catch (Exception e) {
 
 		}
