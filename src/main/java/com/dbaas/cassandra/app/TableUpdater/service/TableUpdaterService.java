@@ -1,6 +1,7 @@
 package com.dbaas.cassandra.app.TableUpdater.service;
 
 import com.dbaas.cassandra.domain.cassandra.keyspace.Keyspace;
+import com.dbaas.cassandra.domain.cassandra.table.dto.RegistTableResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +40,8 @@ public class TableUpdaterService {
 	/**
 	 * テーブルを更新する
 	 */
-	public void updateTable(LoginUser user, Keyspace keyspace, Table table) {
-		updateService.updateTable(user, keyspace, table);
+	public RegistTableResultDto updateTable(LoginUser user, Keyspace keyspace, Table table) {
+		return updateService.updateTable(user, keyspace, table);
 	}
 
 	/**

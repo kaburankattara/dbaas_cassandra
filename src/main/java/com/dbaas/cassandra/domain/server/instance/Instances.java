@@ -1,10 +1,10 @@
 package com.dbaas.cassandra.domain.server.instance;
 
-import static java.util.Arrays.asList;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * ec2インスタンスリスト
