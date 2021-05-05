@@ -1,4 +1,4 @@
-package com.dbaas.cassandra.domain.jsch;
+package com.dbaas.cassandra.domain.jsch.bean;
 
 import com.jcraft.jsch.UserInfo;
 

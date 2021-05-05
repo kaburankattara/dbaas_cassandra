@@ -55,6 +55,10 @@ public class ApplicationProperties {
         return getPropertyByInt("jsch.connectSessionRetryCount");
     }
 
+    public int getSocketTimeout() {
+        return getPropertyByInt("jsch.socketTimeout");
+    }
+
     public int getSleepTime() {
         return getPropertyByInt("utils.sleepTime");
     }

@@ -1,7 +1,8 @@
 package com.dbaas.cassandra.domain.jsch;
 
+import com.dbaas.cassandra.domain.jsch.bean.SessionUser;
 import com.dbaas.cassandra.domain.server.instance.Instance;
-import com.dbaas.cassandra.domain.ssh.SocketFactoryWithTimeout;
+import com.dbaas.cassandra.domain.jsch.bean.SocketFactoryWithTimeout;
 import com.dbaas.cassandra.shared.applicationProperties.ApplicationProperties;
 import com.dbaas.cassandra.shared.exception.SystemException;
 import com.jcraft.jsch.*;
@@ -53,7 +54,7 @@ public class Jsch {
             // Session設定
             final Session session = jsch.getSession(ap.getRemoteServerUser(), instance.getPublicIpAddress(), ap.getSshPort());
             session.setUserInfo(new SessionUser());
-            session.setSocketFactory(SocketFactoryWithTimeout.createInstance(instance));
+            session.setSocketFactory(new SocketFactoryWithTimeout());
             session.connect();
 
             return session;
