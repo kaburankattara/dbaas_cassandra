@@ -1,5 +1,7 @@
 package com.dbaas.cassandra.utils;
 
+import org.apache.commons.lang3.RegExUtils;
+
 /**
  * StringUtils
  */
@@ -152,7 +154,7 @@ public final class StringUtils {
      * @return 処理結果
      */
     public static String replaceAll(final String text, final String regex, final String replacement) {
-        return org.apache.commons.lang3.StringUtils.replaceAll(text, regex, replacement);
+		return RegExUtils.replaceAll(text, regex, replacement);
     }
 
     /**
