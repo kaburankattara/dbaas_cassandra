@@ -1,0 +1,10 @@
+version: 0.1
+
+phases:
+  build:
+    commands:
+      - gradle build -x test
+
+artifacts:
+  files:
+    - ./build/libs/dbaasCassandra.jar
