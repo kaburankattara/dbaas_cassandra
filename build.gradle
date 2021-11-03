@@ -24,6 +24,10 @@ configurations {
 //    }
 //}
 
+tasks.withType(JavaCompile) {
+	options.compilerArgs << '-Xlint:none'
+}
+
 repositories {
 	mavenCentral()
 }
