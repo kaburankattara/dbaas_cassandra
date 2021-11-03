@@ -66,7 +66,7 @@ public class KeyspaceListInitService {
 			}
 
 			// cassandraのコマンド実行まで可能な場合、
-			// キースペースの登録漏れがあれば登録しておく
+			// キースペースの登録漏れがあれば登録して処理終了
 			instances = serverService.getInstances(user);
 			boolean canAllExecCql = cassandraService.canAllExecCql(instances);
 			if (!instances.isEmpty() && canAllExecCql) {
@@ -75,7 +75,7 @@ public class KeyspaceListInitService {
 			}
 			
 			// サーバはあるが、cassandraが起動来ていない場合
-			// cassandraを再セットアップし、起動
+			// cassandraを再セットアップし、起動する。
 			// そしてキースペースの登録漏れがあれば登録
 			if (!instances.isEmpty() && !canAllExecCql) {
 				cassandraService.setup(user, instances);
@@ -84,7 +84,7 @@ public class KeyspaceListInitService {
 				return;
 			}
 
-			// サーバが無ければ構築し、登録漏れのキースペースを登録
+			// サーバが無ければ構築し、登録予定のキースペースを登録
 			// EC2を構築
 			// TODO マルチノードにしたときにメソッドを統合する
 			serverService.createServer(user);
@@ -93,10 +93,10 @@ public class KeyspaceListInitService {
 			serverService.waitCompleteCreateServer(user);
 			instances = serverService.getInstances(user);
 			
-			// cassandraをセットアップし、cassandraを起動
+			// cassandraをセットアップし、cassandraを起動する
 			cassandraService.setup(user, instances);
 			cassandraService.execCassandraByWait(instances);
-			// そしてキースペースの登録漏れがあれば登録
+			// そしてキースペースの登録予定があれば登録する
 			keyspaceService.registKeyspaceByDuplicateIgnore(instances, keyspaceRegistPlans);
 		} catch (Exception e) {
 			// TODO: handle exception
