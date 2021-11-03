@@ -57,7 +57,8 @@ dependencies {
 	
     testImplementation 'org.junit.jupiter:junit-jupiter'//JUnit5に対応
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'//IDEなどのサポート用
-	
+	implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+
 }
 
 dependencyManagement {

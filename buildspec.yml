@@ -10,4 +10,4 @@ phases:
 
 artifacts:
   files:
-    - ./build/libs/dbaasCassandra.jar
+    - ./build/libs/dbaas_cassandra-0.0.1-SNAPSHOT.jar
