@@ -6,7 +6,7 @@ phases:
       java: corretto8
   build:
     commands:
-      - gradle build -x test
+      - ./gradlew build -x test
 
 artifacts:
   files:
