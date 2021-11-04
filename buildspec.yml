@@ -1,9 +1,10 @@
-version: 0.1
+version: 0.2
 
 phases:
   build:
     commands:
-      - gradle build -x test
+      - echo gradle build start
+      - ./gradlew build -x test
 
 artifacts:
   files:
