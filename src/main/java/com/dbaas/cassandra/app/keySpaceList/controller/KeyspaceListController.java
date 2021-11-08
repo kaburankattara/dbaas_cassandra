@@ -1,7 +1,7 @@
 package com.dbaas.cassandra.app.keyspaceList.controller;
 
 import com.dbaas.cassandra.app.keyspaceList.dto.KeyspaceListInitServiceResultDto;
-import com.dbaas.cassandra.app.keyspaceList.form.keyspaceListForm;
+import com.dbaas.cassandra.app.keyspaceList.form.KeyspaceListForm;
 import com.dbaas.cassandra.app.keyspaceList.service.KeyspaceListService;
 import com.dbaas.cassandra.domain.user.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class KeyspaceListController {
      * @return form
      */
     @ModelAttribute("form")
-    private keyspaceListForm setUpForm() {
-        return new keyspaceListForm();
+    private KeyspaceListForm setUpForm() {
+        return new KeyspaceListForm();
     }
 
 
