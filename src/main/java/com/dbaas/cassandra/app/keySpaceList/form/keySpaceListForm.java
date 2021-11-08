@@ -1,4 +1,4 @@
 package com.dbaas.cassandra.app.keyspaceList.form;
 
-public class keyspaceListForm {
+public class KeyspaceListForm {
 }
