@@ -1,6 +1,10 @@
 version: 0.2
 
 phases:
+  commands:
+    - yum update -y
+    - yum -y install ibus-kkc vlgothic-* glibc-locale-source glibc-langpack-en
+
   pre_build:
     commands:
       - localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
