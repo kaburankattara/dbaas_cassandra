@@ -2,7 +2,6 @@ version: 0.2
 
 phases:
   commands:
-    - yum update -y
     - yum -y install ibus-kkc vlgothic-* glibc-locale-source glibc-langpack-en
 
   pre_build:
