@@ -1,8 +1,12 @@
 version: 0.2
 
 phases:
-  commands:
-    - yum -y install ibus-kkc vlgothic-* glibc-locale-source glibc-langpack-en
+  install:
+    runtime-versions:
+      java: corretto8
+    commands:
+      - yum update -y
+      - yum -y install ibus-kkc vlgothic-* glibc-locale-source glibc-langpack-en
 
   pre_build:
     commands:
