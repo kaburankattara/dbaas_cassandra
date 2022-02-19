@@ -21,6 +21,7 @@ phases:
     commands:
       - ./gradlew build -x test
 
-#artifacts:
-#  files:
+artifacts:
+  files:
+    - ./dbaas_cassandra-0.0.1-SNAPSHOT.jar
 #    - ./build/libs/dbaas_cassandra-0.0.1-SNAPSHOT.jar
