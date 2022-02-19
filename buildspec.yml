@@ -23,5 +23,5 @@ phases:
 
 artifacts:
   files:
-    - dbaas_cassandra-0.0.1-SNAPSHOT.jar
+    - '**/*'
 
