@@ -24,4 +24,4 @@ phases:
 artifacts:
   files:
 #    - ./build/libs/dbaas_cassandra-0.0.1-SNAPSHOT.jar
-     - BuildArtif/dbaas_cassandra-0.0.1-SNAPSHOT.jar
+     - target/dbaas_cassandra-0.0.1-SNAPSHOT.jar
