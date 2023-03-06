@@ -37,6 +37,7 @@ public class KeyspaceListController {
     public String index(@AuthenticationPrincipal LoginUser user, Model model) {
 
         KeyspaceListInitServiceResultDto initResultDto = new KeyspaceListInitServiceResultDto();
+
         try {
             initResultDto = keyspaceListService.init(user);
             model.addAttribute("initResultDto", initResultDto);
